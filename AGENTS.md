@@ -27,10 +27,14 @@ Cross-tool rules for **Antigravity**, **Claude Code**, **Cursor**, **GitHub Copi
 ## Unit Tests
 
 Run unit tests headlessly in a single run with watching off:
-```bash
-npm test
-```
-Vitest executes in Node environment without launching browsers or watch processes.
+- **Unit Tests (Vitest):** Headless, in-memory Node tests with watching off:
+  ```bash
+  npm test
+  ```
+- **Component & Browser Tests (Playwright):** Cross-browser visual and interaction tests:
+  ```bash
+  npm run test:e2e
+  ```
 
 ## Multi-Agent & Git Safety
 

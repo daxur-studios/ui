@@ -8,6 +8,7 @@
     "pack:ui": "npm run build:ui && npm pack ./dist/ui --pack-destination ./dist",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:e2e": "playwright test",
     "format": "prettier --write ."
   },
   "prettier": {
@@ -37,6 +38,7 @@
     "@angular/build": "^20.3.32",
     "@angular/cli": "^20.3.4",
     "@angular/compiler-cli": "^20.3.0",
+    "@playwright/test": "^1.64.1",
     "ng-packagr": "^20.3.0",
     "prettier": "^3.5.0",
     "typescript": "~5.9.2",
