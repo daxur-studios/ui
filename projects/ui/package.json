@@ -6,6 +6,10 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/daxur-studios/ui.git"
+  },
   "peerDependencies": {
     "@angular/cdk": "^20.0.0",
     "@angular/common": "^20.3.0",
