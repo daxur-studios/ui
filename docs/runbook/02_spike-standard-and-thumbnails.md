@@ -99,3 +99,14 @@ tags: [spikes, examples, playwright, thumbnails, catalog, runbook]
 - **[open]** The spec last-result cross-check is not built.
 - **[open]** `npm run spikes:thumbnails` was not run for the whole registry. It would capture the in-progress slider spike, which belongs to another session.
 - **[open]** The npm audit fix is waiting for the owner's go-ahead. Nothing was changed.
+
+### Unit-test runner for demo components
+
+- **[decision]** Demo DOM specs (`*.dom.spec.ts`) run through Angular's unit-test builder (`@angular/build:unit-test`, runner `vitest`) with `npm run test:dom` (`ng test demo`). The root `vitest.config.ts` excludes them, so `npm test` still runs only the node specs.
+- **[deviation]** The plan named happy-dom. The builder hardcodes `jsdom` as the environment when no browser is configured (`node_modules/@angular/build/src/builders/unit-test/builder.js`, around line 211), so happy-dom can't be used without a browser run. Installed `jsdom@30.1.1`, pinned exactly. It was published 2026-09-22, more than two weeks before this entry.
+- **[action]** Added `projects/demo/tsconfig.spec.json`, a `test` target in `angular.json`, and DOM specs for the placeholder and the catalog page. The catalog spec checks the filter and the hidden note against the real registry.
+- **[finding]** `--include src/**/*.dom.spec.ts` in `angular.json` found no tests. `**/*.dom.spec.ts` works.
+- **[decision]** Vitest stays at 3.2.7. Angular 20's builder declares `vitest@^3.1.1` as a peer, and a Vitest 4 install fails against it. The owner chose to stay on Vitest 3 for now.
+- **[verification]** `npm run test:dom` passes 3 of 3. `npm test` passes 35 of 35. `npx ng build demo` passes. `npm run test:e2e` passes 20 of 20. Prettier is clean on the changed files.
+- **[open]** `npm audit` still reports 4 dev-only vulnerabilities (2 critical, 2 moderate). The Vitest critical needs Vitest 4.1.11 or later, and the audit offers 5.0.5. The `@angular/build` moderate needs Angular 22. Both fixes need the owner's go-ahead, and both are major upgrades.
+- **[open]** Angular marks the `unit-test` builder experimental. Expect breaking changes on Angular upgrades.

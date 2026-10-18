@@ -39,6 +39,8 @@ Resolved by the owner on 2026-10-18. See standard §9.
 - [x] Add the placeholder component with `--ui-*` fallback styling.
 - [x] Capture the pipeline fixture thumbnail (1.4 KB, 480 × 270). No spike thumbnail yet.
 - [x] Add the catalog at `/catalog`, with failed and inconclusive spikes hidden by a filter.
+- [x] Add DOM unit tests for the placeholder and catalog (`npm run test:dom`, Angular unit-test builder on Vitest 3, jsdom).
+- [ ] Upgrade Vitest past the critical advisory. Held: Angular 20's builder pins Vitest 3. See runbook 02.
 - [ ] Add the "last spec result" cross-check to the catalog.
 - [ ] Record the first real spike outcome in the runbook.
 
