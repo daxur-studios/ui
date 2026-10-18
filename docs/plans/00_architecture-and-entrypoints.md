@@ -27,4 +27,5 @@ Create a flexible, maintainable UI library (`@daxur-studios/ui`) that can serve 
 
 - **Token Rule**: All colors and styling variables are CSS variables only; no hardcoded hex or rgba in component styles.
 - **Optional Peers**: `@angular/core`, `@angular/cdk`, and `@angular/common` are declared optional peer dependencies to prevent unneeded coupling.
+- **Reactive Forms (required, added 2026-10-18)**: Every value-bearing control implements `ControlValueAccessor` through the shared `UiFormControl<T>` base, so `[formControl]` / `formControlName` is the default binding. `@angular/forms` is a required peer. Material form-field (`MatFormFieldControl`) integration is lower priority and deferred. See [Plan 04](04_reactive-forms-contract.md) and [`docs/standards/form-controls.md`](../standards/form-controls.md).
 - **Skill Bundling**: Package includes `.agents/skills/ui/SKILL.md` bundled under `skills/ui/` in the build output.

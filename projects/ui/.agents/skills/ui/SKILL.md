@@ -21,7 +21,8 @@ Required Angular 20 peer dependencies (standalone components, OnPush, signals, z
 {
   "@angular/core": "^20.3.0",
   "@angular/cdk": "^20.0.0",
-  "@angular/common": "^20.3.0"
+  "@angular/common": "^20.3.0",
+  "@angular/forms": "^20.3.0"
 }
 ```
 
@@ -31,9 +32,9 @@ Runtime dependencies:
 
 ## 3. Public entry points
 
-| Import              | Depends on | Provides                                               |
-| ------------------- | ---------- | ------------------------------------------------------ |
-| `@daxur-studios/ui` | Angular 20 | `SliderComponent`, slider math/types, `UI_LIB_VERSION` |
+| Import              | Depends on | Provides                                                                                        |
+| ------------------- | ---------- | ----------------------------------------------------------------------------------------------- |
+| `@daxur-studios/ui` | Angular 20 | `SliderComponent`, `UiFormControl`, `provideUiFormControl`, slider math/types, `UI_LIB_VERSION` |
 
 Use the single root entrypoint. There are no Angular or component sub-entrypoints and no aggregate import-all array.
 
@@ -47,14 +48,14 @@ Use the single root entrypoint. There are no Angular or component sub-entrypoint
 
 Import `SliderComponent` into a standalone component's `imports`.
 
-| Input         | Default         | Purpose                                                                 |
-| ------------- | --------------- | ----------------------------------------------------------------------- |
-| `label`       | required string | Visible label and accessible name                                       |
-| `value`       | `0`             | Numeric model supporting `[(value)]` and `(valueChange)` live preview   |
-| `min` / `max` | `0` / `100`     | Range endpoints                                                         |
-| `step`        | `1`             | Increment aligned to min; invalid steps fall back to 1                  |
-| `unit`        | `''`            | Readout and `aria-valuetext` suffix; include a leading space if desired |
-| `disabled`    | `false`         | Disables interaction and removes the slider from sequential focus       |
+| Input         | Default         | Purpose                                                                                                    |
+| ------------- | --------------- | ---------------------------------------------------------------------------------------------------------- |
+| `label`       | required string | Visible label and accessible name                                                                          |
+| `value`       | `0`             | Numeric model supporting `[(value)]` and `(valueChange)` live preview                                      |
+| `min` / `max` | `0` / `100`     | Range endpoints                                                                                            |
+| `step`        | `1`             | Increment aligned to min; invalid steps fall back to 1                                                     |
+| `unit`        | `''`            | Readout and `aria-valuetext` suffix; include a leading space if desired                                    |
+| `disabled`    | `false`         | Disables interaction and removes the slider from sequential focus; combined with the form's disabled state |
 
 `valueCommit: OutputEmitterRef<number>` emits once at the end of a changed pointer transaction
 (up, cancel, or capture loss), or once per keyboard action that changes the value. Pointer moves
@@ -74,6 +75,25 @@ when max is off the step lattice. Decimal stepping is rounded to 12 places.
 Pure helpers exported from the same entrypoint: `clampAndSnapValue`, `valueToRatio`,
 `ratioToValue`, `normalizeSliderBounds`, `normalizeSliderStep`, `buildAngledTrackPath`,
 `DEFAULT_SLIDER_STEP`, `ISliderTrackGeometry`, and `ISliderSvgPaths`.
+
+### Reactive forms (preferred binding)
+
+Every value-bearing control supports Angular reactive forms by default; prefer `[formControl]` /
+`formControlName` over `[(value)]` for form state. Import `ReactiveFormsModule` alongside the
+control. Do not combine form directives and `[(value)]` on the same element.
+
+- **Updates:** the form receives every changed live value (each drag or key step). Use
+  `(valueCommit)` or debounce `valueChanges` for end-of-interaction work.
+- **Writes:** `setValue`/`patchValue` update the display without marking the control dirty or
+  emitting `valueCommit`. `reset()` (`null`) renders the slider at its normalized minimum.
+- **Touched:** set when the rail loses focus. **Disabled:** `control.disable()` behaves like the
+  `disabled` input (no tab stop, `aria-disabled="true"`, input ignored).
+- Status classes (`ng-dirty`, `ng-touched`, `ng-invalid`, …) apply to the `ui--slider` host.
+- Material `mat-form-field` integration is not provided.
+
+Authoring a new control: extend `UiFormControl<T>`, declare `value = model<T>(...)`, implement
+`coerceWrittenValue`, add `providers: [provideUiFormControl(() => MyControl)]`, route user changes
+through `updateValueFromUser()`, call `markTouched()` on blur, and read `isDisabled()`.
 
 ### Themes and tokens
 
@@ -115,12 +135,25 @@ import { SliderComponent } from '@daxur-studios/ui';
 </section>
 ```
 
+```typescript
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { SliderComponent } from '@daxur-studios/ui';
+// imports: [SliderComponent, ReactiveFormsModule]
+readonly fov = new FormControl(75, { nonNullable: true });
+```
+
+```html
+<ui--slider label="Field of View" [formControl]="fov" [min]="30" [max]="120" unit="°" />
+```
+
 ## 6. Troubleshooting
 
 - **Missing styles or un-themed components**: Verify that the consuming application imports standard theme variables or defines `--ui-*` / `--mat-sys-*` tokens.
-- **Peer dependency warnings**: Install the required Angular core, common, and CDK peers.
+- **Peer dependency warnings**: Install the required Angular core, common, forms, and CDK peers.
+- **`No value accessor for form control`**: Ensure the control is imported from `@daxur-studios/ui` and `ReactiveFormsModule` is in the component's `imports`.
 
 ## 7. Version notes
 
 - `0.0.1`: Initial workspace scaffolding, packaging pipeline, and agent skill bundle.
 - Plan 03: Added standalone slider, pure geometry helpers, packaged Sass theme, and required Angular peers.
+- Plan 04: Added reactive forms support (`UiFormControl`, `provideUiFormControl`) to the slider; `@angular/forms` is now a required peer.

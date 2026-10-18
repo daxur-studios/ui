@@ -5,6 +5,7 @@ Cross-tool rules for **Antigravity**, **Claude Code**, **Cursor**, **GitHub Copi
 | Doc | Role |
 | --- | --- |
 | `AGENTS.md` (this file) | Short rules every agent loads at session start |
+| [`docs/standards/form-controls.md`](docs/standards/form-controls.md) | Required reactive forms (`ControlValueAccessor`) contract for every form control |
 | [`docs/plans-and-runbooks.md`](docs/plans-and-runbooks.md) | Plans (`docs/plans/`) + runbooks (`docs/runbook/`) rules |
 | [`projects/ui/.agents/skills/ui/SKILL.md`](projects/ui/.agents/skills/ui/SKILL.md) | Packaged library skill documenting public entry points and APIs |
 
@@ -20,6 +21,10 @@ Cross-tool rules for **Antigravity**, **Claude Code**, **Cursor**, **GitHub Copi
   - Separate `.ts`, `.html`, and `.scss` files for components (no inline templates or styles).
   - Modern signals: `input()`, `output()`, `computed()`, and signals instead of decorators/EventEmitters.
   - Built-in control flow: `@if`, `@for` (with stable `track`), `@switch`.
+- **Form Controls (required):**
+  - Every value-bearing control (slider, input, toggle, select, …) supports Angular reactive forms (`[formControl]`, `formControlName`) by extending `UiFormControl<T>` and providing `provideUiFormControl(...)`.
+  - User changes go through `updateValueFromUser()`; form writes never echo back; touched on blur; read disabled state only via `isDisabled()`.
+  - Material form-field integration is optional and lower priority. Full rules: [`docs/standards/form-controls.md`](docs/standards/form-controls.md).
 - **Packaging & Skills:**
   - Reusable skills live in `projects/ui/.agents/skills/` and are bundled via `ng-package.json`.
   - Export public surfaces cleanly through entrypoint `public-api.ts`.

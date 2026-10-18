@@ -46,3 +46,8 @@ tags: [slider, svg, spike, accessibility, angular, signals, playwright, vitest, 
 - **[decision]** Explore precise entry as a native number input within `<ui--slider>`. Keep its draft text separate from the numeric model; accept a valid value on Enter or blur, discard on Escape, and restore the prior value on invalid blur. A changed accepted value should produce one `valueCommit`; dragging keeps live previews.
 - **[decision]** Define compact, comfortable (current), and spacious density presets that coordinate spacing, type, editor padding, track geometry, and interaction area. Do not scale track height alone because that distorts the SVG geometry.
 - **[next]** Make editable value entry and density the focus of a follow-up spike. Keep the input native until a second component demonstrates a shared number-input contract; then decide whether to extract `<ui--number>`. This remains a direction for a future hypothesis, not a new plan or API commitment.
+
+### Reactive Forms Follow-up (2026-10-18)
+
+- **[finding]** Plan 03's control contract omitted Angular forms support, so `<ui--slider>` could not bind with `[formControl]` / `formControlName`.
+- **[decision]** The slider is the first adopter of the library-wide forms contract in [Plan 04](../plans/04_reactive-forms-contract.md) and [`docs/standards/form-controls.md`](../standards/form-controls.md). The change is additive: `[(value)]`, `(valueChange)`, and `(valueCommit)` keep their behavior, and Plan 03's finding stands. Adoption evidence is recorded in [Runbook 04](04_reactive-forms-contract.md).
