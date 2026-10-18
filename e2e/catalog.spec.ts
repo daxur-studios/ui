@@ -5,7 +5,8 @@ import { SPIKE_REGISTRY } from '../projects/demo/src/app/spikes/spike-registry';
 
 /** Entries the catalog shows by default. The count follows the registry, so the test holds as spikes are added. */
 const VISIBLE_BY_DEFAULT = SPIKE_REGISTRY.filter(
-  (entry) => entry.status !== 'failed' && entry.status !== 'inconclusive',
+  (entry) =>
+    entry.status !== 'failed' && entry.status !== 'inconclusive' && entry.disposition !== 'discard',
 );
 
 test.describe('spike catalog', () => {

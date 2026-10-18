@@ -1,0 +1,25 @@
+<button
+  [type]="type()"
+  class="hud-button bracket-btn"
+  [class.active]="value()"
+  [attr.aria-pressed]="toggle() ? (value() ? 'true' : 'false') : null"
+  [attr.aria-disabled]="isDisabled()"
+  [attr.tabindex]="isDisabled() ? -1 : 0"
+  (click)="activate()"
+  (keydown)="onKeyDown($event)"
+  (blur)="onBlur()"
+>
+  <svg
+    class="bracket-svg"
+    viewBox="0 0 100 40"
+    preserveAspectRatio="none"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <path class="bracket bracket-tl" d="M 12 2 L 2 2 L 2 12" />
+    <path class="bracket bracket-tr" d="M 88 2 L 98 2 L 98 12" />
+    <path class="bracket bracket-bl" d="M 12 38 L 2 38 L 2 28" />
+    <path class="bracket bracket-br" d="M 88 38 L 98 38 L 98 28" />
+  </svg>
+  <span class="label-text">{{ label() }}</span>
+</button>

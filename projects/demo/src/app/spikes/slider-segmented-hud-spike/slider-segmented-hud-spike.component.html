@@ -1,0 +1,85 @@
+<section
+  class="stage"
+  data-spike-stage
+  [attr.data-spike-ready]="ready() ? 'true' : null"
+  data-ui-theme="hud"
+>
+  <header>
+    <p class="eyebrow">UI LAB / SPIKE 02</p>
+    <h1>Segmented Tick-Cell HUD Slider</h1>
+    <p class="description">
+      Discrete SVG cell array illuminating responsively with a chamfered readout badge.
+    </p>
+  </header>
+
+  <div class="panel">
+    <ui--slider-segmented
+      label="Battery Level"
+      [value]="battery()"
+      (valueChange)="onLiveValue($event)"
+      (valueCommit)="onCommit($event)"
+      [min]="0"
+      [max]="100"
+      [step]="1"
+      unit="%"
+    />
+
+    <ui--slider-segmented
+      label="Shield Capacity"
+      [(value)]="shield"
+      [min]="0"
+      [max]="100"
+      [step]="5"
+      unit=" MW"
+    />
+
+    <ui--slider-segmented label="Auxiliary Grid" [value]="20" [disabled]="true" unit=" kW" />
+
+    <div class="telemetry" aria-label="Battery Level telemetry">
+      <span
+        >Live value <strong data-testid="live-value">{{ battery() }}</strong></span
+      >
+      <span
+        >Live events <strong data-testid="live-count">{{ liveCount() }}</strong></span
+      >
+      <span
+        >Commits <strong data-testid="commit-count">{{ commitCount() }}</strong></span
+      >
+      <span
+        >Committed <strong data-testid="committed-value">{{ committedValue() }}</strong></span
+      >
+    </div>
+  </div>
+
+  <div class="form-panel" aria-label="Reactive form">
+    <ui--slider-segmented
+      label="Reactor Output"
+      [formControl]="reactor"
+      [min]="0"
+      [max]="100"
+      [step]="1"
+      unit="%"
+    />
+
+    <div class="telemetry" aria-label="Reactor form state">
+      <span
+        >Form value <strong data-testid="form-value">{{ reactor.value ?? 'null' }}</strong></span
+      >
+      <span
+        >Dirty <strong data-testid="form-dirty">{{ reactor.dirty }}</strong></span
+      >
+      <span
+        >Touched <strong data-testid="form-touched">{{ reactor.touched }}</strong></span
+      >
+    </div>
+
+    <div class="actions">
+      <button type="button" data-testid="form-toggle-disabled" (click)="toggleReactorDisabled()">
+        {{ reactor.disabled ? 'Enable' : 'Disable' }}
+      </button>
+      <button type="button" data-testid="form-reset" (click)="resetReactor()">Reset</button>
+    </div>
+  </div>
+
+  <p class="hint">Arrow keys · Shift for coarse steps · Page Up / Down · Home / End</p>
+</section>

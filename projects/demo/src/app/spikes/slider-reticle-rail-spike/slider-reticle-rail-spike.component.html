@@ -1,0 +1,85 @@
+<section
+  class="stage"
+  data-spike-stage
+  [attr.data-spike-ready]="ready() ? 'true' : null"
+  data-ui-theme="hud"
+>
+  <header>
+    <p class="eyebrow">UI LAB / SPIKE 03</p>
+    <h1>Dual-Rail Bracket Reticle Slider</h1>
+    <p class="description">
+      Parallel hairline rails with origin zero ticks for bipolar ranges and caliper brackets.
+    </p>
+  </header>
+
+  <div class="panel">
+    <ui--slider-reticle
+      label="Bipolar Audio Gain"
+      [value]="gain()"
+      (valueChange)="onLiveValue($event)"
+      (valueCommit)="onCommit($event)"
+      [min]="-24"
+      [max]="24"
+      [step]="1"
+      unit=" dB"
+    />
+
+    <ui--slider-reticle
+      label="Azimuth Bearing"
+      [(value)]="azimuth"
+      [min]="-90"
+      [max]="90"
+      [step]="5"
+      unit="°"
+    />
+
+    <ui--slider-reticle label="Trim Offset" [value]="0" [disabled]="true" unit=" mm" />
+
+    <div class="telemetry" aria-label="Audio Gain telemetry">
+      <span
+        >Live value <strong data-testid="live-value">{{ gain() }}</strong></span
+      >
+      <span
+        >Live events <strong data-testid="live-count">{{ liveCount() }}</strong></span
+      >
+      <span
+        >Commits <strong data-testid="commit-count">{{ commitCount() }}</strong></span
+      >
+      <span
+        >Committed <strong data-testid="committed-value">{{ committedValue() }}</strong></span
+      >
+    </div>
+  </div>
+
+  <div class="form-panel" aria-label="Reactive form">
+    <ui--slider-reticle
+      label="Antenna Elevation"
+      [formControl]="elevation"
+      [min]="0"
+      [max]="90"
+      [step]="1"
+      unit="°"
+    />
+
+    <div class="telemetry" aria-label="Elevation form state">
+      <span
+        >Form value <strong data-testid="form-value">{{ elevation.value ?? 'null' }}</strong></span
+      >
+      <span
+        >Dirty <strong data-testid="form-dirty">{{ elevation.dirty }}</strong></span
+      >
+      <span
+        >Touched <strong data-testid="form-touched">{{ elevation.touched }}</strong></span
+      >
+    </div>
+
+    <div class="actions">
+      <button type="button" data-testid="form-toggle-disabled" (click)="toggleElevationDisabled()">
+        {{ elevation.disabled ? 'Enable' : 'Disable' }}
+      </button>
+      <button type="button" data-testid="form-reset" (click)="resetElevation()">Reset</button>
+    </div>
+  </div>
+
+  <p class="hint">Arrow keys · Shift for coarse steps · Page Up / Down · Home / End</p>
+</section>

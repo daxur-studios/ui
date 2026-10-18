@@ -1,0 +1,20 @@
+<button
+  [type]="type()"
+  class="hud-button trace-btn"
+  [class.active]="value()"
+  [attr.aria-pressed]="toggle() ? (value() ? 'true' : 'false') : null"
+  [attr.aria-disabled]="isDisabled()"
+  [attr.tabindex]="isDisabled() ? -1 : 0"
+  (click)="activate()"
+  (keydown)="onKeyDown($event)"
+  (blur)="onBlur()"
+>
+  <div class="pip-wrapper" aria-hidden="true">
+    <svg class="led-svg" viewBox="0 0 10 10" focusable="false">
+      <circle cx="5" cy="5" r="3" class="led-pip" />
+      <circle cx="5" cy="5" r="4.5" class="led-ring" />
+    </svg>
+  </div>
+  <span class="label-text">{{ label() }}</span>
+  <div class="bottom-trace" aria-hidden="true"></div>
+</button>

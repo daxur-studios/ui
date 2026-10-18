@@ -1,0 +1,43 @@
+<div class="heading">
+  <label [id]="labelId" class="label">{{ label() }}</label>
+  <span class="readout-badge" aria-hidden="true">
+    <span class="readout-val">{{ valueText() }}</span>
+  </span>
+</div>
+
+<div
+  #track
+  class="track"
+  role="slider"
+  [attr.aria-labelledby]="labelId"
+  [attr.aria-valuemin]="bounds().min"
+  [attr.aria-valuemax]="bounds().max"
+  [attr.aria-valuenow]="currentValue()"
+  [attr.aria-valuetext]="valueText()"
+  [attr.aria-disabled]="isDisabled()"
+  [attr.tabindex]="isDisabled() ? -1 : 0"
+  (pointerdown)="onPointerDown($event)"
+  (pointermove)="updatePointer($event)"
+  (pointerup)="finishPointer($event)"
+  (pointercancel)="finishPointer($event)"
+  (keydown)="onKeyDown($event)"
+  (blur)="markTouched()"
+>
+  <svg
+    [attr.viewBox]="'0 0 ' + trackWidth() + ' ' + trackHeight"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <path [attr.d]="paths().topRailPath" class="rail" />
+    <path [attr.d]="paths().bottomRailPath" class="rail" />
+    @if (paths().isBipolar && paths().originTickPath) {
+      <path [attr.d]="paths().originTickPath" class="origin-tick" />
+    }
+    @if (paths().activeFillPath) {
+      <path [attr.d]="paths().activeFillPath" class="active-fill" />
+    }
+    <path [attr.d]="paths().leftBracketPath" class="caliper-bracket" />
+    <path [attr.d]="paths().rightBracketPath" class="caliper-bracket" />
+    <path [attr.d]="paths().thumbDiamondPath" class="thumb-diamond" />
+  </svg>
+</div>

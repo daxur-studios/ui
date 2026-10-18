@@ -28,8 +28,9 @@ describe('CatalogPage', () => {
     expect(cardCount(root)).toBe(visibleSpikes(SPIKE_REGISTRY, false).length);
 
     const note = root.querySelector('[data-testid="hidden-note"]');
-    if (hiddenSpikeCount(SPIKE_REGISTRY) > 0) {
-      expect(note?.textContent).toContain(String(hiddenSpikeCount(SPIKE_REGISTRY)));
+    const hiddenCount = hiddenSpikeCount(SPIKE_REGISTRY, 'all');
+    if (hiddenCount > 0) {
+      expect(note?.textContent).toContain(String(hiddenCount));
     } else {
       expect(note).toBeNull();
     }
@@ -48,5 +49,56 @@ describe('CatalogPage', () => {
 
     expect(cardCount(root)).toBe(SPIKE_REGISTRY.length);
     expect(root.querySelector('[data-testid="hidden-note"]')).toBeNull();
+  });
+
+  it('filters entries when an element pill is clicked', () => {
+    const fixture = TestBed.createComponent(CatalogPage);
+    fixture.detectChanges();
+    const root: HTMLElement = fixture.nativeElement;
+
+    const buttonPill = root.querySelector<HTMLButtonElement>('[data-testid="filter-button"]');
+    if (!buttonPill) throw new Error('button pill is missing');
+    buttonPill.click();
+    fixture.detectChanges();
+
+    const visibleButtons = visibleSpikes(SPIKE_REGISTRY, { showHidden: false, element: 'button' });
+    expect(cardCount(root)).toBe(visibleButtons.length);
+
+    const allPill = root.querySelector<HTMLButtonElement>('[data-testid="filter-all"]');
+    allPill?.click();
+    fixture.detectChanges();
+    expect(cardCount(root)).toBe(visibleSpikes(SPIKE_REGISTRY, false).length);
+  });
+
+  it('toggles sort order between preference rank and creation order', () => {
+    const fixture = TestBed.createComponent(CatalogPage);
+    fixture.detectChanges();
+    const root: HTMLElement = fixture.nativeElement;
+
+    const sortNumber = root.querySelector<HTMLButtonElement>('[data-testid="sort-number"]');
+    sortNumber?.click();
+    fixture.detectChanges();
+
+    expect(sortNumber?.classList.contains('active')).toBe(true);
+
+    const sortRank = root.querySelector<HTMLButtonElement>('[data-testid="sort-rank"]');
+    sortRank?.click();
+    fixture.detectChanges();
+
+    expect(sortRank?.classList.contains('active')).toBe(true);
+  });
+
+  it('renders element, attempt, rank, and disposition badges on spike cards', () => {
+    const fixture = TestBed.createComponent(CatalogPage);
+    fixture.detectChanges();
+    const root: HTMLElement = fixture.nativeElement;
+
+    const cards = root.querySelectorAll('[data-testid="spike-card"]');
+    if (cards.length > 0) {
+      const firstCard = cards[0];
+      expect(firstCard.querySelector('[data-testid="card-element"]')).not.toBeNull();
+      expect(firstCard.querySelector('[data-testid="card-rank"]')).not.toBeNull();
+      expect(firstCard.querySelector('[data-testid="card-disposition"]')).not.toBeNull();
+    }
   });
 });

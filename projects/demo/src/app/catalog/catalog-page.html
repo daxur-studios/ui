@@ -1,21 +1,77 @@
-<h1>Spike catalog</h1>
+<header class="catalog-header">
+  <h1>Spike catalog</h1>
 
-<label class="filter">
-  <input
-    type="checkbox"
-    data-testid="show-hidden"
-    [checked]="showHidden()"
-    (change)="onShowHiddenChange($event)"
-  />
-  Show failed and inconclusive
-</label>
+  <div class="controls">
+    <div class="filter-pills" role="radiogroup" aria-label="Filter by element">
+      <button
+        type="button"
+        class="pill"
+        [class.active]="elementFilter() === 'all'"
+        (click)="setElementFilter('all')"
+        data-testid="filter-all"
+      >
+        All
+      </button>
+      <button
+        type="button"
+        class="pill"
+        [class.active]="elementFilter() === 'slider'"
+        (click)="setElementFilter('slider')"
+        data-testid="filter-slider"
+      >
+        Slider
+      </button>
+      <button
+        type="button"
+        class="pill"
+        [class.active]="elementFilter() === 'button'"
+        (click)="setElementFilter('button')"
+        data-testid="filter-button"
+      >
+        Button
+      </button>
+    </div>
+
+    <div class="sort-controls">
+      <span class="control-label">Sort:</span>
+      <button
+        type="button"
+        class="pill"
+        [class.active]="sortOrder() === 'rank'"
+        (click)="setSortOrder('rank')"
+        data-testid="sort-rank"
+      >
+        Preference rank
+      </button>
+      <button
+        type="button"
+        class="pill"
+        [class.active]="sortOrder() === 'number'"
+        (click)="setSortOrder('number')"
+        data-testid="sort-number"
+      >
+        Creation order
+      </button>
+    </div>
+
+    <label class="filter">
+      <input
+        type="checkbox"
+        data-testid="show-hidden"
+        [checked]="showHidden()"
+        (change)="onShowHiddenChange($event)"
+      />
+      Show hidden & discarded
+    </label>
+  </div>
+</header>
 
 @if (visible().length === 0) {
   <p class="empty" data-testid="catalog-empty">
     @if (registry.length === 0) {
       No spikes yet.
     } @else {
-      Every spike is hidden. Turn on the filter to see them.
+      No spikes match the current filter.
     }
   </p>
 } @else {
@@ -36,6 +92,25 @@
             <app-spike-placeholder [label]="entry.title" />
           }
         </a>
+        <div class="card-meta">
+          <span class="element-tag" data-testid="card-element">
+            {{ entry.element }} · Attempt {{ entry.attempt }}
+          </span>
+          <div class="badges">
+            @if (entry.rank !== null) {
+              <span class="badge rank-badge" data-testid="card-rank">Rank #{{ entry.rank }}</span>
+            } @else {
+              <span class="badge rank-badge unranked" data-testid="card-rank">Unranked</span>
+            }
+            <span
+              class="badge disposition-badge"
+              [attr.data-disposition]="entry.disposition"
+              data-testid="card-disposition"
+            >
+              {{ entry.disposition }}
+            </span>
+          </div>
+        </div>
         <h2>{{ entry.title }}</h2>
         <p class="status">{{ entry.status }}</p>
       </li>
@@ -43,8 +118,8 @@
   </ul>
 }
 
-@if (!showHidden() && hiddenCount > 0) {
+@if (!showHidden() && hiddenCount() > 0) {
   <p class="hidden-note" data-testid="hidden-note">
-    {{ hiddenCount }} failed or inconclusive hidden.
+    {{ hiddenCount() }} failed, inconclusive, or discarded hidden.
   </p>
 }

@@ -1,0 +1,80 @@
+<section
+  class="stage"
+  data-spike-stage
+  [attr.data-spike-ready]="ready() ? 'true' : null"
+  data-ui-theme="hud"
+>
+  <header>
+    <p class="eyebrow">UI LAB / SPIKE 05</p>
+    <h1>Corner-Bracket Reticle Button</h1>
+    <p class="description">
+      Tactical 4-corner bracket reticle ticks that cinch inward on focus/hover and lock closed.
+    </p>
+  </header>
+
+  <div class="panel">
+    <div class="button-row">
+      <ui--button
+        label="Engage Radar"
+        variant="bracket"
+        (triggered)="onTrigger()"
+        data-testid="action-btn"
+      />
+
+      <ui--button
+        label="Target Track"
+        variant="bracket"
+        toggle
+        [(value)]="toggleState"
+        data-testid="toggle-btn"
+      />
+
+      <ui--button
+        label="Sensor Offline"
+        variant="bracket"
+        [disabled]="true"
+        data-testid="disabled-btn"
+      />
+    </div>
+
+    <div class="telemetry" aria-label="Action telemetry">
+      <span
+        >Triggers <strong data-testid="trigger-count">{{ triggerCount() }}</strong></span
+      >
+      <span
+        >Toggle value <strong data-testid="toggle-value">{{ toggleState() }}</strong></span
+      >
+    </div>
+  </div>
+
+  <div class="form-panel" aria-label="Reactive form">
+    <ui--button
+      label="Target Lock"
+      variant="bracket"
+      toggle
+      [formControl]="targetLock"
+      data-testid="form-btn"
+    />
+
+    <div class="telemetry" aria-label="Target Lock form state">
+      <span
+        >Form value <strong data-testid="form-value">{{ targetLock.value ?? 'null' }}</strong></span
+      >
+      <span
+        >Dirty <strong data-testid="form-dirty">{{ targetLock.dirty }}</strong></span
+      >
+      <span
+        >Touched <strong data-testid="form-touched">{{ targetLock.touched }}</strong></span
+      >
+    </div>
+
+    <div class="actions">
+      <button type="button" data-testid="form-toggle-disabled" (click)="toggleTargetLockDisabled()">
+        {{ targetLock.disabled ? 'Enable' : 'Disable' }}
+      </button>
+      <button type="button" data-testid="form-reset" (click)="resetTargetLock()">Reset</button>
+    </div>
+  </div>
+
+  <p class="hint">Click or Space / Enter to activate · Tab to navigate</p>
+</section>

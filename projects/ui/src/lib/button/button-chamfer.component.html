@@ -1,0 +1,23 @@
+<button
+  [type]="type()"
+  class="hud-button chamfer-btn"
+  [class.active]="value()"
+  [attr.aria-pressed]="toggle() ? (value() ? 'true' : 'false') : null"
+  [attr.aria-disabled]="isDisabled()"
+  [attr.tabindex]="isDisabled() ? -1 : 0"
+  (click)="activate()"
+  (keydown)="onKeyDown($event)"
+  (blur)="onBlur()"
+>
+  <svg
+    class="frame-svg"
+    viewBox="0 0 100 40"
+    preserveAspectRatio="none"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <polygon class="frame-polygon" points="8,0 92,0 100,8 100,40 92,40 0,40 0,8" />
+    <line class="accent-cut" x1="88" y1="2" x2="98" y2="12" />
+  </svg>
+  <span class="label-text">{{ label() }}</span>
+</button>

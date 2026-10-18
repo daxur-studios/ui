@@ -1,0 +1,109 @@
+@use '../styles/tokens';
+
+:host {
+  @include tokens.fallbacks;
+  display: inline-block;
+  font-family: var(--_ui-font-family);
+  font-size: var(--_ui-font-size);
+  line-height: var(--_ui-line-height);
+}
+
+.hud-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 40px;
+  min-width: 100px;
+  padding: var(--_ui-space-small) var(--_ui-space-large);
+  background: var(--_ui-surface-raised);
+  border: none;
+  border-radius: var(--_ui-radius);
+  color: var(--_ui-text);
+  font: inherit;
+  font-weight: var(--_ui-font-weight);
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+  transition: background 150ms ease;
+
+  &:focus-visible {
+    outline: var(--_ui-focus-width) solid var(--_ui-accent);
+    outline-offset: var(--_ui-focus-offset);
+  }
+
+  &[aria-disabled='true'] {
+    opacity: var(--_ui-disabled-opacity);
+    cursor: default;
+  }
+}
+
+.bracket-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.bracket {
+  fill: none;
+  stroke: var(--_ui-muted);
+  stroke-width: 2px;
+  vector-effect: non-scaling-stroke;
+  transition:
+    transform 150ms ease,
+    stroke 150ms ease;
+}
+
+.label-text {
+  position: relative;
+  z-index: 1;
+  letter-spacing: 0.05em;
+}
+
+.hud-button:hover:not([aria-disabled='true']),
+.hud-button:focus-visible:not([aria-disabled='true']) {
+  background: var(--_ui-overlay);
+
+  .bracket {
+    stroke: var(--_ui-accent);
+  }
+
+  .bracket-tl {
+    transform: translate(3px, 3px);
+  }
+  .bracket-tr {
+    transform: translate(-3px, 3px);
+  }
+  .bracket-bl {
+    transform: translate(3px, -3px);
+  }
+  .bracket-br {
+    transform: translate(-3px, -3px);
+  }
+}
+
+.hud-button.active:not([aria-disabled='true']) {
+  background: var(--_ui-overlay);
+  color: var(--_ui-accent);
+
+  .bracket {
+    stroke: var(--_ui-accent);
+  }
+
+  .bracket-tl {
+    transform: translate(4px, 4px);
+  }
+  .bracket-tr {
+    transform: translate(-4px, 4px);
+  }
+  .bracket-bl {
+    transform: translate(4px, -4px);
+  }
+  .bracket-br {
+    transform: translate(-4px, -4px);
+  }
+}

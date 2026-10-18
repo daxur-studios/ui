@@ -1,0 +1,80 @@
+<section
+  class="stage"
+  data-spike-stage
+  [attr.data-spike-ready]="ready() ? 'true' : null"
+  data-ui-theme="hud"
+>
+  <header>
+    <p class="eyebrow">UI LAB / SPIKE 06</p>
+    <h1>Hairline Trace & Status-LED Button</h1>
+    <p class="description">
+      Industrial HUD bar button with embedded SVG status pip (off / armed / latched) and trace rail.
+    </p>
+  </header>
+
+  <div class="panel">
+    <div class="button-row">
+      <ui--button
+        label="Send Telemetry"
+        variant="trace"
+        (triggered)="onTrigger()"
+        data-testid="action-btn"
+      />
+
+      <ui--button
+        label="Data Stream"
+        variant="trace"
+        toggle
+        [(value)]="toggleState"
+        data-testid="toggle-btn"
+      />
+
+      <ui--button
+        label="Comm Link Lost"
+        variant="trace"
+        [disabled]="true"
+        data-testid="disabled-btn"
+      />
+    </div>
+
+    <div class="telemetry" aria-label="Action telemetry">
+      <span
+        >Triggers <strong data-testid="trigger-count">{{ triggerCount() }}</strong></span
+      >
+      <span
+        >Toggle value <strong data-testid="toggle-value">{{ toggleState() }}</strong></span
+      >
+    </div>
+  </div>
+
+  <div class="form-panel" aria-label="Reactive form">
+    <ui--button
+      label="Uplink Channel"
+      variant="trace"
+      toggle
+      [formControl]="uplink"
+      data-testid="form-btn"
+    />
+
+    <div class="telemetry" aria-label="Uplink form state">
+      <span
+        >Form value <strong data-testid="form-value">{{ uplink.value ?? 'null' }}</strong></span
+      >
+      <span
+        >Dirty <strong data-testid="form-dirty">{{ uplink.dirty }}</strong></span
+      >
+      <span
+        >Touched <strong data-testid="form-touched">{{ uplink.touched }}</strong></span
+      >
+    </div>
+
+    <div class="actions">
+      <button type="button" data-testid="form-toggle-disabled" (click)="toggleUplinkDisabled()">
+        {{ uplink.disabled ? 'Enable' : 'Disable' }}
+      </button>
+      <button type="button" data-testid="form-reset" (click)="resetUplink()">Reset</button>
+    </div>
+  </div>
+
+  <p class="hint">Click or Space / Enter to activate · Tab to navigate</p>
+</section>

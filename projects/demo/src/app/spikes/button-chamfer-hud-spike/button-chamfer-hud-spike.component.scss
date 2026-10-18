@@ -1,0 +1,97 @@
+@use '../../../../../ui/src/lib/styles/tokens';
+
+:host {
+  display: block;
+}
+
+.stage {
+  @include tokens.fallbacks;
+  box-sizing: border-box;
+  width: min(100%, var(--_ui-stage-width));
+  min-height: var(--_ui-stage-height);
+  padding: var(--_ui-space-large);
+  background: var(--_ui-surface);
+  color: var(--_ui-text);
+  font-family: var(--_ui-font-family);
+  font-size: var(--_ui-font-size);
+  line-height: var(--_ui-line-height);
+}
+
+header {
+  margin-bottom: var(--_ui-space-large);
+}
+
+h1 {
+  margin: 0;
+  font-size: var(--_ui-title-size);
+  font-weight: var(--_ui-font-weight);
+}
+
+.eyebrow {
+  margin: 0 0 var(--_ui-space-small);
+  color: var(--_ui-accent);
+  font-size: var(--_ui-font-small);
+}
+
+.description,
+.hint {
+  margin: var(--_ui-space-small) 0 0;
+  color: var(--_ui-muted);
+}
+
+.panel,
+.form-panel {
+  display: grid;
+  gap: var(--_ui-space);
+  box-sizing: border-box;
+  max-width: var(--_ui-panel-width);
+  padding: var(--_ui-space);
+  border: var(--_ui-border-width) solid var(--_ui-border);
+  border-radius: var(--_ui-radius);
+  background: var(--_ui-surface-raised);
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--_ui-space);
+}
+
+.form-panel {
+  margin-top: var(--_ui-space);
+}
+
+.telemetry {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--_ui-space);
+  color: var(--_ui-muted);
+  font-size: var(--_ui-font-small);
+  font-variant-numeric: tabular-nums;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--_ui-space-small);
+}
+
+button {
+  font: inherit;
+  padding: var(--_ui-space-small) var(--_ui-space);
+  border: var(--_ui-border-width) solid var(--_ui-border);
+  border-radius: var(--_ui-radius);
+  background: var(--_ui-overlay);
+  color: var(--_ui-text);
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: var(--_ui-focus-width) solid var(--_ui-accent);
+    outline-offset: var(--_ui-focus-offset);
+  }
+}
+
+strong {
+  color: var(--_ui-text);
+  font-weight: var(--_ui-font-weight);
+}

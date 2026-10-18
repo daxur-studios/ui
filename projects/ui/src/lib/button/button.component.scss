@@ -1,0 +1,234 @@
+@use '../styles/tokens';
+
+:host {
+  @include tokens.fallbacks;
+  display: inline-block;
+  font-family: var(--_ui-font-family);
+  font-size: var(--_ui-font-size);
+  line-height: var(--_ui-line-height);
+}
+
+.hud-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--_ui-space-small);
+  box-sizing: border-box;
+  min-height: 40px;
+  min-width: 100px;
+  padding: var(--_ui-space-small) var(--_ui-space-large);
+  background: transparent;
+  border: none;
+  border-radius: var(--_ui-radius);
+  color: var(--_ui-text);
+  font: inherit;
+  font-weight: var(--_ui-font-weight);
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+  overflow: hidden;
+
+  &:focus-visible {
+    outline: var(--_ui-focus-width) solid var(--_ui-accent);
+    outline-offset: var(--_ui-focus-offset);
+  }
+
+  &[aria-disabled='true'] {
+    opacity: var(--_ui-disabled-opacity);
+    cursor: default;
+  }
+}
+
+.label-text {
+  position: relative;
+  z-index: 1;
+  letter-spacing: 0.04em;
+}
+
+// ---------------- Chamfer Variant ----------------
+.variant-chamfer {
+  .frame-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .frame-polygon {
+    fill: var(--_ui-surface-raised);
+    stroke: var(--_ui-border);
+    stroke-width: var(--_ui-border-width);
+    vector-effect: non-scaling-stroke;
+    transition:
+      fill 120ms ease,
+      stroke 120ms ease;
+  }
+
+  .accent-cut {
+    stroke: var(--_ui-accent);
+    stroke-width: 2px;
+    vector-effect: non-scaling-stroke;
+  }
+
+  &:hover:not([aria-disabled='true']) .frame-polygon {
+    fill: var(--_ui-overlay);
+    stroke: var(--_ui-accent);
+  }
+
+  &:active:not([aria-disabled='true']) .frame-polygon,
+  &.active:not([aria-disabled='true']) .frame-polygon {
+    fill: var(--_ui-overlay);
+    stroke: var(--_ui-accent);
+  }
+
+  &.active .label-text {
+    color: var(--_ui-accent);
+  }
+}
+
+// ---------------- Bracket Variant ----------------
+.variant-bracket {
+  background: var(--_ui-surface-raised);
+  transition: background 150ms ease;
+
+  .bracket-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .bracket {
+    fill: none;
+    stroke: var(--_ui-muted);
+    stroke-width: 2px;
+    vector-effect: non-scaling-stroke;
+    transition:
+      transform 150ms ease,
+      stroke 150ms ease;
+  }
+
+  &:hover:not([aria-disabled='true']),
+  &:focus-visible:not([aria-disabled='true']) {
+    background: var(--_ui-overlay);
+
+    .bracket {
+      stroke: var(--_ui-accent);
+    }
+    .bracket-tl {
+      transform: translate(3px, 3px);
+    }
+    .bracket-tr {
+      transform: translate(-3px, 3px);
+    }
+    .bracket-bl {
+      transform: translate(3px, -3px);
+    }
+    .bracket-br {
+      transform: translate(-3px, -3px);
+    }
+  }
+
+  &.active:not([aria-disabled='true']) {
+    background: var(--_ui-overlay);
+    color: var(--_ui-accent);
+
+    .bracket {
+      stroke: var(--_ui-accent);
+    }
+    .bracket-tl {
+      transform: translate(4px, 4px);
+    }
+    .bracket-tr {
+      transform: translate(-4px, 4px);
+    }
+    .bracket-bl {
+      transform: translate(4px, -4px);
+    }
+    .bracket-br {
+      transform: translate(-4px, -4px);
+    }
+  }
+}
+
+// ---------------- Trace Variant ----------------
+.variant-trace {
+  background: var(--_ui-surface-raised);
+  border: var(--_ui-border-width) solid var(--_ui-border);
+  transition:
+    background 120ms ease,
+    border-color 120ms ease;
+
+  .pip-wrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 12px;
+    height: 12px;
+  }
+
+  .led-svg {
+    display: block;
+    width: 10px;
+    height: 10px;
+    overflow: visible;
+  }
+
+  .led-pip {
+    fill: var(--_ui-muted);
+    opacity: var(--_ui-disabled-opacity);
+    transition:
+      fill 120ms ease,
+      opacity 120ms ease;
+  }
+
+  .led-ring {
+    fill: none;
+    stroke: var(--_ui-border);
+    stroke-width: 1px;
+  }
+
+  .bottom-trace {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--_ui-border);
+    transition: background 120ms ease;
+  }
+
+  &:hover:not([aria-disabled='true']) {
+    background: var(--_ui-overlay);
+    border-color: var(--_ui-accent);
+
+    .led-pip {
+      fill: var(--_ui-accent);
+      opacity: 0.75;
+    }
+    .bottom-trace {
+      background: var(--_ui-accent);
+    }
+  }
+
+  &.active:not([aria-disabled='true']) {
+    background: var(--_ui-overlay);
+    border-color: var(--_ui-accent);
+    color: var(--_ui-accent);
+
+    .led-pip {
+      fill: var(--_ui-accent);
+      opacity: 1;
+    }
+    .led-ring {
+      stroke: var(--_ui-accent);
+    }
+    .bottom-trace {
+      background: var(--_ui-accent);
+    }
+  }
+}

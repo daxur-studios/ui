@@ -1,0 +1,121 @@
+@use '../styles/tokens';
+
+:host {
+  @include tokens.fallbacks;
+  display: inline-block;
+  font-family: var(--_ui-font-family);
+  font-size: var(--_ui-font-size);
+  line-height: var(--_ui-line-height);
+}
+
+.hud-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--_ui-space-small);
+  box-sizing: border-box;
+  min-height: 40px;
+  min-width: 100px;
+  padding: var(--_ui-space-small) var(--_ui-space-large);
+  background: var(--_ui-surface-raised);
+  border: var(--_ui-border-width) solid var(--_ui-border);
+  border-radius: var(--_ui-radius);
+  color: var(--_ui-text);
+  font: inherit;
+  font-weight: var(--_ui-font-weight);
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+  overflow: hidden;
+  transition:
+    background 120ms ease,
+    border-color 120ms ease;
+
+  &:focus-visible {
+    outline: var(--_ui-focus-width) solid var(--_ui-accent);
+    outline-offset: var(--_ui-focus-offset);
+    border-color: var(--_ui-accent);
+  }
+
+  &[aria-disabled='true'] {
+    opacity: var(--_ui-disabled-opacity);
+    cursor: default;
+  }
+}
+
+.pip-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 12px;
+}
+
+.led-svg {
+  display: block;
+  width: 10px;
+  height: 10px;
+  overflow: visible;
+}
+
+.led-pip {
+  fill: var(--_ui-muted);
+  transition:
+    fill 120ms ease,
+    opacity 120ms ease;
+  opacity: var(--_ui-disabled-opacity);
+}
+
+.led-ring {
+  fill: none;
+  stroke: var(--_ui-border);
+  stroke-width: 1px;
+}
+
+.label-text {
+  letter-spacing: 0.04em;
+}
+
+.bottom-trace {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--_ui-border);
+  transition: background 120ms ease;
+}
+
+.hud-button:hover:not([aria-disabled='true']) {
+  background: var(--_ui-overlay);
+  border-color: var(--_ui-accent);
+
+  .led-pip {
+    fill: var(--_ui-accent);
+    opacity: 0.75;
+  }
+
+  .bottom-trace {
+    background: var(--_ui-accent);
+  }
+}
+
+.hud-button.active:not([aria-disabled='true']) {
+  background: var(--_ui-overlay);
+  border-color: var(--_ui-accent);
+  color: var(--_ui-accent);
+
+  .led-pip {
+    fill: var(--_ui-accent);
+    opacity: 1;
+  }
+
+  .led-ring {
+    stroke: var(--_ui-accent);
+  }
+
+  .bottom-trace {
+    background: var(--_ui-accent);
+  }
+}

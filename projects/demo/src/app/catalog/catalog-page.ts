@@ -1,12 +1,17 @@
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ISpikeEntry, SPIKE_REGISTRY } from '../spikes/spike-registry';
-import { hiddenSpikeCount, visibleSpikes } from './catalog-filter';
+import {
+  hiddenSpikeCount,
+  visibleSpikes,
+  type ElementFilter,
+  type SortOrder,
+} from './catalog-filter';
 import { SpikePlaceholderComponent } from './spike-placeholder';
 
 /**
- * Catalog of every spike in the registry. Failed and inconclusive spikes are hidden until the
- * filter is turned on. A thumbnail that is missing or fails to load shows the placeholder.
+ * Catalog of every spike in the registry. Allows filtering by element and sorting by preference
+ * rank or creation order. Failed, inconclusive, and discarded spikes are hidden until requested.
  */
 @Component({
   selector: 'demo-catalog-page',
@@ -18,11 +23,31 @@ import { SpikePlaceholderComponent } from './spike-placeholder';
 export class CatalogPage {
   protected readonly registry = SPIKE_REGISTRY;
   protected readonly showHidden = signal(false);
-  protected readonly hiddenCount = hiddenSpikeCount(SPIKE_REGISTRY);
-  protected readonly visible = computed(() => visibleSpikes(SPIKE_REGISTRY, this.showHidden()));
+  protected readonly elementFilter = signal<ElementFilter>('all');
+  protected readonly sortOrder = signal<SortOrder>('rank');
+
+  protected readonly hiddenCount = computed(() =>
+    hiddenSpikeCount(SPIKE_REGISTRY, this.elementFilter()),
+  );
+
+  protected readonly visible = computed(() =>
+    visibleSpikes(SPIKE_REGISTRY, {
+      showHidden: this.showHidden(),
+      element: this.elementFilter(),
+      sort: this.sortOrder(),
+    }),
+  );
 
   /** Ids of entries whose thumbnail file failed to load, so they fall back to the placeholder. */
   private readonly brokenThumbnails = signal<ReadonlySet<string>>(new Set());
+
+  protected setElementFilter(filter: ElementFilter): void {
+    this.elementFilter.set(filter);
+  }
+
+  protected setSortOrder(order: SortOrder): void {
+    this.sortOrder.set(order);
+  }
 
   protected onShowHiddenChange(event: Event): void {
     this.showHidden.set((event.target as HTMLInputElement).checked);
