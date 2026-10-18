@@ -5,7 +5,7 @@
     "ng": "ng",
     "build": "ng build ui",
     "build:ui": "ng build ui --configuration production",
-    "pack:ui": "npm run build:ui && npm pack ./dist/ui --pack-destination ./dist",
+    "pack:ui": "npm run build:ui && node -e \"require('node:fs').mkdirSync('ignore/packages',{recursive:true})\" && npm pack ./dist/ui --pack-destination ./ignore/packages",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:dom": "ng test demo --watch=false",

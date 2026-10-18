@@ -51,3 +51,8 @@ Run unit tests headlessly in a single run with watching off:
 
 - Every plan under `docs/plans/` has a reciprocal runbook under `docs/runbook/` sharing the same sequence number.
 - Append dated findings/decisions to the runbook as work proceeds. Keep both indexes updated.
+
+## Local package archives
+
+All local `.tgz` files go under `/ignore/packages/`, and `/ignore/` must be gitignored.
+Follow [Local package archives](docs/local-packages.md) for packing, dependency paths and clone setup.

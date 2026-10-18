@@ -47,3 +47,7 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# Local package archives and other local-only artifacts
+/ignore/
+*.tgz

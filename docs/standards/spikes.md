@@ -100,17 +100,24 @@ entry. Fields follow Daemon's `sandbox-items.ts` and Mycelia's `SANDBOX_ITEMS`:
 | --- | --- | --- |
 | `id` | yes | kebab-case, equal to `<name>-spike` |
 | `number` | yes | next sequential integer, creation order |
+| `element` | yes | UI control family under exploration (e.g. `'slider'`, `'button'`) |
+| `attempt` | yes | 1-based attempt number within that `element` family |
 | `title` | yes | sentence case |
 | `route` | yes | `/spikes/<name>-spike` |
 | `hypothesis` | yes | the falsifiable question |
 | `status` | yes | `pending` \| `passed` \| `failed` \| `inconclusive` |
+| `disposition` | yes | `'candidate'` \| `'keep'` \| `'discard'` — owner curation verdict across competing style attempts |
+| `rank` | yes | `number \| null` — owner preference order within an element (`1` = favorite, `null` = unranked) |
 | `finding` | when status ≠ `pending` | one or two sentences |
 | `thumbnail` | yes | `thumbnails/<id>.webp`, or `null` (placeholder) |
 | `planRunbook` | optional | link to the plan or runbook that owns the assumption |
 | `dateISO` | yes | date created |
 
-`kind` (`spike` | `example`) and `category` are *(proposed)* optional. Add a
-category only when two or more entries need it.
+`kind` (`spike` | `example`) is *(proposed)* optional. Multiple style/approach
+attempts per `element` are encouraged so the owner can compare them side-by-side
+in `/catalog`, sort by `rank`, keep favored directions (`disposition: 'keep'`),
+and hide discarded attempts (`disposition: 'discard'`) alongside `failed` and
+`inconclusive` spikes.
 
 ## 6. Thumbnails: static, captured with Playwright
 
