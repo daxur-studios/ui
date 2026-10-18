@@ -45,6 +45,7 @@ for local, non-form state.
    `value.set(...)` directly from an interaction handler.
 4. **Form writes never echo.** `writeValue` sets `value` through `coerceWrittenValue` and must not
    notify the form (no change callback, no `dirty`). Controls never emit `valueCommit` for a form write.
+   Because `value` is a model, a form write that changes it does fire `(valueChange)`.
 5. **`null` is a valid write.** `form.reset()` writes `null`. Each control defines its fallback in
    `coerceWrittenValue` (the slider renders at its normalized minimum) and documents it in the skill.
 6. **Live form updates.** The form is notified on every changed live value (each drag step or key

@@ -48,13 +48,13 @@ test('has one tab stop per enabled slider and skips the disabled control', async
   await page.keyboard.press('Tab');
   await expect(gravity).toBeFocused();
   await page.keyboard.press('Tab');
-  await expect(gravity).not.toBeFocused();
+  await expect(page.getByRole('slider', { name: 'Exposure' })).toBeFocused();
   await expect(page.getByRole('slider', { name: 'Disabled' })).not.toBeFocused();
   await page.keyboard.press('Shift+Tab');
   await expect(gravity).toBeFocused();
   await page.keyboard.press('Shift+Tab');
   await expect(fov).toBeFocused();
-  await expect(page.locator('ui--slider [tabindex="0"]')).toHaveCount(2);
+  await expect(page.locator('ui--slider [tabindex="0"]')).toHaveCount(3);
 });
 
 test('supports arrows, coarse arrows, pages and endpoints with one commit per change', async ({
@@ -256,4 +256,53 @@ test('resolves inherited UI tokens, Material adapters and both explicit HUD scop
   ]) {
     expect(readFileSync(path, 'utf8')).not.toMatch(/#[\da-f]{3,8}\b|rgba\s*\(/i);
   }
+});
+
+test('reactive form: keyboard changes the form value and marks the control dirty', async ({
+  page,
+}) => {
+  const exposure = page.getByRole('slider', { name: 'Exposure' });
+  await expect(page.getByTestId('form-value')).toHaveText('40');
+  await expect(page.getByTestId('form-dirty')).toHaveText('false');
+  await exposure.press('ArrowRight');
+  await expect(exposure).toHaveAttribute('aria-valuenow', '41');
+  await expect(page.getByTestId('form-value')).toHaveText('41');
+  await expect(page.getByTestId('form-dirty')).toHaveText('true');
+});
+
+test('reactive form: blur marks the control touched', async ({ page }) => {
+  const exposure = page.getByRole('slider', { name: 'Exposure' });
+  await exposure.focus();
+  await expect(page.getByTestId('form-touched')).toHaveText('false');
+  await page.keyboard.press('Tab');
+  await expect(exposure).not.toBeFocused();
+  await expect(page.getByTestId('form-touched')).toHaveText('true');
+});
+
+test('reactive form: disabling removes the tab stop and enabling restores it', async ({ page }) => {
+  const exposure = page.getByRole('slider', { name: 'Exposure' });
+  const toggle = page.getByTestId('form-toggle-disabled');
+  await expect(page.locator('ui--slider [tabindex="0"]')).toHaveCount(3);
+  await toggle.click();
+  await expect(toggle).toHaveText('Enable');
+  await expect(exposure).toHaveAttribute('tabindex', '-1');
+  await expect(exposure).toHaveAttribute('aria-disabled', 'true');
+  await expect(page.locator('ui--slider [tabindex="0"]')).toHaveCount(2);
+  await toggle.click();
+  await expect(toggle).toHaveText('Disable');
+  await expect(exposure).toHaveAttribute('tabindex', '0');
+  await expect(page.locator('ui--slider [tabindex="0"]')).toHaveCount(3);
+});
+
+test('reactive form: reset returns the slider to its minimum and clears dirty state', async ({
+  page,
+}) => {
+  const exposure = page.getByRole('slider', { name: 'Exposure' });
+  await exposure.press('End');
+  await expect(exposure).toHaveAttribute('aria-valuenow', '100');
+  await expect(page.getByTestId('form-dirty')).toHaveText('true');
+  await page.getByTestId('form-reset').click();
+  await expect(exposure).toHaveAttribute('aria-valuenow', '0');
+  await expect(page.getByTestId('form-value')).toHaveText('null');
+  await expect(page.getByTestId('form-dirty')).toHaveText('false');
 });

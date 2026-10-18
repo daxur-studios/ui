@@ -46,5 +46,32 @@
       >
     </div>
   </div>
+  <div class="form-panel" aria-label="Reactive form">
+    <ui--slider
+      label="Exposure"
+      [formControl]="exposure"
+      [min]="0"
+      [max]="100"
+      [step]="1"
+      unit="%"
+    />
+    <div class="telemetry" aria-label="Exposure form state">
+      <span
+        >Form value <strong data-testid="form-value">{{ exposure.value ?? 'null' }}</strong></span
+      >
+      <span
+        >Dirty <strong data-testid="form-dirty">{{ exposure.dirty }}</strong></span
+      >
+      <span
+        >Touched <strong data-testid="form-touched">{{ exposure.touched }}</strong></span
+      >
+    </div>
+    <div class="actions">
+      <button type="button" data-testid="form-toggle-disabled" (click)="toggleExposureDisabled()">
+        {{ exposure.disabled ? 'Enable' : 'Disable' }}
+      </button>
+      <button type="button" data-testid="form-reset" (click)="resetExposure()">Reset</button>
+    </div>
+  </div>
   <p class="hint">Arrow keys · Shift for coarse steps · Page Up / Down · Home / End</p>
 </section>

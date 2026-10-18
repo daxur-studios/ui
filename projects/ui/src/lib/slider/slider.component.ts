@@ -13,6 +13,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { provideUiFormControl, UiFormControl } from '../forms/ui-form-control';
 import {
   buildAngledTrackPath,
   clampAndSnapValue,
@@ -52,8 +53,9 @@ let nextSliderId = 0;
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './slider.component.html',
   styleUrl: './slider.component.scss',
+  providers: [provideUiFormControl(() => SliderComponent)],
 })
-export class SliderComponent {
+export class SliderComponent extends UiFormControl<number> {
   readonly label = input.required<string>();
   readonly value = model<number>(0);
   readonly valueCommit = output<number>();
@@ -61,7 +63,6 @@ export class SliderComponent {
   readonly max = input<number>(100);
   readonly step = input<number>(1);
   readonly unit = input<string>('');
-  readonly disabled = input<boolean>(false);
 
   protected readonly labelId = `ui-slider-label-${nextSliderId++}`;
   protected readonly trackHeight = TRACK_HEIGHT;
@@ -91,6 +92,7 @@ export class SliderComponent {
   private drag?: { pointerId: number; startValue: number; left: number; width: number };
 
   constructor() {
+    super();
     afterNextRender(() => {
       const element = this.track().nativeElement;
       this.trackWidth.set(element.getBoundingClientRect().width);
@@ -105,7 +107,7 @@ export class SliderComponent {
       this.observer.observe(element);
     });
     effect(() => {
-      if (this.disabled()) this.finishPointer();
+      if (this.isDisabled()) this.finishPointer();
     });
     this.destroyRef.onDestroy(() => {
       this.observer?.disconnect();
@@ -115,7 +117,8 @@ export class SliderComponent {
 
   /** Starts one captured pointer transaction and caches layout once for all subsequent moves. */
   protected onPointerDown(event: PointerEvent): void {
-    if (this.disabled() || this.drag || !event.isPrimary || event.button !== PRIMARY_BUTTON) return;
+    if (this.isDisabled() || this.drag || !event.isPrimary || event.button !== PRIMARY_BUTTON)
+      return;
     event.preventDefault();
     const element = this.track().nativeElement;
     const rect = element.getBoundingClientRect();
@@ -133,7 +136,7 @@ export class SliderComponent {
   /** Emits live values using cached bounds; captured moves remain valid outside the rail. */
   protected updatePointer(event: PointerEvent): void {
     const drag = this.drag;
-    if (!drag || drag.pointerId !== event.pointerId || this.disabled()) return;
+    if (!drag || drag.pointerId !== event.pointerId || this.isDisabled()) return;
     const radius = Math.min(THUMB_RADIUS, drag.width / EDGE_COUNT);
     const span = drag.width - radius * EDGE_COUNT;
     const ratio =
@@ -155,7 +158,7 @@ export class SliderComponent {
 
   /** Applies the full slider keyboard contract as one live update and one changed-value commit. */
   protected onKeyDown(event: KeyboardEvent): void {
-    if (this.disabled() || this.drag || event.altKey || event.ctrlKey || event.metaKey) return;
+    if (this.isDisabled() || this.drag || event.altKey || event.ctrlKey || event.metaKey) return;
     const { min, max } = this.bounds();
     const step = this.increment();
     const arrow = event.shiftKey ? step * COARSE_STEP_MULTIPLIER : step;
@@ -190,10 +193,15 @@ export class SliderComponent {
     if (this.setValue(value)) this.valueCommit.emit(value);
   }
 
-  /** Suppresses duplicate model emissions when a pointer remains on the same snapped step. */
+  /** Accepts any finite number as written and maps everything else, including reset's null, to min. */
+  protected coerceWrittenValue(value: number | null | undefined): number {
+    return typeof value === 'number' && Number.isFinite(value) ? value : this.bounds().min;
+  }
+
+  /** Suppresses duplicate notifications when a pointer remains on the same snapped step. */
   private setValue(value: number): boolean {
     if (value === this.currentValue()) return false;
-    this.value.set(value);
+    this.updateValueFromUser(value);
     return true;
   }
 }

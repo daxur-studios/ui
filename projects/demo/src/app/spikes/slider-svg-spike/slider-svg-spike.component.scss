@@ -39,7 +39,8 @@ h1 {
   color: var(--_ui-muted);
 }
 
-.panel {
+.panel,
+.form-panel {
   display: grid;
   gap: var(--_ui-space);
   box-sizing: border-box;
@@ -50,6 +51,10 @@ h1 {
   background: var(--_ui-surface-raised);
 }
 
+.form-panel {
+  margin-top: var(--_ui-space);
+}
+
 .telemetry {
   display: flex;
   flex-wrap: wrap;
@@ -57,6 +62,27 @@ h1 {
   color: var(--_ui-muted);
   font-size: var(--_ui-font-small);
   font-variant-numeric: tabular-nums;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--_ui-space-small);
+}
+
+button {
+  font: inherit;
+  padding: var(--_ui-space-small) var(--_ui-space);
+  border: var(--_ui-border-width) solid var(--_ui-border);
+  border-radius: var(--_ui-radius);
+  background: var(--_ui-overlay);
+  color: var(--_ui-text);
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: var(--_ui-focus-width) solid var(--_ui-accent);
+    outline-offset: var(--_ui-focus-offset);
+  }
 }
 
 strong {

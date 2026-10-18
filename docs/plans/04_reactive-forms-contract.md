@@ -53,16 +53,25 @@ This is a library-wide contract, not a falsifiable spike. The rules live in the 
 - [x] Write the standard [`docs/standards/form-controls.md`](../standards/form-controls.md).
 - [x] Add the forms rule to `AGENTS.md`, the decision to Plan/Runbook 00, and the forms section to
       the bundled `SKILL.md`.
-- [ ] Implement `UiFormControl<T>` and `provideUiFormControl` and export them from `public-api.ts`.
-- [ ] Move `<ui--slider>` onto the base (live updates, touched on blur, combined disabled, `null` → min).
-- [ ] Add `@angular/forms` to `projects/ui/package.json` peers.
-- [ ] Add `FormControl` round-trip DOM tests (`npm run test:dom`) per standard §3.
-- [ ] Add the reactive form panel to the slider spike and Playwright checks (`npm run test:e2e`).
-- [ ] Verify `npm test`, `npm run test:dom`, `npm run test:e2e`, `npm run build:ui`, and the
+- [x] Implement `UiFormControl<T>` and `provideUiFormControl` and export them from `public-api.ts`.
+- [x] Move `<ui--slider>` onto the base (live updates, touched on blur, combined disabled, `null` → min).
+- [x] Add `@angular/forms` to `projects/ui/package.json` peers.
+- [x] Add `FormControl` round-trip DOM tests (`npm run test:dom`) per standard §3.
+- [x] Add the reactive form panel to the slider spike and Playwright checks (`npm run test:e2e`).
+- [x] Verify `npm test`, `npm run test:dom`, `npm run test:e2e`, `npm run build:ui`, and the
       production demo build; record evidence in Runbook 04.
 - [ ] Apply the standard to every future value-bearing control from its first commit.
 
-## 5. Open Questions
+## 5. Verified Finding (2026-10-18)
+
+**Passed.** `<ui--slider>` binds with `[formControl]`: form writes render without marking dirty,
+keyboard steps update the form live and mark it dirty, blur marks touched, `disable()`/`enable()`
+toggle the tab stop and `aria-disabled`, and `reset()` renders at the minimum. Existing Plan 03
+behavior is unchanged. Evidence: `npm test` 35 passed, `npm run test:dom` 9 passed (6 new),
+Playwright 20 passed on Chromium (4 new), library and production demo builds passed. See
+[Runbook 04](../runbook/04_reactive-forms-contract.md).
+
+## 6. Open Questions
 
 - Should some controls offer an opt-in "commit-only" form update mode for expensive consumers?
   Not until a real consumer needs it; `valueCommit` and debounced `valueChanges` cover it today.
