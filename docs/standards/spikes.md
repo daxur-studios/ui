@@ -10,11 +10,13 @@ tags: [spikes, examples, playwright, thumbnails, catalog, standards]
 
 # Spikes and Examples
 
-> **Draft.** Every rule marked *(proposed)* awaits confirmation. The rules that
-> are not marked are inherited from the sibling projects (Triangular, Mycelia,
-> Brunos Space Program, Daxur Daemon) and the library's own
+> **Draft.** Rules marked *(proposed)* have not been confirmed. Rules in §9
+> are decided. The rest are inherited from the sibling projects (Triangular,
+> Mycelia, Brunos Space Program, Daxur Daemon) and the library's own
 > [`AGENTS.md`](../../AGENTS.md). Provenance is in
 > [`docs/runbook/02_spike-standard-and-thumbnails.md`](../runbook/02_spike-standard-and-thumbnails.md).
+> Built so far: the empty registry, the pipeline fixture, and the thumbnail
+> script. Not built: the catalog UI, the placeholder, and the first spike.
 
 ## 1. Purpose
 
@@ -110,7 +112,9 @@ category only when two or more entries need it.
 
 ## 6. Thumbnails: static, captured with Playwright
 
-Catalog thumbnails are **committed static files**, not runtime captures. The
+Catalog thumbnails are **generated static files**, not runtime captures. They
+are git-ignored (`projects/demo/public/thumbnails/`) and rebuilt locally with
+`npm run spikes:thumbnails`. The
 Triangular, Mycelia and Brunos Space Program catalogs capture at runtime
 because their scenes need a live WebGL engine. Those captures depend on
 `EngineService` render events, which a DOM-only page does not have. (Brunos
@@ -127,8 +131,9 @@ the Playwright `webServer` config and writes one file per registry entry:
   `emulateMedia({ reducedMotion: 'reduce', colorScheme: 'dark' })`, wait for
   `document.fonts.ready`, wait for `[data-spike-ready]`, move the pointer to a
   neutral corner so no hover state is captured.
-- **Region:** clip to `[data-spike-stage]`. Fall back to the full viewport if
-  the stage is absent. Any fallback is logged.
+- **Region:** clip to `[data-spike-stage]`. The stage is required. A page
+  without it fails its capture, because a full-viewport fallback would give
+  the catalog inconsistent framing.
 - **Blank-frame rejection:** reuse the Triangular thresholds. A pixel counts as
   visible when its alpha is above 0 and its brightest channel is above 16. At
   least 16 visible pixels are required. Fail the entry and keep the previous
@@ -136,41 +141,47 @@ the Playwright `webServer` config and writes one file per registry entry:
 
 ### 6.2 Format and size
 
-Playwright writes PNG or JPEG. It cannot write WebP. Compression goes through
-the browser image compression package the sibling projects already use
-(`browser-image-compression`, `^2.0.2` in Triangular's engine), injected through
-the same adapter-token shape as `IMAGE_COMPRESSION_FUNCTION`.
+Playwright writes PNG or JPEG. It cannot write WebP. Compression uses
+`browser-image-compression` (`^2.0.2`, the version Triangular's engine uses),
+installed as a root devDependency.
 
-1. Capture the 960 × 540 PNG buffer with Playwright.
-2. Pass it to the compression adapter inside the browser, with
-   `maxWidthOrHeight: 480`, `fileType: 'image/webp'`, `quality: 0.82`,
-   `maxSizeMB: 0.04`. The size cap is in MB, so 0.04 MB is about 40 KB.
-3. Write `projects/demo/public/thumbnails/<id>.webp`.
+1. Capture the 960 × 540 PNG of `[data-spike-stage]` with Playwright.
+2. Load the package's browser build into the page with `addScriptTag`, then
+   check the frame for blankness in the page. Count pixels whose alpha is above
+   0 and whose brightest channel is above 16. Require at least 16. A blank frame
+   fails the capture and the previous file is kept.
+3. Compress in the page with `maxWidthOrHeight: 480`,
+   `fileType: 'image/webp'`, `initialQuality: 0.82`, `maxSizeMB: 0.04`, and
+   `useWebWorker: false`. The size cap is in MB, so 0.04 MB is about 40 KB.
+4. Write `projects/demo/public/thumbnails/<id>.webp`.
 
 Triangular's `ScreenshotService` is not reusable for capture. It requires a
 live `EngineService`, and it renders through WebGL, camera jitter and the
-CSS2D/CSS3D overlay layers. What carries over is the adapter token and the
-`compress` option shape, plus its download helper if needed. The `maxSizeMB`
-default of 2 is far too large for thumbnails, so the script must always set
-its own limits.
+CSS2D/CSS3D overlay layers. Its `maxSizeMB` default of 2 is far too large for
+thumbnails, so the script always sets its own limits.
 
-The package is not installed in `projects/ui` or the demo yet. Adding it is a
-separate step that needs confirmation at install time.
+*Deviation from the earlier draft:* the draft proposed injecting compression
+through an adapter token. Not built. The capture runs in Playwright's Node
+process, so an Angular injection token has no consumer. Revisit only if the
+catalog itself needs to compress at runtime.
 
 Size budget: target under 40 KB per file, and flag any file over 80 KB for
 review. *(proposed)*
 
 ### 6.3 Fallback
 
-An entry with `thumbnail: null` shows a static placeholder SVG
-(`public/thumbnails/placeholder.svg`) built from `--ui-*` tokens. Recapture only
-replaces a file when the new capture passes the blank-frame check, so a broken
-run never erases a good thumbnail.
+An entry with `thumbnail: null` shows a placeholder. *(not built yet; the
+catalog that would show it is also unbuilt)*. The placeholder must be a
+component rendered with `--ui-*` tokens, not an SVG file. An `<img>` cannot read
+page tokens. Recapture only replaces a file when the new capture passes the
+blank-frame check, so a broken run never erases a good thumbnail.
 
 ### 6.4 When to recapture
 
 Run `spikes:thumbnails` after changing a spike's page or its registry entry.
-Commit the regenerated `.webp` files alongside the change. Evidence screenshots
+The `.webp` files are not committed, so the run is local. A fresh clone shows
+placeholders until someone runs the script. *(proposed)* Run it in CI before
+any build that publishes the catalog. Evidence screenshots
 for runbook entries go under `docs/runbook/assets/02/` and are referenced from
 the runbook. They are not catalog thumbnails.
 

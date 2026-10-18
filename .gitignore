@@ -41,6 +41,9 @@ __screenshots__/
 /test-results
 /blob-report
 
+# Generated spike thumbnails (npm run spikes:thumbnails)
+/projects/demo/public/thumbnails/
+
 # System files
 .DS_Store
 Thumbs.db

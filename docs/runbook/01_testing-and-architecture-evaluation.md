@@ -166,3 +166,8 @@ After reviewing Codex's and Claude's analyses, the core Q1–Q3 foundation holds
 - **[synthesis] `projects/demo` as Unified Playwright Harness & Canonical Agent Examples:**
   - Endorse adding a lightweight zoneless `projects/demo` app in the workspace that serves both as the Playwright multi-browser (`chromium`, `firefox`, `webkit`) test target and as the living catalog of canonical examples referenced by `SKILL.md`.
 
+### Consensus Lock-In (2026-10-18)
+
+- **[decision]** Locked in multi-agent consensus across **Argon**, **Codex**, and **Claude** for **Q1** (Pure Angular 20 Standalone + Signals + selective CDK, with pure TS math/SVG helpers), **Q2** (Single root entrypoint `@daxur-studios/ui`), **Q3** (`--ui-*` -> `--mat-sys-*` -> Dark HUD fallback resolved locally + explicit `.ui-theme-hud` scope), and core control contracts (`<ui--*>` element selectors, `value` + `valueCommit`, single-tab-stop `<input type="text" inputmode="decimal" role="spinbutton">`, and in-field default progressive number helpers). Updated `docs/plans/01_testing-and-architecture-evaluation.md` checklist accordingly.
+
+

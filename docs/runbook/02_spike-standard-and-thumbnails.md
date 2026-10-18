@@ -67,3 +67,21 @@ tags: [spikes, examples, playwright, thumbnails, catalog, runbook]
 
 - **[decision]** The user chose port 4226 for the harness. `HARNESS_PORT` in `playwright.config.ts` is now 4226, replacing 4310. The smoke test passes on it.
 - **[action]** `angular.json` now sets `projects.demo.architect.serve.options.port` to 4226, so a bare `ng serve demo` also uses it. `playwright.config.ts` still passes the port explicitly.
+
+### Thumbnail pipeline built (fixture only)
+
+- **[finding]** `npm audit` reports 4 vulnerabilities (2 moderate, 2 critical). All are dev-only: vitest 3.x, tinypool, `@vitest/mocker`, and `@angular/build`. `npm audit --omit=dev` reports 0. The fix for vitest is a major-version upgrade, so it needs a decision before anything changes.
+- **[action]** Added `projects/demo/src/app/spikes/spike-registry.ts`. It exports `SPIKE_REGISTRY`, empty until the owner confirms the first hypothesis. It is not invented.
+- **[action]** Added `fixtures/pipeline`, a stage with `data-spike-stage` and `data-spike-ready`. It is a pipeline fixture, not a spike, so it is not in the registry or the catalog.
+- **[action]** Added `e2e/thumbnails/capture.spec.ts` and a `thumbnails` Playwright project. The normal `chromium` project ignores that folder. `npm run spikes:thumbnails` runs the capture. It captures every registry route, or the routes in `THUMBNAIL_ROUTES`.
+- **[verification]** `THUMBNAIL_ROUTES=fixtures/pipeline npm run spikes:thumbnails` wrote `projects/demo/public/thumbnails/pipeline.webp` at 1.4 KB. The image is 480 × 270 and shows the block and label, so it isn't blank.
+- **[verification]** With the registry empty, `npm run spikes:thumbnails` skips cleanly. The normal `npx playwright test` still passes. `ng build demo` still passes.
+- **[finding]** Git Bash rewrote `/fixtures/pipeline` into a Windows path. Routes passed through `THUMBNAIL_ROUTES` must not start with `/`.
+- **[open]** The blank-frame rejection is written but has not been exercised. No fixture is blank yet.
+- **[open]** The placeholder and the catalog UI are not built. The first spike waits for the owner's hypothesis.
+- **[deviation]** Compression runs in the page via `addScriptTag`, not through an adapter token. See the standard §6.2.
+
+### Generated thumbnails are git-ignored
+
+- **[decision]** The owner does not want generated thumbnails in git. `/projects/demo/public/thumbnails/` is ignored in `.gitignore`. The `pipeline.webp` file was unstaged with `git rm --cached`, and the file stays on disk. Standard §6 and §6.4 are updated to match.
+- **[tradeoff]** A fresh clone has no thumbnails. The catalog shows placeholders until `npm run spikes:thumbnails` runs. CI must run it before publishing the catalog, which is not set up yet.

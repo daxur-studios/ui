@@ -8,6 +8,7 @@ const HARNESS_ORIGIN = `http://localhost:${HARNESS_PORT}`;
 /**
  * Playwright configuration for @daxur-studios/ui.
  * Runs cross-browser component rendering and interaction verification against the demo harness.
+ * The `thumbnails` project captures spike previews and is kept out of the normal test run.
  */
 export default defineConfig({
   testDir: './e2e',
@@ -29,6 +30,12 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
+      testIgnore: '**/thumbnails/**',
+      use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      name: 'thumbnails',
+      testMatch: '**/thumbnails/*.spec.ts',
       use: { ...devices['Desktop Chrome'] },
     },
   ],

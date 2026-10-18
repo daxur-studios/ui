@@ -30,13 +30,14 @@ Resolved by the owner on 2026-10-18. See standard §9.
 
 ## Work
 
-- [ ] Create `projects/demo` as the Playwright harness, in zoneless mode (plan 01).
-- [ ] Add `spike-registry.ts` and the spike route scaffold.
-- [ ] Add `e2e/spikes/` and the first hypothesis spec.
-- [ ] Install `browser-image-compression` (`^2.0.2`) as a demo dev dependency. Needs confirmation at install time.
-- [ ] Add the adapter token and the `spikes:thumbnails` script with the blank-frame check.
-- [ ] Add the placeholder SVG and `--ui-*` fallback styling.
-- [ ] Capture the first thumbnail. Check its size against the 40 KB target.
+- [x] Create `projects/demo` as the Playwright harness, in zoneless mode (plan 01).
+- [x] Add `spike-registry.ts` (empty) and the pipeline fixture route.
+- [ ] Add the spike route scaffold and `e2e/spikes/`. Waits for the owner's first hypothesis.
+- [x] Install `browser-image-compression` (`^2.0.2`) as a root devDependency.
+- [ ] ~~Add the adapter token~~ Dropped. Compression runs in the page, so no injection token is needed (standard §6.2).
+- [x] Add the `spikes:thumbnails` script with the blank-frame check. The blank rejection is not yet exercised.
+- [ ] Add the placeholder component with `--ui-*` fallback styling.
+- [x] Capture the pipeline fixture thumbnail (1.4 KB, 480 × 270). No spike thumbnail yet.
 - [ ] Add the "last spec result" cross-check to the catalog.
 - [ ] Record the first real spike outcome in the runbook.
 
