@@ -43,3 +43,27 @@ tags: [spikes, examples, playwright, thumbnails, catalog, runbook]
 - **[decision]** `projects/demo` is created under plan 01. It is not a separate plan.
 - **[constraint]** The compression package is not yet installed in the library or the demo. Installing it needs confirmation.
 - **[action]** Updated standard §3, §6.2, §7 and §9, plan 02 decisions and work list. No source files changed.
+
+### Demo harness created
+
+- **[action]** Generated `projects/demo` as a zoneless, standalone Angular 20 application with routing and SCSS. `provideZonelessChangeDetection()` is in `app.config.ts`. The root shell is `demo-root`, with a single home route.
+- **[action]** Added a path alias in `projects/demo/tsconfig.app.json`: `@daxur-studios/ui` → `../ui/src/public-api.ts`. The demo compiles against library source, not `dist/ui`. The home page imports `UI_LIB_VERSION` to prove the alias.
+- **[action]** `playwright.config.ts` gained a `webServer` that runs `ng serve demo` on port 4200, and a `baseURL`. `e2e/smoke.spec.ts` replaces the `expect(true)` placeholder with a real check on the home page's `harness-ready` marker.
+- **[action]** Installed `browser-image-compression@^2.0.2` as a root devDependency (resolved 2.0.2). The root `package.json` is the only one in this repo, so the demo's dev dependency lives there. The library's `projects/ui/package.json` is unchanged.
+- **[mistake]** I generated the demo with `--skip-tests`, which wrote `"skipTests": true` schematic defaults into `angular.json`. I also deleted the karma `test` target and `tsconfig.spec.json`. No instruction asked for either. The user confirmed unit tests are wanted. The schematic defaults are removed. The karma target stays removed because Vitest is the unit runner per AGENTS.md.
+- **[mistake]** I used `--skip-install`, so `@angular/router` was missing and the first build failed. It is now installed as a root devDependency (20.3.34, matching the other Angular packages).
+- **[verification]** `ng build demo --configuration development` passes. `npm test` passes (1 test, the existing library version check). The Vitest include now also covers `projects/demo/src/**/*.spec.ts`.
+- **[blocked]** `npx playwright test` starts the dev server but cannot launch Chromium: the browser is not installed. Installing it downloads a binary, so it needs the user's approval. The smoke test has not passed yet.
+- **[finding]** `npm install` reported 4 vulnerabilities (2 moderate, 2 critical). Not investigated. Check whether they predate this change.
+- **[open]** No demo unit test exists yet. Vitest runs in the `node` environment. Angular component specs need a DOM and TestBed. Two options: add a DOM environment (jsdom or happy-dom) with Angular's Vitest integration, or use Angular's `@angular/build:unit-test` builder through `ng test demo`. Needs a decision.
+
+### Smoke test passing
+
+- **[action]** Installed the Playwright Chromium headless shell (chromium-headless-shell 1248, Chrome 156.0.8078.4) after the user's approval. The download was from Playwright's CDN.
+- **[finding]** The first smoke run reached the wrong server. Port 4200 belongs to a local apps dashboard, and `reuseExistingServer` attached to it. The harness now uses a dedicated port, 4310, set in `playwright.config.ts` as `HARNESS_PORT`.
+- **[verification]** `npx playwright test`: 1 passed (chromium, home page renders the library version through the `@daxur-studios/ui` path alias).
+- **[verification]** `ng build demo --configuration development` passes. `npm test` passes (existing library test only).
+- **[open]** Unit test environment for demo component specs is still undecided (see above). The smoke test does not replace component unit tests.
+
+- **[decision]** The user chose port 4226 for the harness. `HARNESS_PORT` in `playwright.config.ts` is now 4226, replacing 4310. The smoke test passes on it.
+- **[action]** `angular.json` now sets `projects.demo.architect.serve.options.port` to 4226, so a bare `ng serve demo` also uses it. `playwright.config.ts` still passes the port explicitly.
