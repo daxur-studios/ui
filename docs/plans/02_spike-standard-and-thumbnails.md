@@ -35,9 +35,10 @@ Resolved by the owner on 2026-10-18. See standard §9.
 - [ ] Add the spike route scaffold and `e2e/spikes/`. Waits for the owner's first hypothesis.
 - [x] Install `browser-image-compression` (`^2.0.2`) as a root devDependency.
 - [ ] ~~Add the adapter token~~ Dropped. Compression runs in the page, so no injection token is needed (standard §6.2).
-- [x] Add the `spikes:thumbnails` script with the blank-frame check. The blank rejection is not yet exercised.
-- [ ] Add the placeholder component with `--ui-*` fallback styling.
+- [x] Add the `spikes:thumbnails` script with the blank-frame check, and exercise the rejection with a blank fixture (`e2e/thumbnails/blank-frame.spec.ts`).
+- [x] Add the placeholder component with `--ui-*` fallback styling.
 - [x] Capture the pipeline fixture thumbnail (1.4 KB, 480 × 270). No spike thumbnail yet.
+- [x] Add the catalog at `/catalog`, with failed and inconclusive spikes hidden by a filter.
 - [ ] Add the "last spec result" cross-check to the catalog.
 - [ ] Record the first real spike outcome in the runbook.
 

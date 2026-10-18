@@ -1,0 +1,10 @@
+/*
+ * Literal black on purpose: the blank-frame check must see no visible pixels. A theme token cannot
+ * guarantee that, so this file is exempt from the --ui-* token rule.
+ */
+.stage {
+  width: 960px;
+  height: 540px;
+  box-sizing: border-box;
+  background: #000;
+}

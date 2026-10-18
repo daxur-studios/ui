@@ -1,0 +1,50 @@
+<h1>Spike catalog</h1>
+
+<label class="filter">
+  <input
+    type="checkbox"
+    data-testid="show-hidden"
+    [checked]="showHidden()"
+    (change)="onShowHiddenChange($event)"
+  />
+  Show failed and inconclusive
+</label>
+
+@if (visible().length === 0) {
+  <p class="empty" data-testid="catalog-empty">
+    @if (registry.length === 0) {
+      No spikes yet.
+    } @else {
+      Every spike is hidden. Turn on the filter to see them.
+    }
+  </p>
+} @else {
+  <ul class="grid">
+    @for (entry of visible(); track entry.id) {
+      <li class="card" data-testid="spike-card">
+        <a [routerLink]="entry.route">
+          @if (thumbnailSrc(entry); as src) {
+            <img
+              [src]="src"
+              width="480"
+              height="270"
+              [alt]="entry.title"
+              loading="lazy"
+              (error)="onThumbnailError(entry)"
+            />
+          } @else {
+            <app-spike-placeholder [label]="entry.title" />
+          }
+        </a>
+        <h2>{{ entry.title }}</h2>
+        <p class="status">{{ entry.status }}</p>
+      </li>
+    }
+  </ul>
+}
+
+@if (!showHidden() && hiddenCount > 0) {
+  <p class="hidden-note" data-testid="hidden-note">
+    {{ hiddenCount }} failed or inconclusive hidden.
+  </p>
+}

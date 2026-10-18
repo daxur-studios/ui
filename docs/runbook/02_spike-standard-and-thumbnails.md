@@ -85,3 +85,17 @@ tags: [spikes, examples, playwright, thumbnails, catalog, runbook]
 
 - **[decision]** The owner does not want generated thumbnails in git. `/projects/demo/public/thumbnails/` is ignored in `.gitignore`. The `pipeline.webp` file was unstaged with `git rm --cached`, and the file stays on disk. Standard §6 and §6.4 are updated to match.
 - **[tradeoff]** A fresh clone has no thumbnails. The catalog shows placeholders until `npm run spikes:thumbnails` runs. CI must run it before publishing the catalog, which is not set up yet.
+
+### Blank-frame rejection, placeholder and catalog built
+
+- **[action]** Moved the capture logic into `e2e/thumbnails/capture-thumbnail.ts` (`captureThumbnail`). `capture.spec.ts` and the new `blank-frame.spec.ts` both use it.
+- **[action]** Added the blank fixture at `fixtures/blank`: a solid black stage. It uses a literal colour on purpose, because a token cannot guarantee zero visible pixels. The file is exempt from the token rule.
+- **[verification]** `blank-frame.spec.ts` passes 3 of 3. A blank frame throws `frame is blank`, and an existing `blank.webp` keeps its bytes. A blank frame with no previous file writes nothing. A control frame (`pipeline`) is written. The spec uses a temporary directory, so the real thumbnails folder is untouched.
+- **[action]** Added the `app-spike-placeholder` component. It reads `--ui-placeholder-*` tokens with `--mat-sys-*` and system-colour fallbacks.
+- **[action]** Added the catalog at `/catalog`, linked from the home page. Failed and inconclusive entries are hidden until the filter is checked. The filter is `visibleSpikes` in `catalog-filter.ts`. A thumbnail that is missing or fails to load shows the placeholder.
+- **[verification]** `catalog-filter.spec.ts` (Vitest, 5 tests) covers the filter with sample entries, not registry data. `catalog.spec.ts` (Playwright, 3 tests) checks the filter default, one card per visible entry, and that each card shows an image only when its file exists.
+- **[finding]** The slider spike's registry entry has a thumbnail path with no file yet. Its card shows the placeholder through the `img` error fallback, so that path is exercised in the browser.
+- **[open]** The catalog's hidden-entry filter is tested only with sample data, because the registry has no failed or inconclusive entries yet.
+- **[open]** The spec last-result cross-check is not built.
+- **[open]** `npm run spikes:thumbnails` was not run for the whole registry. It would capture the in-progress slider spike, which belongs to another session.
+- **[open]** The npm audit fix is waiting for the owner's go-ahead. Nothing was changed.

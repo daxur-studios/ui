@@ -15,8 +15,10 @@ tags: [spikes, examples, playwright, thumbnails, catalog, standards]
 > Mycelia, Brunos Space Program, Daxur Daemon) and the library's own
 > [`AGENTS.md`](../../AGENTS.md). Provenance is in
 > [`docs/runbook/02_spike-standard-and-thumbnails.md`](../runbook/02_spike-standard-and-thumbnails.md).
-> Built so far: the empty registry, the pipeline fixture, and the thumbnail
-> script. Not built: the catalog UI, the placeholder, and the first spike.
+> Built so far: the registry, the pipeline and blank fixtures, the thumbnail
+> script with its blank-frame check, the placeholder, and the catalog with its
+> hidden-entry filter. Not built: the spec last-result cross-check in the catalog.
+> The first spike, [`slider-svg-spike`](../plans/03_slider-svg-spike.md), passed.
 
 ## 1. Purpose
 
@@ -170,10 +172,8 @@ review. *(proposed)*
 
 ### 6.3 Fallback
 
-An entry with `thumbnail: null` shows a placeholder. *(not built yet; the
-catalog that would show it is also unbuilt)*. The placeholder must be a
-component rendered with `--ui-*` tokens, not an SVG file. An `<img>` cannot read
-page tokens. Recapture only replaces a file when the new capture passes the
+An entry with `thumbnail: null`, or a thumbnail file that is missing or fails to
+load, shows the `app-spike-placeholder` component. The placeholder is rendered with `--ui-*` tokens, not an SVG file. An `<img>` cannot read page tokens. Recapture only replaces a file when the new capture passes the
 blank-frame check, so a broken run never erases a good thumbnail.
 
 ### 6.4 When to recapture

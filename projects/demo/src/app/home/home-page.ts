@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { UI_LIB_VERSION } from '@daxur-studios/ui';
 
 /**
@@ -8,6 +9,7 @@ import { UI_LIB_VERSION } from '@daxur-studios/ui';
  */
 @Component({
   selector: 'demo-home-page',
+  imports: [RouterLink],
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,0 +1,39 @@
+<div class="heading">
+  <span [id]="labelId">{{ label() }}</span>
+  <span class="readout" aria-hidden="true">{{ valueText() }}</span>
+</div>
+<div
+  #track
+  class="track"
+  role="slider"
+  aria-orientation="horizontal"
+  [attr.tabindex]="disabled() ? -1 : 0"
+  [attr.aria-labelledby]="labelId"
+  [attr.aria-valuemin]="bounds().min"
+  [attr.aria-valuemax]="bounds().max"
+  [attr.aria-valuenow]="currentValue()"
+  [attr.aria-valuetext]="valueText()"
+  [attr.aria-disabled]="disabled()"
+  (keydown)="onKeyDown($event)"
+  (pointerdown)="onPointerDown($event)"
+  (pointermove)="updatePointer($event)"
+  (pointerup)="finishPointer($event)"
+  (pointercancel)="finishPointer($event)"
+  (lostpointercapture)="finishPointer($event)"
+>
+  <svg
+    aria-hidden="true"
+    focusable="false"
+    [attr.viewBox]="'0 0 ' + trackWidth() + ' ' + trackHeight"
+    preserveAspectRatio="none"
+  >
+    <path class="inactive" [attr.d]="paths().inactivePath" />
+    <path class="active" [attr.d]="paths().activePath" />
+    <circle
+      class="thumb"
+      [attr.cx]="paths().thumbX"
+      [attr.cy]="paths().thumbY"
+      [attr.r]="thumbRadius"
+    />
+  </svg>
+</div>

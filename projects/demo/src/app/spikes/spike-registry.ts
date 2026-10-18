@@ -20,7 +20,21 @@ export interface ISpikeEntry {
 }
 
 /**
- * Every spike, in creation order. Empty until the owner confirms the first hypothesis, because a
- * spike's question must come from the owner and never be invented.
+ * Every owner-approved spike hypothesis and its measured outcome, in creation order.
  */
-export const SPIKE_REGISTRY: readonly ISpikeEntry[] = [];
+export const SPIKE_REGISTRY: readonly ISpikeEntry[] = [
+  {
+    id: 'slider-svg-spike',
+    number: 1,
+    title: 'Angled SVG range slider',
+    route: '/spikes/slider-svg-spike',
+    hypothesis:
+      'Can a single-tab-stop Angular OnPush signal slider render a responsive angled SVG rail, support pointer capture and full keyboard navigation, and separate live value updates from terminal commits without layout shift or literal component colors?',
+    status: 'passed',
+    finding:
+      'The 12 slider browser checks confirm single-stop keyboard access, responsive angled SVG geometry and captured dragging with more than five live previews followed by exactly one commit. Control bounds stay unchanged during interaction, pointermove performs zero layout reads, and the generated thumbnail is 5.7 KB.',
+    thumbnail: 'thumbnails/slider-svg-spike.webp',
+    planRunbook: '/docs/runbook/03_slider-svg-spike.md',
+    dateISO: '2026-10-18',
+  },
+];

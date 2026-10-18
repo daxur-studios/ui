@@ -1,0 +1,17 @@
+:host {
+  display: block;
+}
+
+.placeholder {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 16 / 9;
+  padding: 8px;
+  border: 1px dashed var(--ui-placeholder-border, currentColor);
+  background: var(--ui-placeholder-background, var(--mat-sys-surface-container, ButtonFace));
+  color: var(--ui-placeholder-foreground, var(--mat-sys-on-surface-variant, GrayText));
+  font-size: 14px;
+  text-align: center;
+}

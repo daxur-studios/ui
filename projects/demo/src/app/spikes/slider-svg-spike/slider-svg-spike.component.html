@@ -1,0 +1,50 @@
+<section
+  class="stage"
+  data-spike-stage
+  [attr.data-spike-ready]="ready() ? 'true' : null"
+  data-ui-theme="hud"
+>
+  <header>
+    <p class="eyebrow">UI LAB / SPIKE 01</p>
+    <h1>Angled SVG range slider</h1>
+    <p class="description">
+      A responsive rail. Live preview while dragging. One commit on release.
+    </p>
+  </header>
+  <div class="panel">
+    <ui--slider
+      label="Field of View"
+      [value]="fov()"
+      (valueChange)="onLiveValue($event)"
+      (valueCommit)="onCommit($event)"
+      [min]="30"
+      [max]="120"
+      [step]="1"
+      unit="°"
+    />
+    <ui--slider
+      label="Gravity Y"
+      [(value)]="gravity"
+      [min]="-20"
+      [max]="0"
+      [step]="0.1"
+      unit=" m/s²"
+    />
+    <ui--slider label="Disabled" [value]="50" [disabled]="true" unit="%" />
+    <div class="telemetry" aria-label="Field of View telemetry">
+      <span
+        >Live value <strong data-testid="live-value">{{ fov() }}</strong></span
+      >
+      <span
+        >Live events <strong data-testid="live-count">{{ liveCount() }}</strong></span
+      >
+      <span
+        >Commits <strong data-testid="commit-count">{{ commitCount() }}</strong></span
+      >
+      <span
+        >Committed <strong data-testid="committed-value">{{ committedValue() }}</strong></span
+      >
+    </div>
+  </div>
+  <p class="hint">Arrow keys · Shift for coarse steps · Page Up / Down · Home / End</p>
+</section>

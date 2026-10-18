@@ -1,0 +1,65 @@
+// All literal defaults live here. Components define private resolved properties so
+// inherited public --ui-* overrides are never shadowed on their hosts.
+@use 'sass:map';
+
+$defaults: (
+  surface: #121a23,
+  surface-raised: #1c2936,
+  text: #e4edf5,
+  muted: #9eafbf,
+  accent: #76dfc4,
+  border: rgba(255, 255, 255, 0.18),
+  overlay: rgba(255, 255, 255, 0.08),
+  font-family: (
+    system-ui,
+    sans-serif,
+  ),
+  font-size: 14px,
+  font-small: 12px,
+  title-size: 28px,
+  font-weight: 600,
+  line-height: 1.5,
+  space-small: 8px,
+  space: 16px,
+  space-large: 32px,
+  border-width: 1px,
+  radius: 6px,
+  focus-width: 2px,
+  focus-offset: 3px,
+  disabled-opacity: 0.45,
+  slider-height: 40px,
+  slider-stroke: 2px,
+  slider-min-width: 12px,
+  readout-width: 9ch,
+  stage-width: 960px,
+  stage-height: 540px,
+  panel-width: 560px,
+);
+
+$material: (
+  surface: surface,
+  surface-raised: surface-container,
+  text: on-surface,
+  muted: on-surface-variant,
+  accent: primary,
+  border: outline-variant,
+);
+
+/** Resolve public tokens through Material where available, then the dark HUD defaults. */
+@mixin fallbacks {
+  @each $name, $fallback in $defaults {
+    @if map.has-key($material, $name) {
+      --_ui-#{$name}: var(--ui-#{$name}, var(--mat-sys-#{map.get($material, $name)}, #{$fallback}));
+    } @else {
+      --_ui-#{$name}: var(--ui-#{$name}, #{$fallback});
+    }
+  }
+}
+
+/** Explicit scope overrides an enclosing Material theme while allowing local customization. */
+@mixin hud {
+  color-scheme: dark;
+  @each $name, $fallback in $defaults {
+    --ui-#{$name}: #{$fallback};
+  }
+}

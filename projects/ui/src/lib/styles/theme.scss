@@ -1,0 +1,6 @@
+@use './tokens';
+
+.ui-theme-hud,
+[data-ui-theme='hud'] {
+  @include tokens.hud;
+}

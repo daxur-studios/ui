@@ -1,0 +1,54 @@
+:host {
+  display: block;
+}
+
+h1 {
+  font-size: 22px;
+  font-weight: 500;
+}
+
+.filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+}
+
+h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.status {
+  margin: 0;
+  font-size: 13px;
+  text-transform: capitalize;
+}
+
+.empty,
+.hidden-note {
+  font-size: 14px;
+}

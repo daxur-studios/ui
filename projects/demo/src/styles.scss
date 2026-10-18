@@ -1,3 +1,5 @@
+@use '../../ui/src/lib/styles/theme';
+
 /* Global harness styles. Colours come from --ui-* tokens; no literal colours here. */
 :root {
   color-scheme: dark;

@@ -15,26 +15,27 @@ UI component library and styling primitives for Daxur Studios applications and d
 
 ## 2. Install and peers
 
-Peer dependencies (declared **optional** to preserve framework flexibility):
+Required Angular 20 peer dependencies (standalone components, OnPush, signals, zoneless compatible):
 
 ```json
 {
-  "@angular/core": "^20.0.0",
+  "@angular/core": "^20.3.0",
   "@angular/cdk": "^20.0.0",
   "@angular/common": "^20.3.0"
 }
 ```
 
 Runtime dependencies:
+
 - `tslib` (`^2.3.0`)
 
 ## 3. Public entry points
 
-| Import | Depends on | Provides |
-| --- | --- | --- |
-| `@daxur-studios/ui` | Core TS | Library version (`UI_LIB_VERSION`), core styling tokens, utilities |
+| Import              | Depends on | Provides                                               |
+| ------------------- | ---------- | ------------------------------------------------------ |
+| `@daxur-studios/ui` | Angular 20 | `SliderComponent`, slider math/types, `UI_LIB_VERSION` |
 
-*(Secondary entry points such as `@daxur-studios/ui/angular` or component-specific sub-entrypoints will be registered as architectural paths are finalized).*
+Use the single root entrypoint. There are no Angular or component sub-entrypoints and no aggregate import-all array.
 
 ## 4. API reference
 
@@ -42,19 +43,84 @@ Runtime dependencies:
 
 - `UI_LIB_VERSION: string` — the current version string of the `@daxur-studios/ui` package.
 
+### Slider (`ui--slider`)
+
+Import `SliderComponent` into a standalone component's `imports`.
+
+| Input         | Default         | Purpose                                                                 |
+| ------------- | --------------- | ----------------------------------------------------------------------- |
+| `label`       | required string | Visible label and accessible name                                       |
+| `value`       | `0`             | Numeric model supporting `[(value)]` and `(valueChange)` live preview   |
+| `min` / `max` | `0` / `100`     | Range endpoints                                                         |
+| `step`        | `1`             | Increment aligned to min; invalid steps fall back to 1                  |
+| `unit`        | `''`            | Readout and `aria-valuetext` suffix; include a leading space if desired |
+| `disabled`    | `false`         | Disables interaction and removes the slider from sequential focus       |
+
+`valueCommit: OutputEmitterRef<number>` emits once at the end of a changed pointer transaction
+(up, cancel, or capture loss), or once per keyboard action that changes the value. Pointer moves
+emit live `valueChange` only. Unchanged clicks/keys and drags returning to their starting value do
+not commit. Disabling during a changed drag closes that transaction once.
+
+The rail is the sole tab stop. Arrow keys move one step, Shift+Arrow moves ten steps,
+PageUp/Down moves 10% of the range (at least one step), and Home/End reaches the endpoints.
+Captured pointer movement continues outside the rail. ResizeObserver is browser-only and is
+disconnected on destroy; the first browser render measures the track.
+
+Non-finite values render at the normalized minimum; non-finite min becomes zero, and invalid or
+reversed max collapses to min. Incoming model values are normalized for display/ARIA without an
+unsolicited output. Interaction emits normalized numbers. Explicit endpoints remain reachable
+when max is off the step lattice. Decimal stepping is rounded to 12 places.
+
+Pure helpers exported from the same entrypoint: `clampAndSnapValue`, `valueToRatio`,
+`ratioToValue`, `normalizeSliderBounds`, `normalizeSliderStep`, `buildAngledTrackPath`,
+`DEFAULT_SLIDER_STEP`, `ISliderTrackGeometry`, and `ISliderSvgPaths`.
+
+### Themes and tokens
+
+Import the packaged Sass theme once in application global styles:
+
+```scss
+@use '@daxur-studios/ui/styles/theme';
+```
+
+This enables `.ui-theme-hud` and `[data-ui-theme="hud"]` scopes with explicit dark defaults,
+even under a light Material theme. Components also work without this import: private resolved
+tokens use inherited `--ui-*`, then mapped `--mat-sys-*`, then shared dark defaults. Components
+never define public defaults on `:host`, so inherited overrides continue to work.
+
+Color tokens: `--ui-surface`, `--ui-surface-raised`, `--ui-text`, `--ui-muted`, `--ui-accent`,
+`--ui-border`, `--ui-overlay`. Material adapters respectively use surface, surface-container,
+on-surface, on-surface-variant, primary, and outline-variant; overlays use translucent white.
+Sizing/type tokens and their defaults are defined in the shipped `styles/_tokens.scss` partial,
+including `--ui-slider-height`, `--ui-slider-stroke`, `--ui-font-size`, and `--ui-space`.
+Use public `--ui-*` overrides; `--_ui-*` properties are private implementation details.
+
 ## 5. Examples
 
 ```typescript
-import { UI_LIB_VERSION } from '@daxur-studios/ui';
+import { SliderComponent } from '@daxur-studios/ui';
+// Add SliderComponent to your standalone component's imports.
+```
 
-console.log('UI Library initialized at version:', UI_LIB_VERSION);
+```html
+<section data-ui-theme="hud">
+  <ui--slider
+    label="Field of View"
+    [(value)]="fov"
+    [min]="30"
+    [max]="120"
+    unit="°"
+    (valueCommit)="saveFov($event)"
+  />
+</section>
 ```
 
 ## 6. Troubleshooting
 
 - **Missing styles or un-themed components**: Verify that the consuming application imports standard theme variables or defines `--ui-*` / `--mat-sys-*` tokens.
-- **Peer dependency warnings**: Peer dependencies are optional; install `@angular/core` and `@angular/cdk` only when using Angular-specific UI wrappers.
+- **Peer dependency warnings**: Install the required Angular core, common, and CDK peers.
 
 ## 7. Version notes
 
 - `0.0.1`: Initial workspace scaffolding, packaging pipeline, and agent skill bundle.
+- Plan 03: Added standalone slider, pure geometry helpers, packaged Sass theme, and required Angular peers.
