@@ -1,0 +1,55 @@
+<div class="picker" role="group" aria-label="Theme" data-testid="theme-picker">
+  <div class="axis" role="group" aria-label="Colour scheme">
+    <span class="axis-label" aria-hidden="true">Scheme</span>
+    <div class="options">
+      @for (option of schemes; track option.value) {
+        <button
+          type="button"
+          class="option"
+          [class.active]="scheme() === option.value"
+          [attr.aria-pressed]="scheme() === option.value"
+          [attr.data-testid]="'theme-scheme-' + option.value"
+          (click)="selectScheme(option.value)"
+        >
+          {{ option.label }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <div class="axis" role="group" aria-label="Mode">
+    <span class="axis-label" aria-hidden="true">Mode</span>
+    <div class="options">
+      @for (option of modes; track option.value) {
+        <button
+          type="button"
+          class="option"
+          [class.active]="mode() === option.value"
+          [attr.aria-pressed]="mode() === option.value"
+          [attr.data-testid]="'theme-mode-' + option.value"
+          (click)="selectMode(option.value)"
+        >
+          {{ option.label }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <div class="axis" role="group" aria-label="Density">
+    <span class="axis-label" aria-hidden="true">Density</span>
+    <div class="options">
+      @for (option of densities; track option.value) {
+        <button
+          type="button"
+          class="option"
+          [class.active]="density() === option.value"
+          [attr.aria-pressed]="density() === option.value"
+          [attr.data-testid]="'theme-density-' + option.value"
+          (click)="selectDensity(option.value)"
+        >
+          {{ option.label }}
+        </button>
+      }
+    </div>
+  </div>
+</div>

@@ -32,9 +32,9 @@ Runtime dependencies:
 
 ## 3. Public entry points
 
-| Import              | Depends on | Provides                                                                                        |
-| ------------------- | ---------- | ----------------------------------------------------------------------------------------------- |
-| `@daxur-studios/ui` | Angular 20 | `SliderComponent`, `UiFormControl`, `provideUiFormControl`, slider math/types, `UI_LIB_VERSION` |
+| Import              | Depends on | Provides                                                                                                                                                                            |
+| ------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@daxur-studios/ui` | Angular 20 | `SliderComponent`, `UiFormControl`, `provideUiFormControl`, slider math/types, `UI_LIB_VERSION`, `UiThemeService` / `provideUiTheme`, theme presets/types, `UiThemePickerComponent` |
 
 Use the single root entrypoint. There are no Angular or component sub-entrypoints and no aggregate import-all array.
 
@@ -108,6 +108,20 @@ even under a light Material theme. Components also work without this import: pri
 tokens use inherited `--ui-*`, then mapped `--mat-sys-*`, then shared dark defaults. Components
 never define public defaults on `:host`, so inherited overrides continue to work.
 
+The same import enables the multi-theme scopes. Themes are three independent axes driven by
+attributes on the document root:
+
+- Colour scheme: `[data-ui-scheme='hud' | 'blue' | 'orange']` (default `hud`).
+- Mode: `[data-ui-mode='dark' | 'light']` (default `dark`); also sets native `color-scheme`.
+- Density: `[data-ui-density='compact' | 'comfortable' | 'spacious']` (default `comfortable`),
+  which scales spacing and type tokens.
+
+Apply them with `UiThemeService` (signals `scheme`, `mode`, `density`, `resolvedMode`) and
+register `provideUiTheme()` so the persisted theme lands before first render. The service writes
+the attributes to `document.documentElement`, persists to `localStorage` (`ui-theme`), and treats
+`mode: 'system'` as `prefers-color-scheme`. `ui--theme-picker` is a ready-made segmented control
+over all three axes; mount one instance and position it as you like.
+
 Color tokens: `--ui-surface`, `--ui-surface-raised`, `--ui-text`, `--ui-muted`, `--ui-accent`,
 `--ui-border`, `--ui-overlay`. Material adapters respectively use surface, surface-container,
 on-surface, on-surface-variant, primary, and outline-variant; overlays use translucent white.
@@ -157,3 +171,4 @@ readonly fov = new FormControl(75, { nonNullable: true });
 - `0.0.1`: Initial workspace scaffolding, packaging pipeline, and agent skill bundle.
 - Plan 03: Added standalone slider, pure geometry helpers, packaged Sass theme, and required Angular peers.
 - Plan 04: Added reactive forms support (`UiFormControl`, `provideUiFormControl`) to the slider; `@angular/forms` is now a required peer.
+- Plan 06: Added the multi-theme system (scheme × mode × density `data-ui-*` scopes), `UiThemeService` / `provideUiTheme`, theme presets/helpers, and the `ui--theme-picker` component. HUD dark remains the default; `[data-ui-theme='hud']` is a backward-compatible alias.

@@ -16,3 +16,6 @@ export * from './lib/button/button-chamfer.component';
 export * from './lib/button/button-bracket.component';
 export * from './lib/button/button-trace.component';
 export * from './lib/forms/ui-form-control';
+export * from './lib/theme/theme-presets';
+export * from './lib/theme/theme.service';
+export * from './lib/theme/theme-picker/theme-picker.component';

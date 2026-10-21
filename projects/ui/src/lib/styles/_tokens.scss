@@ -45,6 +45,101 @@ $material: (
   border: outline-variant,
 );
 
+// Colour themes, keyed by scheme then mode. `hud` dark mirrors $defaults so the
+// default theme and the component fallbacks never disagree. Every literal colour
+// in the library lives in this file; component styles stay token-only.
+$schemes: (
+  'hud': (
+    'dark': (
+      surface: #121a23,
+      surface-raised: #1c2936,
+      text: #e4edf5,
+      muted: #9eafbf,
+      accent: #76dfc4,
+      border: rgba(255, 255, 255, 0.18),
+      overlay: rgba(255, 255, 255, 0.08),
+    ),
+    'light': (
+      surface: #f1f6f7,
+      surface-raised: #ffffff,
+      text: #0f2027,
+      muted: #4d6270,
+      accent: #0f8f76,
+      border: rgba(15, 32, 39, 0.18),
+      overlay: rgba(15, 32, 39, 0.06),
+    ),
+  ),
+  'blue': (
+    'dark': (
+      surface: #0d1524,
+      surface-raised: #16223a,
+      text: #e6eefb,
+      muted: #9db2cd,
+      accent: #5aa9ff,
+      border: rgba(255, 255, 255, 0.18),
+      overlay: rgba(255, 255, 255, 0.08),
+    ),
+    'light': (
+      surface: #eef3fb,
+      surface-raised: #ffffff,
+      text: #13243d,
+      muted: #53688c,
+      accent: #1f6fe0,
+      border: rgba(19, 36, 61, 0.16),
+      overlay: rgba(19, 36, 61, 0.06),
+    ),
+  ),
+  'orange': (
+    'dark': (
+      surface: #1c1310,
+      surface-raised: #2b1e17,
+      text: #f7ebe2,
+      muted: #c8a795,
+      accent: #ff9a3c,
+      border: rgba(255, 255, 255, 0.18),
+      overlay: rgba(255, 255, 255, 0.08),
+    ),
+    'light': (
+      surface: #fbf3ec,
+      surface-raised: #ffffff,
+      text: #3a2414,
+      muted: #8a6a54,
+      accent: #d9741a,
+      border: rgba(58, 36, 20, 0.16),
+      overlay: rgba(58, 36, 20, 0.06),
+    ),
+  ),
+);
+
+// Spacing and type scale per density. `comfortable` matches $defaults so existing
+// consumers are unaffected until they opt into another density.
+$densities: (
+  compact: (
+    font-size: 12px,
+    font-small: 11px,
+    title-size: 22px,
+    space-small: 4px,
+    space: 10px,
+    space-large: 20px,
+  ),
+  comfortable: (
+    font-size: 14px,
+    font-small: 12px,
+    title-size: 28px,
+    space-small: 8px,
+    space: 16px,
+    space-large: 32px,
+  ),
+  spacious: (
+    font-size: 16px,
+    font-small: 13px,
+    title-size: 34px,
+    space-small: 12px,
+    space: 24px,
+    space-large: 48px,
+  ),
+);
+
 /** Resolve public tokens through Material where available, then the dark HUD defaults. */
 @mixin fallbacks {
   @each $name, $fallback in $defaults {
@@ -61,5 +156,24 @@ $material: (
   color-scheme: dark;
   @each $name, $fallback in $defaults {
     --ui-#{$name}: #{$fallback};
+  }
+}
+
+/**
+ * Emit the colour tokens for one scheme and mode, and align native UI (form controls,
+ * scrollbars) with `color-scheme`. Applied to a `[data-ui-scheme][data-ui-mode]` scope.
+ */
+@mixin color-scope($scheme, $mode) {
+  $colors: map.get(map.get($schemes, $scheme), $mode);
+  color-scheme: #{$mode};
+  @each $name, $value in $colors {
+    --ui-#{$name}: #{$value};
+  }
+}
+
+/** Emit the spacing and type tokens for one density. Applied to a `[data-ui-density]` scope. */
+@mixin density-scope($density) {
+  @each $name, $value in map.get($densities, $density) {
+    --ui-#{$name}: #{$value};
   }
 }

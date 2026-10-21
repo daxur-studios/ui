@@ -235,6 +235,7 @@ test('resolves inherited UI tokens, Material adapters and both explicit HUD scop
 }) => {
   const host = page.locator('ui--slider').first();
   const stage = page.locator('[data-spike-stage]');
+  const root = page.locator('html');
   const defaultColor = await host.evaluate((element) => getComputedStyle(element).color);
   await stage.evaluate((element) => {
     (element as HTMLElement).style.setProperty('--mat-sys-on-surface', 'rgb(10, 20, 30)');
@@ -242,7 +243,10 @@ test('resolves inherited UI tokens, Material adapters and both explicit HUD scop
   });
   await expect(host).toHaveCSS('color', defaultColor);
   await expect(stage).toHaveCSS('color-scheme', 'dark');
-  await stage.evaluate((element) => element.removeAttribute('data-ui-theme'));
+  await root.evaluate((element) => {
+    element.removeAttribute('data-ui-scheme');
+    element.removeAttribute('data-ui-mode');
+  });
   await expect(host).toHaveCSS('color', 'rgb(10, 20, 30)');
   await stage.evaluate((element) => element.classList.add('ui-theme-hud'));
   await expect(host).toHaveCSS('color', defaultColor);

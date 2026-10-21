@@ -1,6 +1,25 @@
+@use 'sass:map';
 @use './tokens';
 
+// Colour scopes. Every `[data-ui-scheme][data-ui-mode]` pair emits its full colour set,
+// so switching one attribute restyles every --ui-* consumer with no component changes.
+@each $scheme in map.keys(tokens.$schemes) {
+  @each $mode in map.keys(map.get(tokens.$schemes, $scheme)) {
+    [data-ui-scheme='#{$scheme}'][data-ui-mode='#{$mode}'] {
+      @include tokens.color-scope($scheme, $mode);
+    }
+  }
+}
+
+// Density scopes. `[data-ui-density]` emits the spacing and type scale for that density.
+@each $density in map.keys(tokens.$densities) {
+  [data-ui-density='#{$density}'] {
+    @include tokens.density-scope($density);
+  }
+}
+
+// Backwards-compatible alias for the original single-theme scope (HUD dark).
 .ui-theme-hud,
 [data-ui-theme='hud'] {
-  @include tokens.hud;
+  @include tokens.color-scope('hud', 'dark');
 }

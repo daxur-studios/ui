@@ -3,3 +3,11 @@
   padding: var(--ui-harness-padding, 16px);
   box-sizing: border-box;
 }
+
+/* The picker is shell chrome: pinned to the top corner so it is reachable on every page. */
+.theme-overlay {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 100;
+}
