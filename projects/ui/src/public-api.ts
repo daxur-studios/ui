@@ -5,6 +5,7 @@
 export * from './lib/ui';
 export * from './lib/slider/slider.component';
 export * from './lib/slider/slider-math';
+export * from './lib/slider/ui-slider-base';
 export * from './lib/slider-segmented/slider-segmented.component';
 export * from './lib/slider-segmented/slider-segmented-math';
 export * from './lib/slider-reticle/slider-reticle.component';
