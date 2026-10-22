@@ -141,4 +141,22 @@ export const SPIKE_REGISTRY: readonly ISpikeEntry[] = [
     planRunbook: '/docs/runbook/05_multi-attempt-element-spikes.md',
     dateISO: '2026-10-18',
   },
+  {
+    id: 'slider-notch-rail-spike',
+    number: 7,
+    element: 'slider',
+    attempt: 4,
+    title: 'Chamfered notch rail slider',
+    route: '/spikes/slider-notch-rail-spike',
+    hypothesis:
+      'Can the procedural slider recipe engine produce a fourth, previously unseen look — a chamfered notch rail whose progress line drops diagonally into the handle with an anchored in-canvas readout — purely from recipe data and --ui-* tokens, with no new component class?',
+    status: 'passed',
+    disposition: 'candidate',
+    rank: 4,
+    finding:
+      'The notch look ships as pure recipe data (a dropped progress path and an anchored SVG readout, with no container chrome) with zero new component classes: the whole slider family is now one shared template plus four recipe entries. Existing segmented/reticle e2e specs passed unchanged against the unified component, and three new browser checks confirm the notch geometry, the wrapper-toggle class, and the reactive-forms contract.',
+    thumbnail: 'thumbnails/slider-notch-rail-spike.webp',
+    planRunbook: '/docs/runbook/07_headless-slider-core.md',
+    dateISO: '2026-10-21',
+  },
 ];

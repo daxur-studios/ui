@@ -160,6 +160,13 @@ readonly fov = new FormControl(75, { nonNullable: true });
 <ui--slider label="Field of View" [formControl]="fov" [min]="30" [max]="120" unit="°" />
 ```
 
+`ui--slider` renders one of four looks via its `recipe` input: `angled` (default), `segmented`, `reticle`, and `notch`. `ui--slider-segmented` and `ui--slider-reticle` are convenience selectors that preset the middle two; all four share the same inputs, behaviour, and reactive-forms contract.
+
+```html
+<ui--slider recipe="notch" label="Thrust" [(value)]="thrust" unit="%" />
+<ui--slider-segmented label="Battery" [(value)]="battery" [cellCount]="24" unit="%" />
+```
+
 ## 6. Troubleshooting
 
 - **Missing styles or un-themed components**: Verify that the consuming application imports standard theme variables or defines `--ui-*` / `--mat-sys-*` tokens.
@@ -173,3 +180,4 @@ readonly fov = new FormControl(75, { nonNullable: true });
 - Plan 04: Added reactive forms support (`UiFormControl`, `provideUiFormControl`) to the slider; `@angular/forms` is now a required peer.
 - Plan 06: Added the multi-theme system (scheme × mode × density `data-ui-*` scopes), `UiThemeService` / `provideUiTheme`, theme presets/helpers, and the `ui--theme-picker` component. HUD dark remains the default; `[data-ui-theme='hud']` is a backward-compatible alias.
 - Plan 07 (spike 07a): Extracted the headless `UiSliderBase` (and its `IUiSliderDrag` type) shared by `ui--slider`, `ui--slider-segmented`, and `ui--slider-reticle`. Authoring a new slider attempt: extend `UiSliderBase`, declare `trackHeight`, `pointerRatio(clientX, drag)`, a `#track` template ref, and your geometry; value, keyboard, pointer-capture, commit, and reactive-forms behaviour are inherited.
+- Plan 07 (spike 07b): Added the procedural recipe engine. `ui--slider` now takes a `recipe` input (`angled` default, plus `segmented`, `reticle`, `notch`); `ui--slider-segmented` / `ui--slider-reticle` are thin subclasses that preset a recipe and share the one template/stylesheet. A look is pure data: add a `SliderRecipe` key to `SLIDER_RECIPES` returning `ISliderPart[]` (`path`/`cells`/`circle`/`text`, each with a token-mapped `cssClass`) — no new component class. `UiSliderRecipeComponent`, `slider-parts.ts`, and `slider-recipes.ts` are public.

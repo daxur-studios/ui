@@ -58,7 +58,7 @@ export abstract class UiSliderBase extends UiFormControl<number> {
   readonly unit = input<string>('');
 
   /** SVG canvas height for this attempt's proportioned geometry. */
-  protected abstract readonly trackHeight: number;
+  protected abstract get trackHeight(): number;
 
   /** Measured width of the interactive rail, updated by the `ResizeObserver`. */
   protected readonly trackWidth = signal(INITIAL_WIDTH);

@@ -25,6 +25,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'spikes/slider-notch-rail-spike',
+    loadComponent: () =>
+      import('./spikes/slider-notch-rail-spike/slider-notch-rail-spike.component').then(
+        (m) => m.SliderNotchRailSpikeComponent,
+      ),
+  },
+  {
     path: 'spikes/button-chamfer-hud-spike',
     loadComponent: () =>
       import('./spikes/button-chamfer-hud-spike/button-chamfer-hud-spike.component').then(

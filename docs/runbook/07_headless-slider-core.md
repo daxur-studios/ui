@@ -58,3 +58,71 @@ tags: [slider, architecture, reuse, spikes, procedural, headless, angular, runbo
   shared behaviour is identical across attempts.
 - **[decision]** Proceed to spike 07b (procedural slider parts) as the next queued spike; the base
   is the shared state source that a recipe/part layer will sit on.
+
+### opencode — Spike 07b design (proposed)
+
+- **[finding]** Full design read of the three attempts: they differ only in their SVG parts
+  (`angled` = inactive/active paths + circle thumb; `segmented` = N chamfered cells with an active
+  flag; `reticle` = dual rails + origin tick + fill + two caliper brackets + diamond thumb) and
+  their heading chrome (plain readout vs. badge). All three share the identical `#track` contract
+  (role slider, tabindex, aria-*, five pointer/keyboard handlers) and heading structure.
+- **[decision]** Model the differences as **data**, not classes: an `ISliderPart` union of
+  primitives (`path`/`cells`/`circle`/`polygon`) each carrying a token-mapped `role`, plus a pure
+  `buildSliderParts(recipe, state, config)` registry. One `ui--slider [recipe]` renders the list;
+  default `recipe='angled'` keeps today's output identical. This deviates from "primitives as
+  standalone components" in the earlier note — data descriptors rendered by one SVG renderer need
+  fewer files and no extra change-detection boundaries, and satisfy the same goal.
+- **[action]** Recorded the design and the two open decisions (the new look; the fate of the
+  standalone selectors) in Plan 07 §4. Per `docs/standards/spikes.md` §3 the hypothesis must not be
+  invented, so 07b waits on the owner's new-look definition.
+
+### opencode — Spike 07b implementation
+
+- **[decision]** Owner defined the new look: a `notch` chamfered HUD rail (progress line drops
+  diagonally into the handle, value readout anchored in the notch, optional outer wrapper), and
+  chose thin subclasses sharing the recipe template for the segmented/reticle selectors.
+- **[action]** Added `slider-parts.ts` (the `ISliderPart` union — `path`/`cells`/`circle`/`text`,
+  each with a token-mapped `cssClass`), `slider-recipes.ts` (the `angled | segmented | reticle |
+notch` registry, each with `height`, `pointerRatio`, `readout`, `preserveAspectRatio`, track class,
+  and a pure `parts(state, context)` builder), and `ui-slider-recipe.ts` (the recipe core that answers
+  `UiSliderBase`'s geometry seams from the active recipe).
+- **[action]** Rewrote `slider.component.{html,scss}` as one shared template renderer (`@for` + a
+  `@switch` over `part.kind`) and merged the three stylesheets into one token-only file, keeping every
+  existing DOM class (`.cell.active`, `.origin-tick`, `.caliper-bracket`, `.thumb-diamond`,
+  `.active`/`.inactive`/`.thumb`) so the existing specs stay the regression guard.
+- **[action]** Reduced `SliderSegmentedComponent` / `SliderReticleComponent` to thin subclasses
+  (`defaultRecipe` + `labelId` + provider) sharing the recipe template/styles; deleted their duplicate
+  `.html`/`.scss`. Added the `notch` spike page, lazy route, and registry entry #7.
+
+### opencode — Verification (spike 07b)
+
+- **[verification]** `ng build ui` succeeds.
+- **[verification]** `npm test`: 65 Vitest tests pass (57 + 8 new `slider-recipes.spec.ts`).
+- **[verification]** `npm run test:dom`: 53 jsdom tests pass, unchanged.
+- **[verification]** `npm run test:e2e` (chromium): 38 Playwright tests pass, unchanged for the three
+  keepers plus 3 new notch checks.
+- **[verification]** Prettier applied to changed files.
+
+### opencode — Finding (spike 07b)
+
+- **[finding]** **Passed.** The `notch` look is produced entirely from recipe data with **no new
+  component class**, and the recipe engine reproduces all three keepers: the unified component passed
+  every pre-existing segmented and reticle browser check unmodified. The slider family now has one
+  shared template, one shared stylesheet, and four registry recipes; the segmented/reticle components
+  are thin subclasses and their duplicate templates/styles are gone.
+- **[finding]** Deviation from the earlier "primitives as standalone components" note: primitives are
+  data descriptors rendered by one SVG renderer. This needed fewer files, added no change-detection
+  boundaries, and kept the public selectors and every test selector intact.
+- **[action]** Owner design iteration on the `notch` geometry: after an attempt at a shallower 30°
+  diagonal with a full-height drop, the owner preferred the original (steeper, ~73°) angle and asked
+  for the drop to be halved. Settled on `NOTCH_DIAGONAL_RISE = 20` (half the canvas) with
+  `NOTCH_DIAGONAL_RUN = 6` (preserving the original slope) and `NOTCH_TOP_Y = 10` so the shorter rail
+  is centred in the 40 px hit area. Both are single constants in `slider-recipes.ts` for future
+  tuning; the readout tracks the drop automatically.
+- **[action]** Owner design iteration on the `notch` chrome: removed the grey `notch-track` outline
+  primitive (and its `.notch-track` rule) and the filled/hexagonal container box
+  (`.track--notch` background plus the `.track--notch.track--wrapped` chamfered `clip-path`). The
+  notch now renders only the accent dropped progress line and the anchored readout, floating
+  transparently. `slider-recipes.spec.ts` updated (`notch` parts are now `['path','text']`).
+  `wrappable`/`wrapper` remain a no-op for the notch look (the class still toggles; it just has no
+  notch-specific styling).

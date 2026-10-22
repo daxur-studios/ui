@@ -7,6 +7,7 @@ Cross-tool rules for **Antigravity**, **Claude Code**, **Cursor**, **GitHub Copi
 | `AGENTS.md` (this file) | Short rules every agent loads at session start |
 | [`docs/standards/form-controls.md`](docs/standards/form-controls.md) | Required reactive forms (`ControlValueAccessor`) contract for every form control |
 | [`docs/plans-and-runbooks.md`](docs/plans-and-runbooks.md) | Plans (`docs/plans/`) + runbooks (`docs/runbook/`) rules |
+| [`docs/work-log/README.md`](docs/work-log/README.md) | Lightweight records for standalone repository work that does not belong to an initiative pair |
 | [`projects/ui/.agents/skills/ui/SKILL.md`](projects/ui/.agents/skills/ui/SKILL.md) | Packaged library skill documenting public entry points and APIs |
 
 ## Code Standards
@@ -51,6 +52,8 @@ Run unit tests headlessly in a single run with watching off:
 
 - Every plan under `docs/plans/` has a reciprocal runbook under `docs/runbook/` sharing the same sequence number.
 - Append dated findings/decisions to the runbook as work proceeds. Keep both indexes updated.
+- Before repository work, find the relevant plan/runbook pair or decide whether this is standalone work for the monthly work log. Follow [`docs/plans-and-runbooks.md`](docs/plans-and-runbooks.md); choose the record type without asking whether documentation is wanted.
+- Before handing completed repository work back, ensure its record is current and link it in your reply. Do not wait for the user to confirm that the conversation is over. Provider session IDs are optional.
 
 ## Local package archives
 

@@ -2,7 +2,7 @@
 type: Index
 title: Runbooks Index
 description: Chronological trace of investigations, decisions, and outcomes for @daxur-studios/ui.
-timestamp: 2026-10-17T00:00:00Z
+timestamp: 2026-10-22T00:00:00Z
 tags: [documentation, runbook, index]
 ---
 
@@ -18,3 +18,4 @@ tags: [documentation, runbook, index]
 | [05_multi-attempt-element-spikes.md](05_multi-attempt-element-spikes.md)               | [/docs/plans/05_multi-attempt-element-spikes.md](/docs/plans/05_multi-attempt-element-spikes.md)               | Decisions and verification trace for multi-attempt Slider and Button HUD spikes, catalog preference sorting, and `UiFormControl<boolean>` buttons. |
 | [06_theming-and-density.md](06_theming-and-density.md)                                 | [/docs/plans/06_theming-and-density.md](/docs/plans/06_theming-and-density.md)                                 | Decisions and verification trace for the multi-theme system, density presets, `UiThemeService`, and `ui--theme-picker`.                            |
 | [07_headless-slider-core.md](07_headless-slider-core.md)                               | [/docs/plans/07_headless-slider-core.md](/docs/plans/07_headless-slider-core.md)                               | Slider de-duplication behind `UiSliderBase` and the evaluation of a procedural slider-parts layer.                                                 |
+| [08_agent-work-records.md](08_agent-work-records.md)                                   | [/docs/plans/08_agent-work-records.md](/docs/plans/08_agent-work-records.md)                                   | Decisions and implementation trace for linking repository work sessions to plans, runbooks, or a monthly work log.                              |

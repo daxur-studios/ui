@@ -1,10 +1,31 @@
-<div class="heading">
-  <span [id]="labelId">{{ label() }}</span>
-  <span class="readout" aria-hidden="true">{{ valueText() }}</span>
+<div class="heading" [class.heading--spaced]="readout() !== 'heading'">
+  @switch (readout()) {
+    @case ('inline') {
+      <span [id]="labelId" class="label">{{ label() }}</span>
+    }
+    @case ('badge-chamfer') {
+      <label [id]="labelId" class="label">{{ label() }}</label>
+      <span class="readout-badge badge-chamfer" aria-hidden="true">
+        <span class="readout-val">{{ valueText() }}</span>
+      </span>
+    }
+    @case ('badge-rounded') {
+      <label [id]="labelId" class="label">{{ label() }}</label>
+      <span class="readout-badge badge-rounded" aria-hidden="true">
+        <span class="readout-val">{{ valueText() }}</span>
+      </span>
+    }
+    @default {
+      <span [id]="labelId">{{ label() }}</span>
+      <span class="readout" aria-hidden="true">{{ valueText() }}</span>
+    }
+  }
 </div>
+
 <div
   #track
-  class="track"
+  [class]="'track ' + trackClass"
+  [class.track--wrapped]="wrapped()"
   role="slider"
   aria-orientation="horizontal"
   [attr.tabindex]="isDisabled() ? -1 : 0"
@@ -26,15 +47,37 @@
     aria-hidden="true"
     focusable="false"
     [attr.viewBox]="'0 0 ' + trackWidth() + ' ' + trackHeight"
-    preserveAspectRatio="none"
+    [attr.preserveAspectRatio]="preserveAspectRatio"
   >
-    <path class="inactive" [attr.d]="paths().inactivePath" />
-    <path class="active" [attr.d]="paths().activePath" />
-    <circle
-      class="thumb"
-      [attr.cx]="paths().thumbX"
-      [attr.cy]="paths().thumbY"
-      [attr.r]="thumbRadius"
-    />
+    @for (part of parts(); track $index) {
+      @switch (part.kind) {
+        @case ('path') {
+          <path [attr.d]="part.d" [class]="part.cssClass" />
+        }
+        @case ('cells') {
+          @for (cell of part.cells; track cell.index) {
+            <path class="cell" [class.active]="cell.active" [attr.d]="cell.path" />
+          }
+        }
+        @case ('circle') {
+          <circle
+            [attr.cx]="part.cx"
+            [attr.cy]="part.cy"
+            [attr.r]="part.r"
+            [class]="part.cssClass"
+          />
+        }
+        @case ('text') {
+          <text
+            [attr.x]="part.x"
+            [attr.y]="part.y"
+            [attr.text-anchor]="part.anchor"
+            [class]="part.cssClass"
+          >
+            {{ part.text }}
+          </text>
+        }
+      }
+    }
   </svg>
 </div>

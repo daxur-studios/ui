@@ -2,7 +2,7 @@
 type: Index
 title: Plans Index
 description: Index of architectural and implementation plans for @daxur-studios/ui.
-timestamp: 2026-10-17T00:00:00Z
+timestamp: 2026-10-22T00:00:00Z
 tags: [documentation, plans, index]
 ---
 
@@ -18,3 +18,4 @@ tags: [documentation, plans, index]
 | [05_multi-attempt-element-spikes.md](05_multi-attempt-element-spikes.md)               | active    | Multi-attempt HUD style explorations per UI element (`slider`, `button`), catalog preference ranking & `keep`/`discard` curation, and `UiFormControl<boolean>` support for buttons.                                   |
 | [06_theming-and-density.md](06_theming-and-density.md)                                 | active    | Multi-theme system (scheme × mode × density) via `data-ui-*` scopes, a signal `UiThemeService`, and the reusable `ui--theme-picker` mounted in the demo shell.                                                        |
 | [07_headless-slider-core.md](07_headless-slider-core.md)                               | active    | Headless `UiSliderBase` de-duplication of the slider attempts (spike 07a) and evaluation of a procedural slider-parts layer (spike 07b).                                                                              |
+| [08_agent-work-records.md](08_agent-work-records.md)                                   | active    | Establish a low-friction rule for linking agent work sessions to initiative records or a monthly work log.                                                                                                              |

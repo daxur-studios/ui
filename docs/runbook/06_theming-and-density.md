@@ -72,3 +72,19 @@ tags: [theming, tokens, density, angular, signals, accessibility, demo, runbook]
   before asserting the adapter value, then restores a scope with a stage-level `.ui-theme-hud`.
 - **[action]** Formatted the changed files with Prettier and updated the packaged
   `projects/ui/.agents/skills/ui/SKILL.md` (entry points, theme scopes, version notes).
+
+### opencode — Follow-up finding (2026-10-21, found during Plan 07 spike 07b)
+
+- **[finding]** The shell-mounted picker is `position: fixed` (top-right, `z-index: 100`), and
+  Playwright's `[data-spike-stage].screenshot()` includes fixed overlays that paint inside the
+  element's box. As a result the picker now appears in the top-right of **every** generated spike
+  thumbnail, and the blank-fixture guard fails: `/fixtures/blank` (a literal-black 960x540 stage)
+  captures 2238 non-blank bytes because the picker shows over it. `npm run spikes:thumbnails` reports
+  2 failed (both `e2e/thumbnails/blank-frame.spec.ts`) and 8 passed. Not run during Plan 06, so it
+  went unnoticed.
+- **[decision]** Out of scope for Plan 07; tracked here. Recommended fix (owner call): mark the shell
+  chrome for exclusion and hide it during capture — add `data-thumbnail-ignore` to
+  `<ui--theme-picker>` in `projects/demo/src/app/app.html` and, in
+  `e2e/thumbnails/capture-thumbnail.ts`, remove/hide `[data-thumbnail-ignore]` before
+  `stage.screenshot()`. This keeps the picker on all live pages (Plan 06 decision) while restoring
+  clean, picker-free thumbnails and the blank-frame guard.

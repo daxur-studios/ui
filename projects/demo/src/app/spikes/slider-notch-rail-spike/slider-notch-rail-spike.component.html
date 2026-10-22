@@ -1,0 +1,85 @@
+<section class="stage" data-spike-stage [attr.data-spike-ready]="ready() ? 'true' : null">
+  <header>
+    <p class="eyebrow">UI LAB / SPIKE 04</p>
+    <h1>Chamfered Notch Rail Slider</h1>
+    <p class="description">
+      A recipe-only look: the progress line drops diagonally to become the handle, with the value
+      readout anchored in the notch. Same component, new recipe — no new component class.
+    </p>
+  </header>
+
+  <div class="panel">
+    <ui--slider
+      recipe="notch"
+      label="Thrust"
+      [value]="thrust()"
+      (valueChange)="onLiveValue($event)"
+      (valueCommit)="onCommit($event)"
+      [min]="0"
+      [max]="100"
+      [step]="1"
+      unit="%"
+    />
+
+    <ui--slider
+      recipe="notch"
+      label="Trim"
+      [(value)]="trim"
+      [wrapper]="false"
+      [min]="0"
+      [max]="10"
+      [step]="1"
+      unit="°"
+    />
+
+    <ui--slider recipe="notch" label="Disabled" [value]="50" [disabled]="true" unit="%" />
+
+    <div class="telemetry" aria-label="Thrust telemetry">
+      <span
+        >Live value <strong data-testid="live-value">{{ thrust() }}</strong></span
+      >
+      <span
+        >Live events <strong data-testid="live-count">{{ liveCount() }}</strong></span
+      >
+      <span
+        >Commits <strong data-testid="commit-count">{{ commitCount() }}</strong></span
+      >
+      <span
+        >Committed <strong data-testid="committed-value">{{ committedValue() }}</strong></span
+      >
+    </div>
+  </div>
+
+  <div class="form-panel" aria-label="Reactive form">
+    <ui--slider
+      recipe="notch"
+      label="Navigation"
+      [formControl]="navigation"
+      [min]="0"
+      [max]="100"
+      [step]="1"
+      unit="%"
+    />
+
+    <div class="telemetry" aria-label="Navigation form state">
+      <span
+        >Form value <strong data-testid="form-value">{{ navigation.value ?? 'null' }}</strong></span
+      >
+      <span
+        >Dirty <strong data-testid="form-dirty">{{ navigation.dirty }}</strong></span
+      >
+      <span
+        >Touched <strong data-testid="form-touched">{{ navigation.touched }}</strong></span
+      >
+    </div>
+
+    <div class="actions">
+      <button type="button" data-testid="form-toggle-disabled" (click)="toggleNavigationDisabled()">
+        {{ navigation.disabled ? 'Enable' : 'Disable' }}
+      </button>
+      <button type="button" data-testid="form-reset" (click)="resetNavigation()">Reset</button>
+    </div>
+  </div>
+
+  <p class="hint">Arrow keys · Shift for coarse steps · Page Up / Down · Home / End</p>
+</section>
