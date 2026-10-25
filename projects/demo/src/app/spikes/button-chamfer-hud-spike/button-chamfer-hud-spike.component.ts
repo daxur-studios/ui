@@ -1,6 +1,6 @@
 import { afterNextRender, ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { ButtonChamferComponent, ButtonComponent } from '@daxur-studios/ui';
+import { ButtonComponent } from '@daxur-studios/ui';
 
 /**
  * Spike harness for the chamfered polygon frame HUD button exploring momentary
@@ -9,7 +9,7 @@ import { ButtonChamferComponent, ButtonComponent } from '@daxur-studios/ui';
 @Component({
   selector: 'app-button-chamfer-hud-spike',
   standalone: true,
-  imports: [ButtonComponent, ButtonChamferComponent, ReactiveFormsModule],
+  imports: [ButtonComponent, ReactiveFormsModule],
   templateUrl: './button-chamfer-hud-spike.component.html',
   styleUrl: './button-chamfer-hud-spike.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

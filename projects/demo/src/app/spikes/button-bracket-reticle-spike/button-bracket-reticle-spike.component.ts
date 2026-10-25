@@ -1,6 +1,6 @@
 import { afterNextRender, ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { ButtonBracketComponent, ButtonComponent } from '@daxur-studios/ui';
+import { ButtonComponent } from '@daxur-studios/ui';
 
 /**
  * Spike harness for the tactical bracket reticle HUD button exploring 4-corner
@@ -9,7 +9,7 @@ import { ButtonBracketComponent, ButtonComponent } from '@daxur-studios/ui';
 @Component({
   selector: 'app-button-bracket-reticle-spike',
   standalone: true,
-  imports: [ButtonComponent, ButtonBracketComponent, ReactiveFormsModule],
+  imports: [ButtonComponent, ReactiveFormsModule],
   templateUrl: './button-bracket-reticle-spike.component.html',
   styleUrl: './button-bracket-reticle-spike.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

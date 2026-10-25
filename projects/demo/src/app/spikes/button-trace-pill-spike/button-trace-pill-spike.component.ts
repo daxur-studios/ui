@@ -1,6 +1,6 @@
 import { afterNextRender, ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { ButtonComponent, ButtonTraceComponent } from '@daxur-studios/ui';
+import { ButtonComponent } from '@daxur-studios/ui';
 
 /**
  * Spike harness for the industrial hairline trace HUD button with status LED pip
@@ -9,7 +9,7 @@ import { ButtonComponent, ButtonTraceComponent } from '@daxur-studios/ui';
 @Component({
   selector: 'app-button-trace-pill-spike',
   standalone: true,
-  imports: [ButtonComponent, ButtonTraceComponent, ReactiveFormsModule],
+  imports: [ButtonComponent, ReactiveFormsModule],
   templateUrl: './button-trace-pill-spike.component.html',
   styleUrl: './button-trace-pill-spike.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
