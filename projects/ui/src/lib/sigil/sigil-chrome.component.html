@@ -1,0 +1,65 @@
+<svg
+  class="sigil-chrome"
+  aria-hidden="true"
+  focusable="false"
+  width="0"
+  height="0"
+  [attr.data-material]="material()"
+>
+  <defs>
+    <filter
+      [attr.id]="liquidChromeId"
+      x="-10%"
+      y="-10%"
+      width="120%"
+      height="120%"
+      color-interpolation-filters="sRGB"
+    >
+      <feGaussianBlur in="SourceAlpha" [attr.stdDeviation]="heightmapBlur()" result="heightmap" />
+      <feSpecularLighting
+        in="heightmap"
+        class="sigil-light"
+        result="ridges"
+        [attr.surfaceScale]="surfaceScale()"
+        [attr.specularConstant]="specularConstant"
+        [attr.specularExponent]="specularExponent()"
+      >
+        <fePointLight [attr.x]="lightX()" [attr.y]="lightY()" [attr.z]="lightZ()" />
+      </feSpecularLighting>
+      <feComposite in="ridges" in2="SourceAlpha" operator="in" result="ridgesClipped" />
+      <feComponentTransfer in="ridgesClipped" result="chrome">
+        <feFuncR type="gamma" [attr.amplitude]="chromeAmplitude" [attr.exponent]="chromeExponent" />
+        <feFuncG type="gamma" [attr.amplitude]="chromeAmplitude" [attr.exponent]="chromeExponent" />
+        <feFuncB type="gamma" [attr.amplitude]="chromeAmplitude" [attr.exponent]="chromeExponent" />
+      </feComponentTransfer>
+      <feFlood class="sigil-body" result="body" />
+      <feComposite in="body" in2="SourceAlpha" operator="in" result="bodyClipped" />
+      <feMorphology in="SourceAlpha" operator="erode" [attr.radius]="rimWidth()" result="core" />
+      <feComposite in="SourceAlpha" in2="core" operator="out" result="rimMask" />
+      <feFlood class="sigil-rim" result="rimColor" />
+      <feComposite in="rimColor" in2="rimMask" operator="in" result="rim" />
+      <feMerge>
+        <feMergeNode in="bodyClipped" />
+        <feMergeNode in="chrome" />
+        <feMergeNode in="rim" />
+      </feMerge>
+    </filter>
+
+    <filter
+      [attr.id]="starBloomId"
+      x="-30%"
+      y="-30%"
+      width="160%"
+      height="160%"
+      color-interpolation-filters="sRGB"
+    >
+      <feGaussianBlur in="SourceGraphic" [attr.stdDeviation]="bloomDeviation" result="glow" />
+      <feFlood class="sigil-bloom" result="glowColor" />
+      <feComposite in="glowColor" in2="glow" operator="in" result="tinted" />
+      <feMerge>
+        <feMergeNode in="tinted" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+</svg>

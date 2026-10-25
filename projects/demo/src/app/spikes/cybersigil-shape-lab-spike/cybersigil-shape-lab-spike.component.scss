@@ -1,0 +1,170 @@
+@use '../../../../../ui/src/lib/styles/tokens';
+
+:host {
+  display: block;
+}
+
+// The stage is the thumbnail frame: header and archetypes, held at the 16:9 stage height so catalog
+// captures are not stretched. The controls sit below it, outside the captured region.
+.stage {
+  @include tokens.fallbacks;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: min(100%, var(--_ui-stage-width));
+  min-height: var(--_ui-stage-height);
+  padding: var(--_ui-space-large);
+  background: var(--_ui-surface);
+  color: var(--_ui-text);
+  font-family: var(--_ui-font-family);
+  font-size: var(--_ui-font-size);
+  line-height: var(--_ui-line-height);
+}
+
+header {
+  margin-bottom: var(--_ui-space);
+}
+
+h1 {
+  margin: 0;
+  font-size: var(--_ui-title-size);
+  font-weight: var(--_ui-font-weight);
+}
+
+h2 {
+  margin: 0;
+  font-size: var(--_ui-font-small);
+  font-weight: var(--_ui-font-weight);
+  color: var(--_ui-muted);
+  text-transform: uppercase;
+}
+
+.eyebrow {
+  margin: 0 0 var(--_ui-space-small);
+  color: var(--_ui-accent);
+  font-size: var(--_ui-font-small);
+}
+
+.description,
+.hint {
+  margin: var(--_ui-space-small) 0 0;
+  color: var(--_ui-muted);
+}
+
+.archetypes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--_ui-space);
+  margin-bottom: var(--_ui-space);
+}
+
+.joins {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--_ui-space);
+  margin-bottom: var(--_ui-space);
+}
+
+.canvas-card {
+  display: grid;
+  gap: var(--_ui-space-small);
+  margin: 0;
+  padding: var(--_ui-space-small);
+  border: var(--_ui-border-width) solid var(--_ui-border);
+  border-radius: var(--_ui-radius);
+  background: var(--_ui-surface-raised);
+  color: var(--_ui-muted);
+  font-size: var(--_ui-font-small);
+}
+
+.canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  touch-action: none;
+  overflow: visible;
+  cursor: crosshair;
+}
+
+// Without the chrome filter, the silhouette paints in the page text colour.
+.silhouette {
+  fill: var(--_ui-text);
+  fill-rule: nonzero;
+}
+
+.lab-controls {
+  display: grid;
+  gap: var(--_ui-space);
+  margin-top: var(--_ui-space-large);
+}
+
+.panels {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--_ui-space);
+}
+
+.panel {
+  display: grid;
+  gap: var(--_ui-space);
+  align-content: start;
+  padding: var(--_ui-space);
+  border: var(--_ui-border-width) solid var(--_ui-border);
+  border-radius: var(--_ui-radius);
+  background: var(--_ui-surface-raised);
+}
+
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--_ui-space-small);
+}
+
+.references {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--_ui-space);
+  margin-top: var(--_ui-space);
+
+  figure {
+    display: grid;
+    gap: var(--_ui-space-small);
+    margin: 0;
+    color: var(--_ui-muted);
+    font-size: var(--_ui-font-small);
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: var(--_ui-border-width) solid var(--_ui-border);
+    border-radius: var(--_ui-radius);
+    background: var(--_ui-surface-raised);
+  }
+}
+
+.telemetry {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--_ui-space);
+  margin: var(--_ui-space) 0 0;
+  color: var(--_ui-muted);
+  font-size: var(--_ui-font-small);
+  font-variant-numeric: tabular-nums;
+}
+
+strong {
+  color: var(--_ui-text);
+  font-weight: var(--_ui-font-weight);
+}
+
+@media (max-width: 720px) {
+  .archetypes,
+  .joins,
+  .references,
+  .panels {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

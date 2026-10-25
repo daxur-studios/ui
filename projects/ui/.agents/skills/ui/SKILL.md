@@ -129,6 +129,24 @@ Sizing/type tokens and their defaults are defined in the shipped `styles/_tokens
 including `--ui-slider-height`, `--ui-slider-stroke`, `--ui-font-size`, and `--ui-space`.
 Use public `--ui-*` overrides; `--_ui-*` properties are private implementation details.
 
+### Sigil geometry and chrome (`sigil-math`, `ui--sigil-chrome`)
+
+Pure, deterministic SVG path builders for the cybersigil direction (Plan 09). Each composer takes
+an `ISigilLabParams` (`curvature`, `swell`, `thornCount`, `crescentDepth`, `asymmetry`,
+`spikeLength`; unit-interval values except `thornCount`) and returns an `ISigilGeometry` with
+`d`, `width` and `height` for a `<path>` in a matching `viewBox`:
+
+- `composeWingedStar`, `composeFiligreeCrest`, `composeTendrilSCurve`: full 480 x 270 archetypes.
+- `composeModularUiJoin(params, railWidth)`: fixed-size caps with a stretchable rail. Its `parts`
+  show that caps stay identical across widths.
+- Primitives: `buildTaperedRibbon`, `buildCrescentBranch`, `buildStarEyeSigil`, `buildSpearCrest`.
+
+`<ui--sigil-chrome [material]="'mercury' | 'bronze' | 'anodized' | 'flat'" />` defines the
+`sigil-liquid-chrome` and `sigil-star-bloom` filters. Render it once per document and reference
+the filters with `filter="url(#sigil-liquid-chrome)"`. Palettes come from the `--ui-sigil-*`
+tokens (`<material>-body`, `-light`, `-rim`, `-bloom`). They are not part of the per-scheme colour
+scopes yet, so override them with `--ui-sigil-*` on a page to retune a metal.
+
 ## 5. Examples
 
 ```typescript

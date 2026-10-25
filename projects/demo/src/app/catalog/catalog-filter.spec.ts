@@ -113,6 +113,11 @@ describe('visibleSpikes', () => {
     const buttons = visibleSpikes(ENTRIES, { element: 'button' });
     expect(buttons.map((e) => e.id)).toEqual(['candidate-button-1', 'candidate-button-2']);
 
+    const sigils = visibleSpikes([...ENTRIES, sample({ id: 'sigil-lab', element: 'sigil' })], {
+      element: 'sigil',
+    });
+    expect(sigils.map((e) => e.id)).toEqual(['sigil-lab']);
+
     const all = visibleSpikes(ENTRIES, { element: 'all' });
     expect(all.length).toBe(4);
   });

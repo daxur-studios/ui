@@ -1,0 +1,247 @@
+<ui--sigil-chrome
+  [material]="material()"
+  [heightmapBlur]="heightmapBlur()"
+  [surfaceScale]="surfaceScale()"
+  [specularExponent]="specularExponent()"
+  [lightX]="lightX()"
+  [lightY]="lightY()"
+/>
+
+<section class="stage" data-spike-stage [attr.data-spike-ready]="ready() ? 'true' : null">
+  <header>
+    <p class="eyebrow">UI LAB / SPIKE 08</p>
+    <h1>Cybersigil Shape &amp; Chrome Lab</h1>
+    <p class="description">
+      Procedural tapered ribbons and crescent armpits, shaded by a liquid-chrome SVG filter. Every
+      archetype is generated from sigil-math, not drawn by hand.
+    </p>
+  </header>
+
+  <div class="archetypes" aria-label="Procedural archetypes">
+    <figure class="canvas-card">
+      <figcaption>1 · Winged star</figcaption>
+      <svg
+        class="canvas"
+        role="img"
+        aria-label="Winged star archetype"
+        data-testid="sigil-canvas"
+        data-archetype="winged-star"
+        [attr.viewBox]="'0 0 ' + winged().width + ' ' + winged().height"
+        (pointermove)="onCanvasPointer($event, winged().width, winged().height)"
+        (pointerleave)="onCanvasLeave()"
+      >
+        <g [attr.filter]="bloomFilter()">
+          <path class="silhouette" [attr.d]="winged().d" [attr.filter]="chromeFilter()" />
+        </g>
+      </svg>
+    </figure>
+
+    <figure class="canvas-card">
+      <figcaption>2 · Filigree crest</figcaption>
+      <svg
+        class="canvas"
+        role="img"
+        aria-label="Filigree crest archetype"
+        data-testid="sigil-canvas"
+        data-archetype="filigree-crest"
+        [attr.viewBox]="'0 0 ' + crest().width + ' ' + crest().height"
+        (pointermove)="onCanvasPointer($event, crest().width, crest().height)"
+        (pointerleave)="onCanvasLeave()"
+      >
+        <path class="silhouette" [attr.d]="crest().d" [attr.filter]="chromeFilter()" />
+      </svg>
+    </figure>
+
+    <figure class="canvas-card">
+      <figcaption>3 · S-curve tendril</figcaption>
+      <svg
+        class="canvas"
+        role="img"
+        aria-label="S-curve tendril archetype"
+        data-testid="sigil-canvas"
+        data-archetype="tendril-s-curve"
+        [attr.viewBox]="'0 0 ' + tendril().width + ' ' + tendril().height"
+        (pointermove)="onCanvasPointer($event, tendril().width, tendril().height)"
+        (pointerleave)="onCanvasLeave()"
+      >
+        <path class="silhouette" [attr.d]="tendril().d" [attr.filter]="chromeFilter()" />
+      </svg>
+    </figure>
+  </div>
+
+  <div class="joins" aria-label="Modular UI join at three widths">
+    @for (join of joins(); track join.width) {
+      <figure class="canvas-card">
+        <figcaption>4 · Modular join, rail {{ join.width }}</figcaption>
+        <svg
+          class="canvas join"
+          role="img"
+          [attr.aria-label]="'Modular join at width ' + join.width"
+          data-testid="sigil-canvas"
+          data-archetype="modular-ui-join"
+          [attr.data-width]="join.width"
+          [attr.viewBox]="'0 0 ' + join.width + ' ' + join.height"
+          (pointermove)="onCanvasPointer($event, join.width, join.height)"
+          (pointerleave)="onCanvasLeave()"
+        >
+          <path class="silhouette" [attr.d]="join.d" [attr.filter]="chromeFilter()" />
+        </svg>
+      </figure>
+    }
+  </div>
+</section>
+
+<div class="lab-controls">
+  <div class="panels">
+    <section class="panel" aria-label="Geometry">
+      <h2>Geometry</h2>
+      <ui--slider
+        label="Curvature"
+        [value]="geometry().curvature"
+        (valueChange)="setGeometry('curvature', $event)"
+        [min]="0"
+        [max]="100"
+        [step]="1"
+        unit="%"
+      />
+      <ui--slider
+        label="Swell"
+        [value]="geometry().swell"
+        (valueChange)="setGeometry('swell', $event)"
+        [min]="0"
+        [max]="100"
+        [step]="1"
+        unit="%"
+      />
+      <ui--slider
+        label="Thorn count"
+        [value]="geometry().thornCount"
+        (valueChange)="setGeometry('thornCount', $event)"
+        [min]="1"
+        [max]="6"
+        [step]="1"
+      />
+      <ui--slider
+        label="Crescent depth"
+        [value]="geometry().crescentDepth"
+        (valueChange)="setGeometry('crescentDepth', $event)"
+        [min]="0"
+        [max]="100"
+        [step]="1"
+        unit="%"
+      />
+      <ui--slider
+        label="Asymmetry"
+        [value]="geometry().asymmetry"
+        (valueChange)="setGeometry('asymmetry', $event)"
+        [min]="0"
+        [max]="100"
+        [step]="1"
+        unit="%"
+      />
+      <ui--slider
+        label="Spike length"
+        [value]="geometry().spikeLength"
+        (valueChange)="setGeometry('spikeLength', $event)"
+        [min]="0"
+        [max]="100"
+        [step]="1"
+        unit="%"
+      />
+    </section>
+
+    <section class="panel" aria-label="Lighting">
+      <h2>Lighting filter</h2>
+      <ui--slider
+        label="Heightmap blur"
+        [value]="heightmapBlur()"
+        (valueChange)="heightmapBlur.set($event)"
+        [min]="0"
+        [max]="12"
+        [step]="1"
+      />
+      <ui--slider
+        label="Surface scale"
+        [value]="surfaceScale()"
+        (valueChange)="surfaceScale.set($event)"
+        [min]="0"
+        [max]="20"
+        [step]="1"
+      />
+      <ui--slider
+        label="Specular exponent"
+        [value]="specularExponent()"
+        (valueChange)="specularExponent.set($event)"
+        [min]="1"
+        [max]="40"
+        [step]="1"
+      />
+
+      <h2>Material</h2>
+      <div class="buttons">
+        <ui--button
+          label="Mercury"
+          data-testid="material-mercury"
+          (triggered)="selectMaterial('mercury')"
+        />
+        <ui--button
+          label="Bronze"
+          data-testid="material-bronze"
+          (triggered)="selectMaterial('bronze')"
+        />
+        <ui--button
+          label="Anodized"
+          data-testid="material-anodized"
+          (triggered)="selectMaterial('anodized')"
+        />
+        <ui--button label="Flat" data-testid="material-flat" (triggered)="selectMaterial('flat')" />
+      </div>
+
+      <div class="buttons">
+        <ui--button
+          label="3D chrome filter"
+          toggle
+          data-testid="chrome-toggle"
+          [value]="chromeOn()"
+          (valueChange)="setChrome($event)"
+        />
+        <ui--button
+          label="Pointer glint"
+          toggle
+          data-testid="glint-toggle"
+          [(value)]="interactiveLight"
+        />
+        <ui--button
+          label="Concept references"
+          toggle
+          data-testid="reference-toggle"
+          [(value)]="showReferences"
+        />
+      </div>
+    </section>
+  </div>
+
+  @if (showReferences()) {
+    <div class="references" data-testid="reference-strip" aria-label="Concept references">
+      @for (reference of references; track reference.file) {
+        <figure>
+          <img [src]="conceptSrc(reference.file)" [alt]="reference.label" loading="lazy" />
+          <figcaption>{{ reference.label }}</figcaption>
+        </figure>
+      }
+    </div>
+  }
+
+  <p class="telemetry" aria-label="Lab telemetry">
+    <span
+      >Material <strong data-testid="active-material">{{ material() }}</strong></span
+    >
+    <span
+      >Thorns <strong data-testid="thorn-count">{{ geometry().thornCount }}</strong></span
+    >
+    <span>
+      Light <strong data-testid="light-position">{{ lightX() }}, {{ lightY() }}</strong>
+    </span>
+  </p>
+  <p class="hint">Hover a canvas to move the light. Reduced motion holds it still.</p>
+</div>

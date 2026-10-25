@@ -1,0 +1,55 @@
+@use '../styles/tokens';
+
+:host {
+  @include tokens.fallbacks;
+  display: block;
+  height: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.sigil-chrome {
+  display: block;
+  overflow: visible;
+}
+
+// One palette per `data-material` preset. `flat` reuses mercury colours so the defs stay valid if a
+// consumer forgets to skip the filter, and the spike never applies it in flat mode.
+[data-material='mercury'],
+[data-material='flat'] {
+  --sigil-body: var(--_ui-sigil-mercury-body);
+  --sigil-light: var(--_ui-sigil-mercury-light);
+  --sigil-rim: var(--_ui-sigil-mercury-rim);
+  --sigil-bloom: var(--_ui-sigil-mercury-bloom);
+}
+
+[data-material='bronze'] {
+  --sigil-body: var(--_ui-sigil-bronze-body);
+  --sigil-light: var(--_ui-sigil-bronze-light);
+  --sigil-rim: var(--_ui-sigil-bronze-rim);
+  --sigil-bloom: var(--_ui-sigil-bronze-bloom);
+}
+
+[data-material='anodized'] {
+  --sigil-body: var(--_ui-sigil-anodized-body);
+  --sigil-light: var(--_ui-sigil-anodized-light);
+  --sigil-rim: var(--_ui-sigil-anodized-rim);
+  --sigil-bloom: var(--_ui-sigil-anodized-bloom);
+}
+
+// Filter primitives take their colours from CSS properties, so no hex or rgba literal is needed here.
+.sigil-light {
+  lighting-color: var(--sigil-light);
+}
+
+.sigil-body {
+  flood-color: var(--sigil-body);
+}
+
+.sigil-rim {
+  flood-color: var(--sigil-rim);
+}
+
+.sigil-bloom {
+  flood-color: var(--sigil-bloom);
+}

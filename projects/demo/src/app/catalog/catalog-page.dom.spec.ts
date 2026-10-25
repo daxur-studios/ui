@@ -70,6 +70,21 @@ describe('CatalogPage', () => {
     expect(cardCount(root)).toBe(visibleSpikes(SPIKE_REGISTRY, false).length);
   });
 
+  it('filters to sigil spikes when the sigil pill is clicked', () => {
+    const fixture = TestBed.createComponent(CatalogPage);
+    fixture.detectChanges();
+    const root: HTMLElement = fixture.nativeElement;
+
+    const sigilPill = root.querySelector<HTMLButtonElement>('[data-testid="filter-sigil"]');
+    if (!sigilPill) throw new Error('sigil pill is missing');
+    sigilPill.click();
+    fixture.detectChanges();
+
+    const visibleSigil = visibleSpikes(SPIKE_REGISTRY, { showHidden: false, element: 'sigil' });
+    expect(cardCount(root)).toBe(visibleSigil.length);
+    expect(sigilPill.classList.contains('active')).toBe(true);
+  });
+
   it('toggles sort order between preference rank and creation order', () => {
     const fixture = TestBed.createComponent(CatalogPage);
     fixture.detectChanges();

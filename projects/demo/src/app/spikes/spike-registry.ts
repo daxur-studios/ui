@@ -2,7 +2,7 @@
 export type SpikeStatus = 'pending' | 'passed' | 'failed' | 'inconclusive';
 
 /** UI control family under exploration. */
-export type SpikeElement = 'slider' | 'button';
+export type SpikeElement = 'slider' | 'button' | 'sigil';
 
 /** Owner curation verdict across competing style attempts. */
 export type SpikeDisposition = 'candidate' | 'keep' | 'discard';
@@ -158,5 +158,21 @@ export const SPIKE_REGISTRY: readonly ISpikeEntry[] = [
     thumbnail: 'thumbnails/slider-notch-rail-spike.webp',
     planRunbook: '/docs/runbook/07_headless-slider-core.md',
     dateISO: '2026-10-21',
+  },
+  {
+    id: 'cybersigil-shape-lab-spike',
+    number: 8,
+    element: 'sigil',
+    attempt: 1,
+    title: 'Cybersigil shape & chrome lab',
+    route: '/spikes/cybersigil-shape-lab-spike',
+    hypothesis:
+      'Can pure procedural Bezier-ribbon and crescent-junction math (sigil-math.ts) plus a hardware-accelerated SVG feSpecularLighting filter generate the three target cybersigil archetypes (asymmetric winged star from concept (6), bilateral crest from concept (7), anodized S-tendril from concept (1)), with live slider tuning, flat-versus-chrome inspection, and pointer-reactive specular glints, using --ui-* tokens only?',
+    status: 'pending',
+    disposition: 'candidate',
+    rank: null,
+    thumbnail: 'thumbnails/cybersigil-shape-lab-spike.webp',
+    planRunbook: '/docs/plans/09_cybersigillism-svg-lighting.md',
+    dateISO: '2026-10-25',
   },
 ];

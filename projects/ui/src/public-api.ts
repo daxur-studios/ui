@@ -23,3 +23,5 @@ export * from './lib/forms/ui-form-control';
 export * from './lib/theme/theme-presets';
 export * from './lib/theme/theme.service';
 export * from './lib/theme/theme-picker/theme-picker.component';
+export * from './lib/sigil/sigil-math';
+export * from './lib/sigil/sigil-chrome.component';

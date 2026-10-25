@@ -53,6 +53,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'spikes/cybersigil-shape-lab-spike',
+    loadComponent: () =>
+      import('./spikes/cybersigil-shape-lab-spike/cybersigil-shape-lab-spike.component').then(
+        (m) => m.CybersigilShapeLabSpikeComponent,
+      ),
+  },
+  {
     path: 'fixtures/pipeline',
     loadComponent: () =>
       import('./fixtures/pipeline/pipeline-fixture.component').then(
