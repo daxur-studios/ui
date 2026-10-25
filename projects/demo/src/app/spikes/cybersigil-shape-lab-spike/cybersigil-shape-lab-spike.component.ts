@@ -38,6 +38,9 @@ const INITIAL_SPIKE_LENGTH = DEFAULT_SIGIL_LAB_PARAMS.spikeLength * PERCENT_SCAL
 /** Rail widths for archetype 4, in user units. They show the join stretching without seam breaks. */
 const JOIN_WIDTHS = [240, 420, 600] as const;
 
+/** The widest join fills its card, so narrower joins are drawn at the same scale and their caps match. */
+const MAX_JOIN_WIDTH = Math.max(...JOIN_WIDTHS);
+
 /** Material used on first paint, and restored when the chrome toggle turns back on. */
 const DEFAULT_MATERIAL: SigilMaterial = 'mercury';
 
@@ -121,6 +124,11 @@ export class CybersigilShapeLabSpikeComponent {
   protected readonly joins = computed(() =>
     JOIN_WIDTHS.map((width) => composeModularUiJoin(this.params(), width)),
   );
+
+  /** Share of the card a join occupies, as a percentage. Equal scale across widths keeps the caps the same size. */
+  protected joinPercent(width: number): number {
+    return (width / MAX_JOIN_WIDTH) * PERCENT_SCALE;
+  }
 
   /** Liquid-chrome filter reference, or `null` when the flat silhouette is selected. */
   protected readonly chromeFilter = computed(() =>

@@ -19,8 +19,11 @@ import {
   sigilWidthProfile,
   SIGIL_CENTER,
   SIGIL_JOIN_CAP_WIDTH,
+  SIGIL_JOIN_HEIGHT,
   SIGIL_JOIN_MIN_WIDTH,
   SIGIL_MAX_THORN_COUNT,
+  SIGIL_ROOT_TAPER_SPAN,
+  SIGIL_TAPER_EXPONENT,
   SIGIL_VIEW_HEIGHT,
   SIGIL_VIEW_WIDTH,
 } from './sigil-math';
@@ -81,8 +84,13 @@ describe('sigilWidthProfile', () => {
     expect(sigilWidthProfile(1, 9, 0.5)).toBe(0);
   });
 
-  it('returns the base width at the spine start when swell is zero', () => {
-    expect(sigilWidthProfile(0, 9, 0)).toBeCloseTo(9, 10);
+  it('starts at a needle point at t = 0, so roots weld into their parents', () => {
+    expect(sigilWidthProfile(0, 9, 0)).toBe(0);
+  });
+
+  it('reaches the taper width once the root fade is complete', () => {
+    const expected = 9 * Math.pow(1 - SIGIL_ROOT_TAPER_SPAN, SIGIL_TAPER_EXPONENT);
+    expect(sigilWidthProfile(SIGIL_ROOT_TAPER_SPAN, 9, 0)).toBeCloseTo(expected, 10);
   });
 
   it('thickens at the junction when swell is raised', () => {
@@ -297,6 +305,11 @@ describe('composeModularUiJoin', () => {
     const xs = railPoints.map((p) => p.x);
     expect(Math.min(...xs)).toBeCloseTo(SIGIL_JOIN_CAP_WIDTH, 1);
     expect(Math.max(...xs)).toBeCloseTo(600 - SIGIL_JOIN_CAP_WIDTH, 1);
+  });
+
+  it('gives each cap upper and lower thorns that are mirror-symmetric about the centre line', () => {
+    const ys = allPoints(wide.parts.leftCap).map((p) => p.y);
+    expect(Math.min(...ys) + Math.max(...ys)).toBeCloseTo(SIGIL_JOIN_HEIGHT, 1);
   });
 
   it('mirrors the right cap across the join centre', () => {

@@ -87,6 +87,11 @@ h2 {
   cursor: crosshair;
 }
 
+// Joins are sized by the inline width, which keeps their scale equal, so centre the shorter ones.
+.canvas.join {
+  margin-inline: auto;
+}
+
 // Without the chrome filter, the silhouette paints in the page text colour.
 .silhouette {
   fill: var(--_ui-text);

@@ -32,9 +32,9 @@ Runtime dependencies:
 
 ## 3. Public entry points
 
-| Import              | Depends on | Provides                                                                                                                                                                            |
-| ------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `@daxur-studios/ui` | Angular 20 | `SliderComponent`, `UiFormControl`, `provideUiFormControl`, slider math/types, `UI_LIB_VERSION`, `UiThemeService` / `provideUiTheme`, theme presets/types, `UiThemePickerComponent` |
+| Import              | Depends on | Provides                                                                                                                                                                                                                                                                                                                            |
+| ------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@daxur-studios/ui` | Angular 20 | `SliderComponent`, `UiFormControl`, `provideUiFormControl`, slider math/types, `UI_LIB_VERSION`, `UiThemeService` / `provideUiTheme`, theme presets/types, `UiThemePickerComponent`, `SigilChromeComponent`, sigil geometry composers (`composeWingedStar`, `composeFiligreeCrest`, `composeTendrilSCurve`, `composeModularUiJoin`) |
 
 Use the single root entrypoint. There are no Angular or component sub-entrypoints and no aggregate import-all array.
 
@@ -199,3 +199,4 @@ readonly fov = new FormControl(75, { nonNullable: true });
 - Plan 06: Added the multi-theme system (scheme × mode × density `data-ui-*` scopes), `UiThemeService` / `provideUiTheme`, theme presets/helpers, and the `ui--theme-picker` component. HUD dark remains the default; `[data-ui-theme='hud']` is a backward-compatible alias.
 - Plan 07 (spike 07a): Extracted the headless `UiSliderBase` (and its `IUiSliderDrag` type) shared by `ui--slider`, `ui--slider-segmented`, and `ui--slider-reticle`. Authoring a new slider attempt: extend `UiSliderBase`, declare `trackHeight`, `pointerRatio(clientX, drag)`, a `#track` template ref, and your geometry; value, keyboard, pointer-capture, commit, and reactive-forms behaviour are inherited.
 - Plan 07 (spike 07b): Added the procedural recipe engine. `ui--slider` now takes a `recipe` input (`angled` default, plus `segmented`, `reticle`, `notch`); `ui--slider-segmented` / `ui--slider-reticle` are thin subclasses that preset a recipe and share the one template/stylesheet. A look is pure data: add a `SliderRecipe` key to `SLIDER_RECIPES` returning `ISliderPart[]` (`path`/`cells`/`circle`/`text`, each with a token-mapped `cssClass`) — no new component class. `UiSliderRecipeComponent`, `slider-parts.ts`, and `slider-recipes.ts` are public.
+- Plan 09 (spike 09a): Added `sigil-math` procedural geometry (`baseWidth` is the full ribbon width, and every ribbon root is a needle that welds into its parent) and the `ui--sigil-chrome` liquid-chrome filter pipeline with its `--ui-sigil-*` palettes.

@@ -9,7 +9,7 @@
 
 <section class="stage" data-spike-stage [attr.data-spike-ready]="ready() ? 'true' : null">
   <header>
-    <p class="eyebrow">UI LAB / SPIKE 08</p>
+    <p class="eyebrow">UI LAB / PLAN 09 · SPIKE 09A</p>
     <h1>Cybersigil Shape &amp; Chrome Lab</h1>
     <p class="description">
       Procedural tapered ribbons and crescent armpits, shaded by a liquid-chrome SVG filter. Every
@@ -77,6 +77,7 @@
           class="canvas join"
           role="img"
           [attr.aria-label]="'Modular join at width ' + join.width"
+          [style.width.%]="joinPercent(join.width)"
           data-testid="sigil-canvas"
           data-archetype="modular-ui-join"
           [attr.data-width]="join.width"

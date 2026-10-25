@@ -40,8 +40,11 @@ export const SIGIL_DEFAULT_LIGHT_Z = 160;
 /** Radius in user units of the erode step that carves the rim band off the silhouette edge. */
 export const SIGIL_DEFAULT_RIM_WIDTH = 1;
 
-/** Gain applied to the chrome curve. Above 1 brightens the ridges without moving the palette. */
-export const SIGIL_CHROME_AMPLITUDE = 1.15;
+/**
+ * Gain applied to the chrome curve. Above 1 brightens the ridges without moving the palette. Pass 3 raised
+ * it from 1.15 so the spine glint reads against the darker body.
+ */
+export const SIGIL_CHROME_AMPLITUDE = 1.4;
 
 /** Gamma exponent of the chrome curve. Below 1 lifts the mid-tones so the metal reads as reflective. */
 export const SIGIL_CHROME_EXPONENT = 0.75;
