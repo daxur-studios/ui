@@ -126,6 +126,26 @@ h2 {
   gap: var(--_ui-space-small);
 }
 
+// One select per archetype slot, labelled on the left so the four rows line up in the Strategy panel.
+.strategy-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--_ui-space-small);
+  color: var(--_ui-muted);
+  font-size: var(--_ui-font-small);
+
+  select {
+    min-width: 0;
+    padding: var(--_ui-space-small);
+    border: var(--_ui-border-width) solid var(--_ui-border);
+    border-radius: var(--_ui-radius);
+    background: var(--_ui-surface);
+    color: var(--_ui-text);
+    font: inherit;
+  }
+}
+
 .references {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

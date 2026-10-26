@@ -7,11 +7,8 @@ import {
 } from '@angular/core';
 import {
   ButtonComponent,
-  composeFiligreeCrest,
-  composeModularUiJoin,
-  composeTendrilSCurve,
-  composeWingedStar,
   DEFAULT_SIGIL_LAB_PARAMS,
+  SIGIL_BASELINE_STRATEGY,
   SIGIL_DEFAULT_HEIGHTMAP_BLUR,
   SIGIL_DEFAULT_LIGHT_X,
   SIGIL_DEFAULT_LIGHT_Y,
@@ -19,10 +16,13 @@ import {
   SIGIL_DEFAULT_SURFACE_SCALE,
   SIGIL_LIQUID_CHROME_FILTER_ID,
   SIGIL_STAR_BLOOM_FILTER_ID,
+  SIGIL_STRATEGIES,
   SigilChromeComponent,
   SigilMaterial,
   SliderComponent,
   type ISigilLabParams,
+  type ISigilStrategy,
+  type SigilStrategySlot,
 } from '@daxur-studios/ui';
 
 /** Slider readings are whole percentages, so the unit-interval knobs are divided by this value. */
@@ -118,11 +118,37 @@ export class CybersigilShapeLabSpikeComponent {
     };
   });
 
-  protected readonly winged = computed(() => composeWingedStar(this.params()));
-  protected readonly crest = computed(() => composeFiligreeCrest(this.params()));
-  protected readonly tendril = computed(() => composeTendrilSCurve(this.params()));
+  /** Strategy id chosen for each archetype slot. Every slot starts on the baseline. */
+  protected readonly picks = signal<Record<SigilStrategySlot, string>>({
+    star: SIGIL_BASELINE_STRATEGY.id,
+    crest: SIGIL_BASELINE_STRATEGY.id,
+    tendril: SIGIL_BASELINE_STRATEGY.id,
+    join: SIGIL_BASELINE_STRATEGY.id,
+  });
+
+  /** Every registered strategy, offered by each select. */
+  protected readonly strategies = SIGIL_STRATEGIES;
+
+  /** Archetype slots in display order, with their select labels. */
+  protected readonly slots: readonly SigilStrategySlot[] = ['star', 'crest', 'tendril', 'join'];
+  protected readonly slotLabels: Record<SigilStrategySlot, string> = {
+    star: 'Winged star',
+    crest: 'Filigree crest',
+    tendril: 'S-curve tendril',
+    join: 'Modular join',
+  };
+
+  /** Shared id when every slot agrees, or an empty string when the slots are mixed. */
+  protected readonly sharedStrategy = computed(() => {
+    const ids = Object.values(this.picks());
+    return ids.every((id) => id === ids[0]) ? ids[0] : '';
+  });
+
+  protected readonly winged = computed(() => this.resolve('star').star(this.params()));
+  protected readonly crest = computed(() => this.resolve('crest').crest(this.params()));
+  protected readonly tendril = computed(() => this.resolve('tendril').tendril(this.params()));
   protected readonly joins = computed(() =>
-    JOIN_WIDTHS.map((width) => composeModularUiJoin(this.params(), width)),
+    JOIN_WIDTHS.map((width) => this.resolve('join').join(this.params(), width)),
   );
 
   /** Share of the card a join occupies, as a percentage. Equal scale across widths keeps the caps the same size. */
@@ -142,6 +168,28 @@ export class CybersigilShapeLabSpikeComponent {
 
   constructor() {
     afterNextRender(() => this.ready.set(true));
+  }
+
+  /** Strategy the lab currently draws for one archetype slot. Unknown ids fall back to the baseline. */
+  private resolve(slot: SigilStrategySlot): ISigilStrategy {
+    const id = this.picks()[slot];
+    return SIGIL_STRATEGIES.find((strategy) => strategy.id === id) ?? SIGIL_BASELINE_STRATEGY;
+  }
+
+  /** Points one archetype slot at a strategy. */
+  protected selectStrategy(slot: SigilStrategySlot, id: string): void {
+    this.picks.update((current) => ({ ...current, [slot]: id }));
+  }
+
+  /** Points every archetype slot at one strategy. An empty id is the "mixed" placeholder and is ignored. */
+  protected selectAllStrategies(id: string): void {
+    if (!id) return;
+    this.picks.set({ star: id, crest: id, tendril: id, join: id });
+  }
+
+  /** Reads the chosen value from a select's change event. */
+  protected eventValue(event: Event): string {
+    return (event.target as HTMLSelectElement).value;
   }
 
   /** Writes one geometry knob from a slider reading. */

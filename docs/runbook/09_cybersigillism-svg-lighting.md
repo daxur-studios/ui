@@ -93,3 +93,30 @@ tags:
 - **[verification]** `npm test`: 105 passed (3 new). `npm run test:dom`: 60 passed. `npm run build:ui`: built. Spike Playwright (chromium): 8 passed. The spike thumbnail was regenerated at 10.1 KB. Prettier was run on the edited files.
 - **[visual]** At 1600 px: the lobe is a full arch with both legs visible. The crest thorns sit flush on the veins with no blunt stubs. The join is one symmetric thorn cluster, with no hollow double crescent. One straight edge remains on the tendril's upper thorn armpit (`x ≈ 725` in the render).
 - **[open]** Owner review of the tendril and crest against the concept art. The bulb junction (review item 3) and the remaining straight armpit edge are candidates for a later pass.
+
+### claude — Strategy registry and per-archetype selects (`cybersigil-shape-lab-spike`)
+
+- **[decision]** Competing geometry is swappable per archetype slot, not as a whole set. `ISigilStrategy` (`sigil-strategies.ts`) holds `star`, `crest`, `tendril` and `join` functions. A strategy may spread `SIGIL_BASELINE_STRATEGY` and override only the slots it rewrote. The chrome filter is held constant so competitors are compared on shape alone.
+- **[action]** `sigil-math.ts` exports its shared kernel: `ISigilShape`, `solid`, `hole`, `shapesToPath`, `mirrorShapes`, `outlinePoints`, `ribbonPoints`, `crescentBranchShapes`, `starEyeShapes`, `thornShapes` and `hookShapes`. Strategies build shapes with these and must not change them. Changing a shared primitive affects every strategy.
+- **[action]** The lab has a Strategy panel with one select per archetype and an "All archetypes" master select. The master shows "Mixed" when the slots disagree. A failed id falls back to the baseline.
+- **[action]** `sigil-strategies.spec.ts` runs five contract checks per registered strategy: a full canvas for star, crest and tendril, finite output, finite output at extreme knobs, determinism, and a join at the requested rail width.
+- **[status]** The registry holds only the baseline, so each select offers one option. Competing agents add their files and entries to `SIGIL_STRATEGIES`.
+- **[verification]** `npm test`: 110 passed (5 new). `npm run test:dom`: 60 passed. `npm run build:ui`: built. `ng build demo`: built with no template errors. The lab Playwright spec: 8 passed. Prettier was run on the edited files.
+- **[budget]** The lab stylesheet grew from about 4.86 kB to 5.23 kB. It was already over the 4 kB budget, so the owner decision on the budget is still open.
+- **[open]** Each competing strategy still needs its own visual review against the concept art. The selects have not been exercised in the browser pane.
+
+## 2026-10-26
+
+### antigravity — Competing geometry strategy `chitin-filigree` (`cybersigil-shape-lab-spike`)
+
+- **[action]** Added `projects/ui/src/lib/sigil/sigil-strategy-chitin-filigree.ts`, exporting `SIGIL_CHITIN_FILIGREE_STRATEGY` of type `ISigilStrategy` (`id: 'chitin-filigree'`, `label: 'Chitin Filigree'`), competing across all four archetype slots:
+  1. `star` (Winged Star): Concept (6) multi-tiered scythe plumes with soaring primary wings, an under-wing looping armpit pocket with inner hook, and an 8-point hollow star eye with an elongated top cardinal needle.
+  2. `crest` (Filigree Crest): Concept (7) bilateral ribcage with a trident crown diamond spear, open negative-space filigree lace eyes, upright antler combs, and outer double-horn terminal scythes.
+  3. `tendril` (S-Curve Tendril): Concept (1) continuous flowing spine with mid-spine looping eye, sweeping lower belly claw, swollen terminal chitin node, upper crescent claw eye, and lower anchor/cross cluster.
+  4. `join` (Modular UI Join): Interlocking dual-claw end-caps with concave crescent rail welds and an 8-point cyber-diamond star reticle that preserves exact `railWidth` and fixed cap aspect ratios.
+- **[action]** Registered `SIGIL_CHITIN_FILIGREE_STRATEGY` in `SIGIL_STRATEGIES` in `projects/ui/src/lib/sigil/sigil-strategies.ts`. Avoided import cycle by deriving directly from `./sigil-math` without importing `SIGIL_BASELINE_STRATEGY`.
+- **[action]** Added `projects/ui/src/lib/sigil/sigil-strategy-chitin-filigree.spec.ts` testing subpath counts, bilateral symmetry, determinism, exact width preservation across stretching widths (180, 240, 420, 600, 720), and finiteness across extreme parameter combinations.
+- **[verification]** `npm test` (vitest): 128 tests passed across 11 test files (+18 tests total: 4 new registry contract test instances in `sigil-strategies.spec.ts` and 14 tests in `sigil-strategy-chitin-filigree.spec.ts`).
+- **[verification]** `npm run test:dom`: 60 passed. `npm run build:ui`: built cleanly. `npx ng build demo`: built cleanly. `e2e/spikes/cybersigil-shape-lab-spike.spec.ts`: 8 passed.
+- **[visual]** Captured lab stage renders in Playwright with `chitin-filigree` selected. The wings weld seamlessly into the hollow star eye without floating gaps. The filigree crest exhibits authentic negative-space lace windows and antler crowns. The tendril connects solidly into its terminal node with a dramatic sweeping lower claw and anchor cross.
+- **[open]** Owner review of `chitin-filigree` against the baseline in the shape lab select controls and comparison with concept art (6), (7), and (1).

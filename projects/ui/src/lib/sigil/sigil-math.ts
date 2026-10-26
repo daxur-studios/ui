@@ -270,16 +270,16 @@ export function signedArea(points: readonly ISigilPoint[]): number {
 /* Shapes: a polygon plus whether it cuts a hole. Path output normalises winding from this flag.     */
 /* ---------------------------------------------------------------------------------------------- */
 
-interface ISigilShape {
+export interface ISigilShape {
   readonly points: readonly ISigilPoint[];
   readonly hole: boolean;
 }
 
-function solid(points: readonly ISigilPoint[]): ISigilShape {
+export function solid(points: readonly ISigilPoint[]): ISigilShape {
   return { points, hole: false };
 }
 
-function hole(points: readonly ISigilPoint[]): ISigilShape {
+export function hole(points: readonly ISigilPoint[]): ISigilShape {
   return { points, hole: true };
 }
 
@@ -294,7 +294,7 @@ function formatCoordinate(value: number): string {
 }
 
 /** Writes shapes as one SVG path. Holes are wound opposite to solids, so `nonzero` fill cuts them out. */
-function shapesToPath(shapes: readonly ISigilShape[]): string {
+export function shapesToPath(shapes: readonly ISigilShape[]): string {
   return shapes
     .filter((shape) => shape.points.length >= SIGIL_MIN_POLYGON_POINTS)
     .map((shape) => {
@@ -308,7 +308,7 @@ function shapesToPath(shapes: readonly ISigilShape[]): string {
 }
 
 /** Mirrors shapes across the vertical axis at `axisX`. Winding is renormalised when written. */
-function mirrorShapes(shapes: readonly ISigilShape[], axisX: number): ISigilShape[] {
+export function mirrorShapes(shapes: readonly ISigilShape[], axisX: number): ISigilShape[] {
   return shapes.map((shape) => ({
     points: shape.points.map((p) => ({ x: 2 * axisX - p.x, y: p.y })),
     hole: shape.hole,
@@ -362,7 +362,7 @@ export function curvedSpine(from: ISigilPoint, to: ISigilPoint, bend: number): I
  * Closed outline of a ribbon along `spine`, left side forward and right side back. `widthAt` gives the
  * full width at each sample `t`, so a ribbon can take the standard root taper or its own profile.
  */
-function outlinePoints(spine: ISigilSpine, widthAt: (t: number) => number): ISigilPoint[] {
+export function outlinePoints(spine: ISigilSpine, widthAt: (t: number) => number): ISigilPoint[] {
   const left: ISigilPoint[] = [];
   const right: ISigilPoint[] = [];
   for (let index = 0; index <= SIGIL_SPINE_SAMPLES; index++) {
@@ -377,7 +377,7 @@ function outlinePoints(spine: ISigilSpine, widthAt: (t: number) => number): ISig
 }
 
 /** Closed outline of a ribbon with the standard width profile, left side forward and right side back. */
-function ribbonPoints(spine: ISigilSpine, baseWidth: number, swell: number): ISigilPoint[] {
+export function ribbonPoints(spine: ISigilSpine, baseWidth: number, swell: number): ISigilPoint[] {
   return outlinePoints(spine, (t) => sigilWidthProfile(t, baseWidth, swell));
 }
 
@@ -407,7 +407,7 @@ export const SIGIL_CRESCENT_WEB_LENGTH = 0.5;
  * two contours. Its control point moves toward the junction as `crescentDepth` grows, so the pocket
  * curves inward and is never a sharp V.
  */
-function crescentBranchShapes(options: ICrescentBranchOptions): ISigilShape[] {
+export function crescentBranchShapes(options: ICrescentBranchOptions): ISigilShape[] {
   const chord = subtract(options.tip, options.junction);
   const spine = curvedSpine(options.junction, options.tip, options.bend);
   // A child can be no wider than its parent at the junction, so its root sits flush inside the parent.
@@ -467,7 +467,7 @@ export const SIGIL_STAR_BASE_RADIUS = 60;
 /** Growth of the star radius per unit of spike length. */
 export const SIGIL_SPIKE_GAIN = 0.6;
 
-function starEyeShapes(centre: ISigilPoint, radius: number): ISigilShape[] {
+export function starEyeShapes(centre: ISigilPoint, radius: number): ISigilShape[] {
   const tipStep = SIGIL_FULL_TURN / SIGIL_STAR_TIP_COUNT;
   const outline: ISigilPoint[] = [];
   for (let index = 0; index < SIGIL_STAR_TIP_COUNT; index++) {
@@ -553,7 +553,7 @@ export const SIGIL_ASYMMETRY_PHASE = 0.06;
  * scythe. `phase` shifts every branch point, which gives the lopsided wing its organic offset. The
  * vein width is the spine's full root width, so each armpit starts on the vein's outer edge.
  */
-function thornShapes(
+export function thornShapes(
   spine: ISigilSpine,
   params: ISigilLabParams,
   phase: number,
@@ -601,7 +601,7 @@ export const SIGIL_HOOK_BASE_LENGTH = 70;
  * Hook branching from `spine` at parameter `t`. `side` picks the turning direction. The curl follows the
  * same side, so mirrored wings hook in opposite directions and the pair reads as asymmetric.
  */
-function hookShapes(
+export function hookShapes(
   spine: ISigilSpine,
   t: number,
   side: number,

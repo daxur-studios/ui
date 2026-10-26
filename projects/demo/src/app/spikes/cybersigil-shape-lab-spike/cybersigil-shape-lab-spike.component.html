@@ -94,6 +94,38 @@
 
 <div class="lab-controls">
   <div class="panels">
+    <section class="panel" aria-label="Strategy">
+      <h2>Strategy</h2>
+      <label class="strategy-row">
+        <span>All archetypes</span>
+        <select data-testid="strategy-all" (change)="selectAllStrategies(eventValue($event))">
+          @if (!sharedStrategy()) {
+            <option value="" selected disabled>Mixed</option>
+          }
+          @for (strategy of strategies; track strategy.id) {
+            <option [value]="strategy.id" [selected]="sharedStrategy() === strategy.id">
+              {{ strategy.label }}
+            </option>
+          }
+        </select>
+      </label>
+      @for (slot of slots; track slot) {
+        <label class="strategy-row">
+          <span>{{ slotLabels[slot] }}</span>
+          <select
+            [attr.data-testid]="'strategy-' + slot"
+            (change)="selectStrategy(slot, eventValue($event))"
+          >
+            @for (strategy of strategies; track strategy.id) {
+              <option [value]="strategy.id" [selected]="picks()[slot] === strategy.id">
+                {{ strategy.label }}
+              </option>
+            }
+          </select>
+        </label>
+      }
+    </section>
+
     <section class="panel" aria-label="Geometry">
       <h2>Geometry</h2>
       <ui--slider
