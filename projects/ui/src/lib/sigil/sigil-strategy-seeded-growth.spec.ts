@@ -48,3 +48,38 @@ describe('seeded growth tendril', () => {
     }
   });
 });
+
+describe('seeded growth star', () => {
+  it('repeats each seed and varies with seed and geometry controls', () => {
+    const renderStar = (params: SeededSigilParams) => SIGIL_SEEDED_GROWTH_STRATEGY.star(params).d;
+    const base = { ...DEFAULT_SIGIL_LAB_PARAMS, seed: 42 };
+    expect(renderStar(base)).toBe(renderStar(base));
+    expect(renderStar(base)).not.toBe(renderStar({ ...base, seed: 43 }));
+    for (const key of [
+      'curvature',
+      'swell',
+      'crescentDepth',
+      'asymmetry',
+      'spikeLength',
+    ] as const) {
+      expect(renderStar({ ...base, [key]: 0 }), key).not.toBe(renderStar({ ...base, [key]: 1 }));
+    }
+    expect(renderStar({ ...base, thornCount: 1 })).not.toBe(renderStar({ ...base, thornCount: 6 }));
+    for (let seed = 0; seed < 100; seed++) {
+      for (const extreme of [0, 1]) {
+        expect(
+          renderStar({
+            ...base,
+            seed,
+            curvature: extreme,
+            swell: extreme,
+            crescentDepth: extreme,
+            asymmetry: extreme,
+            spikeLength: extreme,
+            thornCount: 6,
+          }),
+        ).not.toMatch(/NaN|Infinity/);
+      }
+    }
+  });
+});

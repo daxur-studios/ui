@@ -1,7 +1,6 @@
 import {
   composeFiligreeCrest,
   composeModularUiJoin,
-  composeWingedStar,
   crescentBranchShapes,
   cubicPoint,
   cubicTangent,
@@ -9,6 +8,7 @@ import {
   outlinePoints,
   shapesToPath,
   solid,
+  starEyeShapes,
   SIGIL_VIEW_HEIGHT,
   SIGIL_VIEW_WIDTH,
   type ISigilGeometry,
@@ -55,6 +55,15 @@ const GROWTH = {
   terminalReach: 83,
   terminalSpread: 65,
   terminalWidth: 12,
+  starRadius: 25,
+  starRadiusGain: 13,
+  wingReach: 190,
+  wingRise: 45,
+  wingSeedRise: 35,
+  wingWidth: 15,
+  wingWidthGain: 12,
+  wingBranchLength: 37,
+  wingBranchGain: 36,
 } as const;
 
 /** Stable indexed hash, so one parameter change never reshuffles later decisions. */
@@ -111,6 +120,10 @@ function composeSeededTendril(raw: SeededSigilParams): ISigilGeometry {
       loopHeight + pick(5) * GROWTH.seedHeight,
     ),
   ];
+  // Some seeds grow an additional crossing vein, changing the branch topology.
+  if (pick(6) > 0.5) {
+    shapes.push(loop(spine, 0.26, 0.72, (pick(7) > 0.5 ? 1 : -1) * loopHeight * 0.7));
+  }
   for (let i = 0; i < p.thornCount; i++) {
     const t =
       GROWTH.branchStart +
@@ -164,11 +177,61 @@ function composeSeededTendril(raw: SeededSigilParams): ISigilGeometry {
   return { d: shapesToPath(shapes), width: SIGIL_VIEW_WIDTH, height: SIGIL_VIEW_HEIGHT };
 }
 
-/** A reproducible generative tendril alongside the baseline's remaining archetypes. */
+/** Grows two seeded wings from a hollow star, with reconnecting veins and tapered barbs. */
+function composeSeededStar(raw: SeededSigilParams): ISigilGeometry {
+  const p = normalizeSigilParams(raw);
+  const seed = Number.isFinite(raw.seed) ? Math.trunc(raw.seed!) : 0;
+  const pick = (index: number) => variation(seed, index);
+  const centre = { x: SIGIL_VIEW_WIDTH / 2, y: SIGIL_VIEW_HEIGHT / 2 };
+  const radius = GROWTH.starRadius + p.spikeLength * GROWTH.starRadiusGain;
+  const shapes = starEyeShapes(centre, radius);
+  for (const side of [-1, 1]) {
+    const offset = side === -1 ? 100 : 200;
+    const asymmetry = side * p.asymmetry;
+    const reach = GROWTH.wingReach * (0.9 + pick(offset) * 0.1 + asymmetry * 0.08);
+    const rise =
+      GROWTH.wingRise + p.curvature * GROWTH.wingSeedRise + pick(offset + 1) * GROWTH.wingSeedRise;
+    const spine: ISigilSpine = {
+      p0: { x: centre.x + side * radius * 0.28, y: centre.y },
+      p1: { x: centre.x + side * reach * 0.32, y: centre.y - rise * 0.8 },
+      p2: { x: centre.x + side * reach * 0.7, y: centre.y - rise * (0.3 + pick(offset + 2) * 0.6) },
+      p3: { x: centre.x + side * reach, y: centre.y - rise * (0.25 + pick(offset + 3) * 0.7) },
+    };
+    const width = GROWTH.wingWidth + p.swell * GROWTH.wingWidthGain;
+    shapes.push(solid(outlinePoints(spine, (t) => width * Math.pow(1 - t, GROWTH.widthPower))));
+    shapes.push(
+      loop(spine, 0.24, 0.85, (pick(offset + 4) > 0.5 ? 1 : -1) * (22 + p.curvature * 30)),
+    );
+    for (let i = 0; i < p.thornCount; i++) {
+      const t = 0.2 + (0.65 * (i + 0.5)) / p.thornCount;
+      const junction = cubicPoint(spine, t);
+      const branchSide = (i + (pick(offset + 5) > 0.5 ? 1 : 0)) % 2 === 0 ? -1 : 1;
+      const length =
+        GROWTH.wingBranchLength +
+        p.spikeLength * GROWTH.wingBranchGain +
+        pick(offset + 10 + i) * 20;
+      shapes.push(
+        ...crescentBranchShapes({
+          junction,
+          direction: cubicTangent(spine, t),
+          tip: { x: junction.x + side * length * 0.65, y: junction.y + branchSide * length },
+          bend: branchSide * (0.2 + p.curvature * 0.6),
+          baseWidth: GROWTH.terminalWidth,
+          parentWidth: width * Math.pow(1 - t, GROWTH.widthPower),
+          swell: p.swell,
+          crescentDepth: p.crescentDepth,
+        }),
+      );
+    }
+  }
+  return { d: shapesToPath(shapes), width: SIGIL_VIEW_WIDTH, height: SIGIL_VIEW_HEIGHT };
+}
+
+/** Reproducible seeded star and tendril, with baseline crest and join. */
 export const SIGIL_SEEDED_GROWTH_STRATEGY: ISigilStrategy = {
   id: 'seeded-growth',
   label: 'Seeded Growth',
-  star: composeWingedStar,
+  star: composeSeededStar,
   crest: composeFiligreeCrest,
   tendril: composeSeededTendril,
   join: composeModularUiJoin,
