@@ -120,3 +120,24 @@ tags:
 - **[verification]** `npm run test:dom`: 60 passed. `npm run build:ui`: built cleanly. `npx ng build demo`: built cleanly. `e2e/spikes/cybersigil-shape-lab-spike.spec.ts`: 8 passed.
 - **[visual]** Captured lab stage renders in Playwright with `chitin-filigree` selected. The wings weld seamlessly into the hollow star eye without floating gaps. The filigree crest exhibits authentic negative-space lace windows and antler crowns. The tendril connects solidly into its terminal node with a dramatic sweeping lower claw and anchor cross.
 - **[open]** Owner review of `chitin-filigree` against the baseline in the shape lab select controls and comparison with concept art (6), (7), and (1).
+
+### codex — Competing geometry strategy `orbital-lace` (`cybersigil-shape-lab-spike`)
+
+- **[action]** Added and registered `orbital-lace`, rewriting the tendril with a double-tapered spine, two open lobes and terminal crescent branches. Star, crest and join use the baseline composers; no shared helper needed an export.
+- **[verification]** `npm test`: 132 passed. `npm run test:dom`: 60 passed, with existing jsdom `ResizeObserver is not defined` messages. `npm run build:ui` and `npx ng build demo` passed; the demo reported existing style budget warnings. The lab's eight Playwright tests passed. Full `npm run test:e2e`: 54 passed, three failed: a button chamfer trigger-count assertion and two blank-frame rejection assertions.
+- **[visual]** Lab render with the shared chrome shows two open arches and a forked terminal. Compared with concept (1), the result is sparse and regular, with thin circular loops and too little of the reference's irregular webbing and lower cross cluster. The inherited star and crest remain simpler than concepts (6) and (7).
+- **[open]** Owner comparison and selection; the tendril's loop shape, branch density and terminal silhouette need further visual refinement.
+
+### codex — Art-directed tendril prototype `sculpted-web` (`cybersigil-shape-lab-spike`)
+
+- **[action]** Added a second tendril competitor using a connected, sampled cubic outer contour and two shaped negative spaces. The baseline star, crest and join remain in its other slots. Curvature, spike length, asymmetry, swell and crescent depth deform the authored contours; thorn count does not yet change this prototype.
+- **[visual]** At default settings the connected web, lower sweep and forked terminal are closer to concept (1) than Orbital Lace's circular loops. The fixed contour is still less detailed than the reference, and the two upper openings are small at lab scale. The star and crest are unchanged.
+- **[verification]** `npm test`: 136 passed; `npm run test:dom`: 60 passed with the existing jsdom ResizeObserver messages; `npm run build:ui` and `npx ng build demo` passed (the demo retains stylesheet budget warnings). The eight lab Playwright tests passed. The registry contract checks finite extremes, deterministic paths and join width.
+- **[open]** Owner visual review, topology at intermediate knob settings, and an art-directed thorn-count implementation. This prototype intentionally prioritizes a fixed silhouette over full knob semantics; its path closely follows the reference composition and should be evaluated for suitability as a reusable design.
+
+### codex — Sculpted Web full-archetype iteration (`cybersigil-shape-lab-spike`)
+
+- **[action]** Replaced the inherited star and crest with authored cubic silhouettes: asymmetric star wings and lower arc, and a mirrored crest framework with a central pendant. The join still uses the baseline composer. The tendril now adds up to six small authored spurs as thorn count increases.
+- **[visual]** Checked the three shapes in the lab with shared chrome at thumbnail size against concepts (6), (7), and (1). The large sweeps and open crest are closer to the references. The star's lower arc and centre are still simpler than (6), the crest has fewer fine branches than (7), and the tendril's openings and added spurs are small at this scale.
+- **[verification]** `npm test`: 137 passed, including a focused thorn-count test. `npm run test:dom`: 60 passed with existing `ResizeObserver is not defined` console errors. `npm run build:ui` and `npx ng build demo` passed; existing style-budget warnings remain. The eight Chromium lab Playwright tests passed.
+- **[open]** Owner visual review. Star and crest use fixed authored branch topology; thorn count affects only the tendril, and swell and crescent depth only deform its openings. Contract tests check finite endpoint settings, but do not establish visual quality throughout the control range. No shared helper export was needed.
