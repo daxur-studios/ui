@@ -65,6 +65,17 @@ test('a geometry slider reshapes the winged star', async ({ page }) => {
   await expect.poll(() => silhouette.getAttribute('d')).not.toBe(before);
 });
 
+test('the seed changes the procedural tendril and restores it when reset', async ({ page }) => {
+  await page.getByTestId('strategy-tendril').selectOption('seeded-growth');
+  const silhouette = page.locator('[data-archetype="tendril-s-curve"] .silhouette');
+  const initial = await silhouette.getAttribute('d');
+  const seed = page.getByRole('slider', { name: 'Seed (Seeded Growth tendril)' });
+  await seed.press('ArrowRight');
+  await expect.poll(() => silhouette.getAttribute('d')).not.toBe(initial);
+  await seed.press('ArrowLeft');
+  await expect.poll(() => silhouette.getAttribute('d')).toBe(initial);
+});
+
 test('the thorn count slider is bounded to the maximum thorn count', async ({ page }) => {
   const thorns = page.getByRole('slider', { name: 'Thorn count' });
   await thorns.press('End');

@@ -28,6 +28,9 @@ import {
 /** Slider readings are whole percentages, so the unit-interval knobs are divided by this value. */
 const PERCENT_SCALE = 100;
 
+/** First deterministic variation of the seeded prototype. */
+const DEFAULT_SEED = 0;
+
 /** Initial geometry knob readings in percent, mirroring `DEFAULT_SIGIL_LAB_PARAMS`. */
 const INITIAL_CURVATURE = DEFAULT_SIGIL_LAB_PARAMS.curvature * PERCENT_SCALE;
 const INITIAL_SWELL = DEFAULT_SIGIL_LAB_PARAMS.swell * PERCENT_SCALE;
@@ -83,6 +86,7 @@ export class CybersigilShapeLabSpikeComponent {
   protected readonly ready = signal(false);
   protected readonly references = REFERENCES;
   protected readonly joinWidths = JOIN_WIDTHS;
+  protected readonly seed = signal(DEFAULT_SEED);
 
   protected readonly geometry = signal<ISigilLabControls>({
     curvature: INITIAL_CURVATURE,
@@ -106,9 +110,10 @@ export class CybersigilShapeLabSpikeComponent {
   protected readonly lightY = signal(SIGIL_DEFAULT_LIGHT_Y);
 
   /** Knob readings converted to the unit interval that `sigil-math` expects. */
-  protected readonly params = computed<ISigilLabParams>(() => {
+  protected readonly params = computed<ISigilLabParams & { seed: number }>(() => {
     const knobs = this.geometry();
     return {
+      seed: this.seed(),
       curvature: knobs.curvature / PERCENT_SCALE,
       swell: knobs.swell / PERCENT_SCALE,
       thornCount: knobs.thornCount,

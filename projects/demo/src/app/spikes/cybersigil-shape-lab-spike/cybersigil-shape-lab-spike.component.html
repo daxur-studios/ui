@@ -12,8 +12,7 @@
     <p class="eyebrow">UI LAB / PLAN 09 · SPIKE 09A</p>
     <h1>Cybersigil Shape &amp; Chrome Lab</h1>
     <p class="description">
-      Procedural tapered ribbons and crescent armpits, shaded by a liquid-chrome SVG filter. Every
-      archetype is generated from sigil-math, not drawn by hand.
+      Compare procedural and art-directed geometry, shaded by a shared liquid-chrome SVG filter.
     </p>
   </header>
 
@@ -128,6 +127,14 @@
 
     <section class="panel" aria-label="Geometry">
       <h2>Geometry</h2>
+      <ui--slider
+        label="Seed (Seeded Growth tendril)"
+        [value]="seed()"
+        (valueChange)="seed.set($event)"
+        [min]="0"
+        [max]="999"
+        [step]="1"
+      />
       <ui--slider
         label="Curvature"
         [value]="geometry().curvature"

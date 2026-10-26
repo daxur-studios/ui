@@ -10,6 +10,7 @@ import {
 import { SIGIL_CHITIN_FILIGREE_STRATEGY } from './sigil-strategy-chitin-filigree';
 import { SIGIL_ORBITAL_LACE_STRATEGY } from './sigil-strategy-orbital-lace';
 import { SIGIL_SCULPTED_WEB_STRATEGY } from './sigil-strategy-sculpted-web';
+import { SIGIL_SEEDED_GROWTH_STRATEGY } from './sigil-strategy-seeded-growth';
 
 /**
  * One geometry composer per archetype slot. A competing strategy supplies its own functions and may
@@ -49,4 +50,5 @@ export const SIGIL_STRATEGIES: readonly ISigilStrategy[] = [
   SIGIL_CHITIN_FILIGREE_STRATEGY,
   SIGIL_ORBITAL_LACE_STRATEGY,
   SIGIL_SCULPTED_WEB_STRATEGY,
+  SIGIL_SEEDED_GROWTH_STRATEGY,
 ];
