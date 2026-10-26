@@ -139,7 +139,7 @@ an `ISigilLabParams` (`curvature`, `swell`, `thornCount`, `crescentDepth`, `asym
 - `composeWingedStar`, `composeFiligreeCrest`, `composeTendrilSCurve`: full 480 x 270 archetypes.
 - `composeModularUiJoin(params, railWidth)`: fixed-size caps with a stretchable rail. Its `parts`
   show that caps stay identical across widths.
-- Primitives: `buildTaperedRibbon`, `buildCrescentBranch`, `buildStarEyeSigil`, `buildSpearCrest`.
+- Primitives: `buildTaperedRibbon`, `buildCrescentBranch`, `buildStarEyeSigil`, `buildSpearCrest`, `buildTendrilBulb`, `buildTendrilLoop`.
 
 `<ui--sigil-chrome [material]="'mercury' | 'bronze' | 'anodized' | 'flat'" />` defines the
 `sigil-liquid-chrome` and `sigil-star-bloom` filters. Render it once per document and reference

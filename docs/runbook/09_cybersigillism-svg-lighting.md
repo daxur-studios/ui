@@ -80,3 +80,16 @@ tags:
 - **[verification]** `npm test`: 102 passed. `npm run test:dom`: 60 passed. `npm run build:ui`: built. Spike Playwright (chromium): 8 passed. The spike thumbnail was regenerated at 10.8 KB. Prettier was run on the three edited files. Visual check in the lab: the tendril shows a knot and an arch above the spine, and mercury, bronze and anodized each read as a dark core with bright ridges.
 - **[gap]** No targeted unit test was added for the bulb or loop. The existing finiteness sweep covers them, and the visual check stands in for shape assertions. The dev server also logs a compile error in `button-trace-pill-spike`. That file belongs to other in-flight work, so I left it alone.
 - **[open]** Owner review of the bulb and lobe against `(1).jpg` and the contrast against `(6).jpg` and `(7).jpg`. The checklist item stays open. Registry entry #8 stays `pending` until the owner decides.
+
+### claude — Shape iteration pass 4 (`cybersigil-shape-lab-spike`)
+
+- **[review]** Applied the planning agent's pass 3 review. Each finding was checked against the code and a large render before it was changed.
+- **[action]** Tendril lobe: `tendrilLoopShape` now uses a symmetric arch profile, `sin(pi t)^0.7` (`SIGIL_LOOP_ARCH_EXPONENT`). Both legs stay fuller near the spine and weld with equal thickness, so the eye closes under the chrome filter. `ribbonPoints` is now a wrapper around `outlinePoints(spine, widthAt)`, so a ribbon can take its own width profile.
+- **[action]** Child thorns: `crescentBranchShapes` uses a near-blunt root (`SIGIL_CHILD_ROOT_SPAN` 0.02) instead of the 0.12 main-vein taper, capped at the parent's width at the junction so the base sits flush. The earlier blunt version stuck out past the parent on late thorns, and the capped version does not.
+- **[action]** Join caps: `joinCapShapes` builds each thorn and its armpit once, from the rail edge. The duplicate set that started at `x = 30` in empty space is gone, and the armpit direction now points along the rail toward the centre.
+- **[action]** Crest barbs: the `SIGIL_SPEAR_WIDTH / 4` divisor is named `SIGIL_BARB_ROOT_SHARE` (0.25).
+- **[action]** Tests: `buildTendrilBulb` and `buildTendrilLoop` are exported as path builders, so the three new tests can check that swell thickens the bulb, that spike length lifts the loop, and that both are closed subpaths. `sigilWidthProfile` takes an optional root span.
+- **[not applied]** The review's item 3 (anchor the upper and lower thorns at the bulb, so it reads as a vein junction) is a shape decision and is not in this pass. The bulb still stands alone.
+- **[verification]** `npm test`: 105 passed (3 new). `npm run test:dom`: 60 passed. `npm run build:ui`: built. Spike Playwright (chromium): 8 passed. The spike thumbnail was regenerated at 10.1 KB. Prettier was run on the edited files.
+- **[visual]** At 1600 px: the lobe is a full arch with both legs visible. The crest thorns sit flush on the veins with no blunt stubs. The join is one symmetric thorn cluster, with no hollow double crescent. One straight edge remains on the tendril's upper thorn armpit (`x ≈ 725` in the render).
+- **[open]** Owner review of the tendril and crest against the concept art. The bulb junction (review item 3) and the remaining straight armpit edge are candidates for a later pass.

@@ -325,10 +325,15 @@ function mirrorShapes(shapes: readonly ISigilShape[], axisX: number): ISigilShap
  * are points and a root welds into its parent. A Gaussian bump centred at `SIGIL_JUNCTION_T` adds the
  * junction swell, scaled by `swell`.
  */
-export function sigilWidthProfile(t: number, baseWidth: number, swell: number): number {
+export function sigilWidthProfile(
+  t: number,
+  baseWidth: number,
+  swell: number,
+  rootSpan: number = SIGIL_ROOT_TAPER_SPAN,
+): number {
   const clampedT = clampRange(t, 0, 1);
   const taper = Math.pow(1 - clampedT, SIGIL_TAPER_EXPONENT);
-  const rootFade = Math.min(1, clampedT / SIGIL_ROOT_TAPER_SPAN);
+  const rootFade = Math.min(1, clampedT / rootSpan);
   const z = (clampedT - SIGIL_JUNCTION_T) / SIGIL_JUNCTION_SPREAD;
   const junctionBump = 1 + clampUnit(swell) * SIGIL_SWELL_GAIN * Math.exp(-0.5 * z * z);
   return baseWidth * taper * rootFade * junctionBump;
@@ -353,19 +358,27 @@ export function curvedSpine(from: ISigilPoint, to: ISigilPoint, bend: number): I
   };
 }
 
-/** Closed outline of a ribbon along `spine`, left side forward and right side back. */
-function ribbonPoints(spine: ISigilSpine, baseWidth: number, swell: number): ISigilPoint[] {
+/**
+ * Closed outline of a ribbon along `spine`, left side forward and right side back. `widthAt` gives the
+ * full width at each sample `t`, so a ribbon can take the standard root taper or its own profile.
+ */
+function outlinePoints(spine: ISigilSpine, widthAt: (t: number) => number): ISigilPoint[] {
   const left: ISigilPoint[] = [];
   const right: ISigilPoint[] = [];
   for (let index = 0; index <= SIGIL_SPINE_SAMPLES; index++) {
     const t = index / SIGIL_SPINE_SAMPLES;
     const centre = cubicPoint(spine, t);
     const tangent = unit(cubicTangent(spine, t));
-    const offset = scale(perpendicular(tangent), sigilWidthProfile(t, baseWidth, swell) / 2);
+    const offset = scale(perpendicular(tangent), widthAt(t) / 2);
     left.push(add(centre, offset));
     right.push(subtract(centre, offset));
   }
   return [...left, ...right.reverse()];
+}
+
+/** Closed outline of a ribbon with the standard width profile, left side forward and right side back. */
+function ribbonPoints(spine: ISigilSpine, baseWidth: number, swell: number): ISigilPoint[] {
+  return outlinePoints(spine, (t) => sigilWidthProfile(t, baseWidth, swell));
 }
 
 /**
@@ -377,6 +390,12 @@ export function buildTaperedRibbon(spine: ISigilSpine, options: ITaperedRibbonOp
   return shapesToPath([solid(ribbonPoints(spine, options.baseWidth, options.swell))]);
 }
 
+/**
+ * Root span of a child thorn, as a fraction of the spine. Much shorter than the main vein's
+ * `SIGIL_ROOT_TAPER_SPAN`, so the thorn leaves its parent at near full width and the armpit web meets its
+ * outer edge, not a needle that pinches away from the web.
+ */
+export const SIGIL_CHILD_ROOT_SPAN = 0.02;
 /** Parameter `t` at which a crescent armpit meets its thorn. */
 export const SIGIL_CRESCENT_WEB_T = 0.22;
 /** Length of the armpit's reach along the parent vein, as a fraction of the thorn's chord. */
@@ -391,7 +410,11 @@ export const SIGIL_CRESCENT_WEB_LENGTH = 0.5;
 function crescentBranchShapes(options: ICrescentBranchOptions): ISigilShape[] {
   const chord = subtract(options.tip, options.junction);
   const spine = curvedSpine(options.junction, options.tip, options.bend);
-  const ribbon = ribbonPoints(spine, options.baseWidth, options.swell);
+  // A child can be no wider than its parent at the junction, so its root sits flush inside the parent.
+  const rootWidth = Math.min(options.baseWidth, options.parentWidth ?? options.baseWidth);
+  const childWidth = (t: number): number =>
+    sigilWidthProfile(t, rootWidth, options.swell, SIGIL_CHILD_ROOT_SPAN);
+  const ribbon = outlinePoints(spine, childWidth);
 
   const along = unit(options.direction);
   const across = perpendicular(along);
@@ -405,7 +428,7 @@ function crescentBranchShapes(options: ICrescentBranchOptions): ISigilShape[] {
   // The thorn's outer edge on the armpit side is the one that faces back along the parent.
   const thornCentre = cubicPoint(spine, SIGIL_CRESCENT_WEB_T);
   const thornNormal = perpendicular(unit(cubicTangent(spine, SIGIL_CRESCENT_WEB_T)));
-  const thornHalf = sigilWidthProfile(SIGIL_CRESCENT_WEB_T, options.baseWidth, options.swell) / 2;
+  const thornHalf = childWidth(SIGIL_CRESCENT_WEB_T) / 2;
   const armpitSide = dot(thornNormal, along) < 0 ? 1 : -1;
   const armpitEnd = add(thornCentre, scale(thornNormal, armpitSide * thornHalf));
 
@@ -744,6 +767,8 @@ export const SIGIL_CREST_LOWER_SECOND_LIFT = 1.3;
 export const SIGIL_CREST_LOWER_TIP_LIFT = 0.7;
 /** Length of the hook barbs on the spear's sides, as a fraction of the spear width. */
 export const SIGIL_BARB_REACH = 1.0;
+/** Share of the spear width at which the crest barbs root, measured from the centre axis. */
+export const SIGIL_BARB_ROOT_SHARE = 0.25;
 /** Height of a barb's junction on the spear, as a fraction of the spear height above the centre. */
 export const SIGIL_BARB_JUNCTION_SHARE = 0.15;
 /** Height of a barb's tip on the spear, as a fraction of the spear height above the centre. */
@@ -806,11 +831,11 @@ export function composeFiligreeCrest(raw: ISigilLabParams): ISigilGeometry {
   // Hook barbs sit on the spear's left side and are mirrored, so they stay bilateral.
   const barbReach = SIGIL_SPEAR_WIDTH * SIGIL_BARB_REACH;
   const barbJunction = {
-    x: centre.x - SIGIL_SPEAR_WIDTH / 4,
+    x: centre.x - SIGIL_SPEAR_WIDTH * SIGIL_BARB_ROOT_SHARE,
     y: centre.y - spearHeight * SIGIL_BARB_JUNCTION_SHARE,
   };
   const barbTip = {
-    x: centre.x - (SIGIL_SPEAR_WIDTH / 4 + barbReach),
+    x: centre.x - (SIGIL_SPEAR_WIDTH * SIGIL_BARB_ROOT_SHARE + barbReach),
     y: centre.y - spearHeight * SIGIL_BARB_TIP_SHARE,
   };
   const leftBarbs = crescentBranchShapes({
@@ -880,8 +905,13 @@ export const SIGIL_TENDRIL_LOOP_START_T = 0.16;
 export const SIGIL_TENDRIL_LOOP_END_T = 0.34;
 /** How far the loop rises above the spine at zero spike length, in user units. */
 export const SIGIL_TENDRIL_LOOP_HEIGHT = 56;
-/** Full width of the loop ribbon at its root, in user units. */
+/** Full width of the loop ribbon at its midpoint, in user units. Both legs thin to needles at the spine. */
 export const SIGIL_TENDRIL_LOOP_WIDTH = 9;
+/**
+ * Exponent of the loop's arch profile, `sin(pi t)^exponent`. Below 1 keeps the legs fuller near the spine,
+ * so both legs stay visible under the chrome filter instead of one leg thinning to a hair.
+ */
+export const SIGIL_LOOP_ARCH_EXPONENT = 0.7;
 
 /**
  * Solid ellipse knot centred on the spine at `SIGIL_TENDRIL_BULB_T`. Its long axis follows the spine, and
@@ -922,7 +952,10 @@ function tendrilLoopShape(spine: ISigilSpine, params: ISigilLabParams): ISigilSh
     p2: add(lerp(from, to, 1 - SIGIL_CONTROL_FRACTION), lift),
     p3: to,
   };
-  return [solid(ribbonPoints(loopSpine, SIGIL_TENDRIL_LOOP_WIDTH, params.swell))];
+  // The arch profile is symmetric, so both feet weld into the spine with the same thickness.
+  const archWidth = (t: number): number =>
+    SIGIL_TENDRIL_LOOP_WIDTH * Math.pow(Math.sin(Math.PI * t), SIGIL_LOOP_ARCH_EXPONENT);
+  return [solid(outlinePoints(loopSpine, archWidth))];
 }
 
 /**
@@ -930,18 +963,22 @@ function tendrilLoopShape(spine: ISigilSpine, params: ISigilLabParams): ISigilSh
  * spine mid-way, a looping lobe arches above it, opposing crescent hooks alternate sides along it, and
  * the tail forks into two needle tips.
  */
-export function composeTendrilSCurve(raw: ISigilLabParams): ISigilGeometry {
-  const params = normalizeSigilParams(raw);
+function tendrilSpine(params: ISigilLabParams): ISigilSpine {
   const centre = SIGIL_CENTER;
   const amplitude = SIGIL_TENDRIL_AMPLITUDE + params.curvature * SIGIL_TENDRIL_CURVE_GAIN;
   const tailShift = params.asymmetry * SIGIL_WING_LIFT;
 
-  const spine: ISigilSpine = {
+  return {
     p0: { x: SIGIL_TENDRIL_INSET, y: centre.y + SIGIL_TENDRIL_ROOT_DROP },
     p1: { x: SIGIL_TENDRIL_FIRST_X, y: centre.y - amplitude },
     p2: { x: SIGIL_TENDRIL_SECOND_X, y: centre.y + amplitude },
     p3: { x: SIGIL_TENDRIL_TAIL_X, y: centre.y - SIGIL_TENDRIL_TAIL_DROP + tailShift },
   };
+}
+
+export function composeTendrilSCurve(raw: ISigilLabParams): ISigilGeometry {
+  const params = normalizeSigilParams(raw);
+  const spine = tendrilSpine(params);
 
   const forkStart = cubicPoint(spine, SIGIL_FORK_T);
   const forkReach =
@@ -964,6 +1001,18 @@ export function composeTendrilSCurve(raw: ISigilLabParams): ISigilGeometry {
   ];
 
   return { d: shapesToPath(shapes), width: SIGIL_VIEW_WIDTH, height: SIGIL_VIEW_HEIGHT };
+}
+
+/** Writes the tendril's mid-spine bulb as one SVG path. The bulb's own shape, so its size is testable. */
+export function buildTendrilBulb(raw: ISigilLabParams): string {
+  const params = normalizeSigilParams(raw);
+  return shapesToPath([tendrilBulbShape(tendrilSpine(params), params)]);
+}
+
+/** Writes the tendril's looping lobe as one SVG path. The lobe's own shape, so its height is testable. */
+export function buildTendrilLoop(raw: ISigilLabParams): string {
+  const params = normalizeSigilParams(raw);
+  return shapesToPath(tendrilLoopShape(tendrilSpine(params), params));
 }
 
 /* ---------------------------------------------------------------------------------------------- */
@@ -1000,20 +1049,17 @@ function joinCapShapes(params: ISigilLabParams, centreY: number): ISigilShape[] 
     x: SIGIL_JOIN_CAP_TIP_INSET,
     y: centreY + SIGIL_JOIN_CAP_WIDTH * SIGIL_JOIN_CAP_RISE,
   };
-  const upper = curvedSpine(edge, upperTip, params.curvature);
-  const lower = curvedSpine(edge, lowerTip, -params.curvature);
-  const armpit = lerp(edge, { x: SIGIL_JOIN_CAP_TIP_INSET, y: centreY }, 0.5);
+  // Each thorn is built once, from the rail's edge. Its parent runs back toward the centre, so the
+  // direction points along the rail toward the centre, which puts the armpit on the rail.
   const armpitWeb = {
-    junction: armpit,
-    direction: { x: 1, y: 0 },
+    junction: edge,
+    direction: { x: -1, y: 0 },
     baseWidth: SIGIL_THORN_BASE_WIDTH,
     swell: params.swell,
     crescentDepth: params.crescentDepth,
     parentWidth: SIGIL_JOIN_RAIL_THICKNESS,
   };
   return [
-    solid(ribbonPoints(upper, SIGIL_THORN_BASE_WIDTH, params.swell)),
-    solid(ribbonPoints(lower, SIGIL_THORN_BASE_WIDTH, params.swell)),
     ...crescentBranchShapes({
       ...armpitWeb,
       tip: upperTip,

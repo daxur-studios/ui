@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import {
   buildCrescentBranch,
   buildSpearCrest,
+  buildTendrilBulb,
+  buildTendrilLoop,
   buildStarEyeSigil,
   buildTaperedRibbon,
   composeFiligreeCrest,
@@ -289,6 +291,42 @@ describe('archetype composers', () => {
     const mirrored = composeFiligreeCrest({ ...DEFAULT_SIGIL_LAB_PARAMS, asymmetry: 0 });
     const lopsided = composeFiligreeCrest({ ...DEFAULT_SIGIL_LAB_PARAMS, asymmetry: 1 });
     expect(lopsided.d).toBe(mirrored.d);
+  });
+});
+
+describe('tendril bulb and looping lobe', () => {
+  /** Vertical extent of a path's points, the height the bulb or lobe spans. */
+  function verticalSpan(d: string): number {
+    const ys = allPoints(d).map((point) => point.y);
+    return Math.max(...ys) - Math.min(...ys);
+  }
+
+  /** Highest point of a path, the smallest y, since screen y grows downward. */
+  function topOf(d: string): number {
+    return Math.min(...allPoints(d).map((point) => point.y));
+  }
+
+  it('swell thickens the bulb across the spine', () => {
+    const calm = buildTendrilBulb({ ...DEFAULT_SIGIL_LAB_PARAMS, swell: 0 });
+    const swollen = buildTendrilBulb({ ...DEFAULT_SIGIL_LAB_PARAMS, swell: 1 });
+    expect(verticalSpan(swollen)).toBeGreaterThan(verticalSpan(calm));
+  });
+
+  it('spike length lifts the looping lobe higher above the spine', () => {
+    const short = buildTendrilLoop({ ...DEFAULT_SIGIL_LAB_PARAMS, spikeLength: 0 });
+    const tall = buildTendrilLoop({ ...DEFAULT_SIGIL_LAB_PARAMS, spikeLength: 1 });
+    expect(topOf(tall)).toBeLessThan(topOf(short));
+  });
+
+  it('the bulb and the lobe are closed, non-empty subpaths', () => {
+    for (const d of [
+      buildTendrilBulb(DEFAULT_SIGIL_LAB_PARAMS),
+      buildTendrilLoop(DEFAULT_SIGIL_LAB_PARAMS),
+    ]) {
+      expect(subpaths(d).length).toBeGreaterThan(0);
+      expect(d.endsWith('Z')).toBe(true);
+      expect(d).not.toMatch(/NaN|Infinity/);
+    }
   });
 });
 
