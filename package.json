@@ -43,7 +43,7 @@
     "@angular/cli": "^20.3.4",
     "@angular/compiler-cli": "^20.3.0",
     "@angular/router": "^20.3.34",
-    "@daxur-studios/stop-motion-ui": "file:ignore/packages/daxur-studios-stop-motion-ui-0.2.0-c222d8a2.tgz",
+    "@daxur-studios/stop-motion-ui": "file:ignore/packages/daxur-studios-stop-motion-ui-0.2.0-218a6be5.tgz",
     "@playwright/test": "^1.64.1",
     "@types/node": "^22.20.5",
     "browser-image-compression": "^2.0.2",

@@ -57,7 +57,7 @@ Run unit tests headlessly in a single run with watching off:
 
 ## Demo videos
 
-For narrated MP4 UI walkthroughs, read `node_modules/@daxur-studios/stop-motion-ui/skills/adopt-stop-motion-capture/SKILL.md`. The pilot recipe is `demos/buttons.demo.ts`; run `npm run demo:video -- --json`, or append `--narration off` for an explicitly silent demo. See `docs/runbook/10_stop-motion-demos.md` for the local package snapshot and supplied-audio setup.
+For narrated MP4 UI walkthroughs, read `node_modules/@daxur-studios/stop-motion-ui/skills/adopt-stop-motion-capture/SKILL.md`. The pilot recipe is `demos/buttons.demo.ts`; run `npm.cmd run demo:video -- --json` on Windows, or append `--narration off` for an explicitly silent demo. It uses the configured Daxur Gemini speech CLI with Fola and automatic caching; `STOP_MOTION_AUDIO_DIR` optionally overrides with supplied clips. See `docs/runbook/10_stop-motion-demos.md` for the local package snapshot and prerequisites.
 
 In Codex, deliver the returned video with an inline Markdown media embed: `![Button demo](<absolute-path-to-demo.mp4>)`, using its actual absolute path and forward slashes on Windows. The user confirmed phone playback on 2026-11-05. Claude uses its available `SendUserFile` tool. This explicit delivery rule supplements the older installed package skill until its next snapshot; sharing does not establish listening quality or performance.
 
