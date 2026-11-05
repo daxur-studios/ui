@@ -8,6 +8,8 @@ tags: [documentation, runbook, index]
 
 # Runbooks Index
 
+- [10_stop-motion-demos.md](10_stop-motion-demos.md) — [Plan 10](/docs/plans/10_stop-motion-demos.md): package adoption, supplied speech and pilot evidence.
+
 | Runbook                                                                                | Plans                                                                                                          | Description                                                                                                                                                    |
 | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [00_architecture-and-entrypoints.md](00_architecture-and-entrypoints.md)               | [/docs/plans/00_architecture-and-entrypoints.md](/docs/plans/00_architecture-and-entrypoints.md)               | Exploration, findings, and decisions on UI framework independence, entrypoints, and token strategies.                                                          |

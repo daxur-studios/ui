@@ -8,6 +8,8 @@ tags: [documentation, plans, index]
 
 # Plans Index
 
+- [10_stop-motion-demos.md](10_stop-motion-demos.md) — active: installed-package narrated UI demo pilot and remote delivery rehearsal.
+
 | Plan                                                                                   | Status    | Description                                                                                                                                                                                                                   |
 | -------------------------------------------------------------------------------------- | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [00_architecture-and-entrypoints.md](00_architecture-and-entrypoints.md)               | proposed  | Architecture, framework integration boundaries, and multi-entrypoint structure for the UI library.                                                                                                                            |

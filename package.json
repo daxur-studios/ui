@@ -2,6 +2,8 @@
   "name": "daxur-studios-ui-workspace",
   "version": "0.0.0",
   "scripts": {
+    "demo:video": "stop-motion-ui run demos/buttons.demo.ts --out ignore/demo-videos",
+    "demo:video:doctor": "stop-motion-ui doctor --json",
     "ng": "ng",
     "build": "ng build ui",
     "build:ui": "ng build ui --configuration production",
@@ -41,7 +43,9 @@
     "@angular/cli": "^20.3.4",
     "@angular/compiler-cli": "^20.3.0",
     "@angular/router": "^20.3.34",
+    "@daxur-studios/stop-motion-ui": "file:ignore/packages/daxur-studios-stop-motion-ui-0.2.0-c222d8a2.tgz",
     "@playwright/test": "^1.64.1",
+    "@types/node": "^22.20.5",
     "browser-image-compression": "^2.0.2",
     "jsdom": "30.1.1",
     "ng-packagr": "^20.3.0",

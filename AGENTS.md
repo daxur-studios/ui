@@ -55,6 +55,12 @@ Run unit tests headlessly in a single run with watching off:
 - Before repository work, find the relevant plan/runbook pair or decide whether this is standalone work for the monthly work log. Follow [`docs/plans-and-runbooks.md`](docs/plans-and-runbooks.md); choose the record type without asking whether documentation is wanted.
 - Before handing completed repository work back, ensure its record is current and link it in your reply. Do not wait for the user to confirm that the conversation is over. Provider session IDs are optional.
 
+## Demo videos
+
+For narrated MP4 UI walkthroughs, read `node_modules/@daxur-studios/stop-motion-ui/skills/adopt-stop-motion-capture/SKILL.md`. The pilot recipe is `demos/buttons.demo.ts`; run `npm run demo:video -- --json`, or append `--narration off` for an explicitly silent demo. See `docs/runbook/10_stop-motion-demos.md` for the local package snapshot and supplied-audio setup.
+
+In Codex, deliver the returned video with an inline Markdown media embed: `![Button demo](<absolute-path-to-demo.mp4>)`, using its actual absolute path and forward slashes on Windows. The user confirmed phone playback on 2026-11-05. Claude uses its available `SendUserFile` tool. This explicit delivery rule supplements the older installed package skill until its next snapshot; sharing does not establish listening quality or performance.
+
 ## Local package archives
 
 All local `.tgz` files go under `/ignore/packages/`, and `/ignore/` must be gitignored.
