@@ -22,7 +22,7 @@ test('renders three full archetypes and three modular joins with real path data'
 
   for (const archetype of ['winged-star', 'filigree-crest', 'tendril-s-curve']) {
     const silhouette = page.locator(`[data-archetype="${archetype}"] .silhouette`);
-    await expect(silhouette).toHaveAttribute('d', /^M[-\d.]+ [-\d.]+L/);
+    await expect(silhouette).toHaveAttribute('d', /^M[-\d.]+ [-\d.]+[LC]/);
   }
 
   const joinWidths = await page
@@ -72,7 +72,7 @@ test('the seed changes the procedural tendril and restores it when reset', async
   const initialStar = await star.getAttribute('d');
   const silhouette = page.locator('[data-archetype="tendril-s-curve"] .silhouette');
   const initial = await silhouette.getAttribute('d');
-  const seed = page.getByRole('slider', { name: 'Seed (Seeded Growth star and tendril)' });
+  const seed = page.getByRole('slider', { name: 'Seed' });
   await seed.press('ArrowRight');
   await expect.poll(() => silhouette.getAttribute('d')).not.toBe(initial);
   await expect.poll(() => star.getAttribute('d')).not.toBe(initialStar);
@@ -100,10 +100,23 @@ test('pointer glints move the light over a canvas', async ({ page }) => {
   await expect(page.getByTestId('light-position')).not.toHaveText(DEFAULT_LIGHT);
 });
 
-test('shows the concept reference strip with three images when toggled', async ({ page }) => {
+test('shows the concept reference strip with five images when toggled', async ({ page }) => {
   await expect(page.getByTestId('reference-strip')).toHaveCount(0);
   await page.getByTestId('reference-toggle').click();
-  await expect(page.getByTestId('reference-strip').locator('img')).toHaveCount(3);
+  await expect(page.getByTestId('reference-strip').locator('img')).toHaveCount(5);
+});
+
+test('switches to UI Chrome Parts, 6-Seed Matrix, and Live UI Composite modes', async ({ page }) => {
+  await page.getByTestId('mode-ui-parts').click();
+  await expect(page.getByTestId('ui-part-toolbar')).toBeVisible();
+  await expect(page.getByTestId('ui-part-divider')).toBeVisible();
+  await expect(page.getByTestId('ui-part-connector')).toBeVisible();
+
+  await page.getByTestId('mode-seed-matrix').click();
+  await expect(page.getByTestId('seed-matrix').locator('svg')).toHaveCount(6);
+
+  await page.getByTestId('mode-ui-composite').click();
+  await expect(page.getByTestId('ui-composite')).toBeVisible();
 });
 
 test.describe('reduced motion', () => {

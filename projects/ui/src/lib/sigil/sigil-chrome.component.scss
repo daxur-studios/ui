@@ -37,6 +37,13 @@
   --sigil-bloom: var(--_ui-sigil-anodized-bloom);
 }
 
+[data-material='pearl'] {
+  --sigil-body: var(--_ui-sigil-pearl-body);
+  --sigil-light: var(--_ui-sigil-pearl-light);
+  --sigil-rim: var(--_ui-sigil-pearl-rim);
+  --sigil-bloom: var(--_ui-sigil-pearl-bloom);
+}
+
 // Filter primitives take their colours from CSS properties, so no hex or rgba literal is needed here.
 .sigil-light {
   lighting-color: var(--sigil-light);

@@ -15,7 +15,9 @@
       height="120%"
       color-interpolation-filters="sRGB"
     >
-      <feGaussianBlur in="SourceAlpha" [attr.stdDeviation]="heightmapBlur()" result="heightmap" />
+      <feGaussianBlur in="SourceAlpha" [attr.stdDeviation]="heightmapBlur()" result="broadBlur" />
+      <feGaussianBlur in="SourceAlpha" stdDeviation="1.1" result="sharpBlur" />
+      <feBlend in="broadBlur" in2="sharpBlur" mode="lighten" result="heightmap" />
       <feSpecularLighting
         in="heightmap"
         class="sigil-light"

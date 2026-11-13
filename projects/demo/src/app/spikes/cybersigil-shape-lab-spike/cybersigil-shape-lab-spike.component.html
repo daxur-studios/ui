@@ -7,94 +7,289 @@
   [lightY]="lightY()"
 />
 
-<section class="stage" data-spike-stage [attr.data-spike-ready]="ready() ? 'true' : null">
+<section
+  class="stage"
+  data-spike-stage
+  [attr.data-spike-ready]="ready() ? 'true' : null"
+  [class.pearl-surface]="pearlBackdrop()"
+>
   <header>
-    <p class="eyebrow">UI LAB / PLAN 09 · SPIKE 09A</p>
-    <h1>Cybersigil Shape &amp; Chrome Lab</h1>
+    <p class="eyebrow">UI LAB / PLAN 09 · SPIKE 09A (V2 TOPOLOGICAL SDF)</p>
+    <h1>Cybersigil Shape &amp; UI Chrome Lab</h1>
     <p class="description">
-      Compare procedural and art-directed geometry, shaded by a shared liquid-chrome SVG filter.
+      Seeded topological venation graphs + smooth-union SDF contours, shaded by a dual-slope liquid-chrome filter.
     </p>
   </header>
 
-  <div class="archetypes" aria-label="Procedural archetypes">
-    <figure class="canvas-card">
-      <figcaption>1 · Winged star</figcaption>
-      <svg
-        class="canvas"
-        role="img"
-        aria-label="Winged star archetype"
-        data-testid="sigil-canvas"
-        data-archetype="winged-star"
-        [attr.viewBox]="'0 0 ' + winged().width + ' ' + winged().height"
-        (pointermove)="onCanvasPointer($event, winged().width, winged().height)"
-        (pointerleave)="onCanvasLeave()"
-      >
-        <g [attr.filter]="bloomFilter()">
-          <path class="silhouette" [attr.d]="winged().d" [attr.filter]="chromeFilter()" />
-        </g>
-      </svg>
-    </figure>
+  @switch (mode()) {
+    @case ('archetypes') {
+      <div class="archetypes" aria-label="Procedural archetypes">
+        <figure class="canvas-card">
+          <figcaption>1 · Winged star (seed {{ seed() }})</figcaption>
+          <svg
+            class="canvas"
+            role="img"
+            aria-label="Winged star archetype"
+            data-testid="sigil-canvas"
+            data-archetype="winged-star"
+            [attr.viewBox]="'0 0 ' + winged().width + ' ' + winged().height"
+            (pointermove)="onCanvasPointer($event, winged().width, winged().height)"
+            (pointerleave)="onCanvasLeave()"
+          >
+            <g [attr.filter]="bloomFilter()">
+              <path class="silhouette" [attr.d]="winged().d" [attr.filter]="chromeFilter()" />
+            </g>
+          </svg>
+        </figure>
 
-    <figure class="canvas-card">
-      <figcaption>2 · Filigree crest</figcaption>
-      <svg
-        class="canvas"
-        role="img"
-        aria-label="Filigree crest archetype"
-        data-testid="sigil-canvas"
-        data-archetype="filigree-crest"
-        [attr.viewBox]="'0 0 ' + crest().width + ' ' + crest().height"
-        (pointermove)="onCanvasPointer($event, crest().width, crest().height)"
-        (pointerleave)="onCanvasLeave()"
-      >
-        <path class="silhouette" [attr.d]="crest().d" [attr.filter]="chromeFilter()" />
-      </svg>
-    </figure>
+        <figure class="canvas-card">
+          <figcaption>2 · Filigree crest (seed {{ seed() }})</figcaption>
+          <svg
+            class="canvas"
+            role="img"
+            aria-label="Filigree crest archetype"
+            data-testid="sigil-canvas"
+            data-archetype="filigree-crest"
+            [attr.viewBox]="'0 0 ' + crest().width + ' ' + crest().height"
+            (pointermove)="onCanvasPointer($event, crest().width, crest().height)"
+            (pointerleave)="onCanvasLeave()"
+          >
+            <path class="silhouette" [attr.d]="crest().d" [attr.filter]="chromeFilter()" />
+          </svg>
+        </figure>
 
-    <figure class="canvas-card">
-      <figcaption>3 · S-curve tendril</figcaption>
-      <svg
-        class="canvas"
-        role="img"
-        aria-label="S-curve tendril archetype"
-        data-testid="sigil-canvas"
-        data-archetype="tendril-s-curve"
-        [attr.viewBox]="'0 0 ' + tendril().width + ' ' + tendril().height"
-        (pointermove)="onCanvasPointer($event, tendril().width, tendril().height)"
-        (pointerleave)="onCanvasLeave()"
-      >
-        <path class="silhouette" [attr.d]="tendril().d" [attr.filter]="chromeFilter()" />
-      </svg>
-    </figure>
-  </div>
+        <figure class="canvas-card">
+          <figcaption>3 · S-curve tendril (seed {{ seed() }})</figcaption>
+          <svg
+            class="canvas"
+            role="img"
+            aria-label="S-curve tendril archetype"
+            data-testid="sigil-canvas"
+            data-archetype="tendril-s-curve"
+            [attr.viewBox]="'0 0 ' + tendril().width + ' ' + tendril().height"
+            (pointermove)="onCanvasPointer($event, tendril().width, tendril().height)"
+            (pointerleave)="onCanvasLeave()"
+          >
+            <path class="silhouette" [attr.d]="tendril().d" [attr.filter]="chromeFilter()" />
+          </svg>
+        </figure>
+      </div>
 
-  <div class="joins" aria-label="Modular UI join at three widths">
-    @for (join of joins(); track join.width) {
-      <figure class="canvas-card">
-        <figcaption>4 · Modular join, rail {{ join.width }}</figcaption>
-        <svg
-          class="canvas join"
-          role="img"
-          [attr.aria-label]="'Modular join at width ' + join.width"
-          [style.width.%]="joinPercent(join.width)"
-          data-testid="sigil-canvas"
-          data-archetype="modular-ui-join"
-          [attr.data-width]="join.width"
-          [attr.viewBox]="'0 0 ' + join.width + ' ' + join.height"
-          (pointermove)="onCanvasPointer($event, join.width, join.height)"
-          (pointerleave)="onCanvasLeave()"
-        >
-          <path class="silhouette" [attr.d]="join.d" [attr.filter]="chromeFilter()" />
-        </svg>
-      </figure>
+      <div class="joins" aria-label="Modular UI join at three widths">
+        @for (join of joins(); track join.width) {
+          <figure class="canvas-card">
+            <figcaption>4 · Modular join, rail {{ join.width }}</figcaption>
+            <svg
+              class="canvas join"
+              role="img"
+              [attr.aria-label]="'Modular join at width ' + join.width"
+              [style.width.%]="joinPercent(join.width)"
+              data-testid="sigil-canvas"
+              data-archetype="modular-ui-join"
+              [attr.data-width]="join.width"
+              [attr.viewBox]="'0 0 ' + join.width + ' ' + join.height"
+              (pointermove)="onCanvasPointer($event, join.width, join.height)"
+              (pointerleave)="onCanvasLeave()"
+            >
+              <path class="silhouette" [attr.d]="join.d" [attr.filter]="chromeFilter()" />
+            </svg>
+          </figure>
+        }
+      </div>
     }
-  </div>
+
+    @case ('ui-parts') {
+      <div class="ui-parts-grid" aria-label="Architectural UI Chrome Parts">
+        <figure class="canvas-card wide">
+          <figcaption>Toolbar Crown · Medallion Cradle &amp; Flanking Rib Pockets</figcaption>
+          <svg
+            class="canvas"
+            role="img"
+            aria-label="Toolbar crown"
+            data-testid="ui-part-toolbar"
+            [attr.viewBox]="'0 0 ' + toolbarCrown().width + ' ' + toolbarCrown().height"
+            (pointermove)="onCanvasPointer($event, toolbarCrown().width, toolbarCrown().height)"
+            (pointerleave)="onCanvasLeave()"
+          >
+            <path class="pocket-glass" [attr.d]="toolbarCrown().pocketD" />
+            <path class="silhouette" [attr.d]="toolbarCrown().d" [attr.filter]="chromeFilter()" />
+          </svg>
+        </figure>
+
+        <figure class="canvas-card">
+          <figcaption>4-Corner Spandrels (TL / TR / BL / BR)</figcaption>
+          <div class="corners-quad">
+            @for (corner of [cornerTl(), cornerTr(), cornerBl(), cornerBr()]; track $index) {
+              <svg
+                class="canvas"
+                role="img"
+                [attr.aria-label]="'Corner spandrel ' + $index"
+                data-testid="ui-part-corner"
+                [attr.viewBox]="'0 0 ' + corner.width + ' ' + corner.height"
+              >
+                <path class="pocket-glass" [attr.d]="corner.pocketD" />
+                <path class="silhouette" [attr.d]="corner.d" [attr.filter]="chromeFilter()" />
+              </svg>
+            }
+          </div>
+        </figure>
+
+        <figure class="canvas-card">
+          <figcaption>Dendritic Connector (1 → {{ connectorRows() }} rows)</figcaption>
+          <svg
+            class="canvas"
+            role="img"
+            aria-label="Branching rail-to-card connector"
+            data-testid="ui-part-connector"
+            [attr.viewBox]="'0 0 ' + branchingConnector().width + ' ' + branchingConnector().height"
+          >
+            <path class="silhouette" [attr.d]="branchingConnector().d" [attr.filter]="chromeFilter()" />
+          </svg>
+        </figure>
+
+        <figure class="canvas-card wide">
+          <figcaption>Waist Section Divider · Central Node &amp; 4 Spandrel Pockets</figcaption>
+          <svg
+            class="canvas"
+            role="img"
+            aria-label="Waist divider"
+            data-testid="ui-part-divider"
+            [attr.viewBox]="'0 0 ' + waistDivider().width + ' ' + waistDivider().height"
+          >
+            <path class="pocket-glass" [attr.d]="waistDivider().pocketD" />
+            <path class="silhouette" [attr.d]="waistDivider().d" [attr.filter]="chromeFilter()" />
+          </svg>
+        </figure>
+
+        <figure class="canvas-card wide">
+          <figcaption>Calyx Pill / Input Frame</figcaption>
+          <svg
+            class="canvas"
+            role="img"
+            aria-label="Calyx pill frame"
+            data-testid="ui-part-calyx"
+            [attr.viewBox]="'0 0 ' + calyxFrame().width + ' ' + calyxFrame().height"
+          >
+            <path class="pocket-glass" [attr.d]="calyxFrame().pocketD" />
+            <path class="silhouette" [attr.d]="calyxFrame().d" [attr.filter]="chromeFilter()" />
+          </svg>
+        </figure>
+      </div>
+    }
+
+    @case ('seed-matrix') {
+      <div class="seed-matrix-grid" aria-label="6-Seed Uniqueness Matrix" data-testid="seed-matrix">
+        @for (item of matrixItems(); track item.seed) {
+          <figure class="canvas-card">
+            <figcaption>{{ matrixPart() }} · seed {{ item.seed }} ({{ item.pocketCount }} pockets)</figcaption>
+            <svg
+              class="canvas"
+              role="img"
+              [attr.aria-label]="matrixPart() + ' seed ' + item.seed"
+              [attr.viewBox]="'0 0 ' + item.width + ' ' + item.height"
+            >
+              <path class="pocket-glass" [attr.d]="item.pocketD" />
+              <path class="silhouette" [attr.d]="item.d" [attr.filter]="chromeFilter()" />
+            </svg>
+          </figure>
+        }
+      </div>
+    }
+
+    @case ('ui-composite') {
+      <div class="composite-window" data-testid="ui-composite" aria-label="Cybersigil UI Window Preview">
+        <div class="composite-header">
+          <svg
+            class="composite-toolbar-svg"
+            [attr.viewBox]="'0 0 ' + toolbarCrown().width + ' ' + toolbarCrown().height"
+            preserveAspectRatio="none"
+          >
+            <path class="pocket-glass" [attr.d]="toolbarCrown().pocketD" />
+            <path class="silhouette" [attr.d]="toolbarCrown().d" [attr.filter]="chromeFilter()" />
+          </svg>
+          <span class="composite-emblem" aria-hidden="true">Æ</span>
+        </div>
+
+        <div class="composite-body">
+          <svg
+            class="composite-connector-svg"
+            [attr.viewBox]="'0 0 ' + branchingConnector().width + ' ' + branchingConnector().height"
+          >
+            <path class="silhouette" [attr.d]="branchingConnector().d" [attr.filter]="chromeFilter()" />
+          </svg>
+          <div class="composite-cards">
+            <div class="composite-card">
+              <strong>Bruno's Æ</strong>
+              <span>Codex · 17 minutes ago</span>
+            </div>
+            <div class="composite-card">
+              <strong>Triangular</strong>
+              <span>Claude Code · 13 minutes ago</span>
+            </div>
+            <div class="composite-card">
+              <strong>Library adoption</strong>
+              <span>Antigravity · 4 minutes ago</span>
+            </div>
+          </div>
+        </div>
+
+        <svg
+          class="composite-divider-svg"
+          [attr.viewBox]="'0 0 ' + waistDivider().width + ' ' + waistDivider().height"
+          preserveAspectRatio="none"
+        >
+          <path class="pocket-glass" [attr.d]="waistDivider().pocketD" />
+          <path class="silhouette" [attr.d]="waistDivider().d" [attr.filter]="chromeFilter()" />
+        </svg>
+      </div>
+    }
+  }
 </section>
 
 <div class="lab-controls">
+  <div class="mode-bar" role="tablist" aria-label="Workbench mode">
+    <ui--button
+      label="1 · Archetypes"
+      data-testid="mode-archetypes"
+      (triggered)="mode.set('archetypes')"
+    />
+    <ui--button
+      label="2 · UI Chrome Parts"
+      data-testid="mode-ui-parts"
+      (triggered)="mode.set('ui-parts')"
+    />
+    <ui--button
+      label="3 · 6-Seed Matrix"
+      data-testid="mode-seed-matrix"
+      (triggered)="mode.set('seed-matrix')"
+    />
+    <ui--button
+      label="4 · Live UI Composite"
+      data-testid="mode-ui-composite"
+      (triggered)="mode.set('ui-composite')"
+    />
+  </div>
+
   <div class="panels">
-    <section class="panel" aria-label="Strategy">
-      <h2>Strategy</h2>
+    <section class="panel" aria-label="Strategy & Matrix">
+      <h2>Strategy &amp; Matrix</h2>
+      @if (mode() === 'seed-matrix') {
+        <label class="strategy-row">
+          <span>Matrix part</span>
+          <select
+            data-testid="matrix-part-select"
+            (change)="matrixPart.set($any(eventValue($event)))"
+          >
+            <option value="winged-star" [selected]="matrixPart() === 'winged-star'">Winged star</option>
+            <option value="filigree-crest" [selected]="matrixPart() === 'filigree-crest'">Filigree crest</option>
+            <option value="tendril" [selected]="matrixPart() === 'tendril'">S-curve tendril</option>
+            <option value="toolbar" [selected]="matrixPart() === 'toolbar'">Toolbar crown</option>
+            <option value="corner" [selected]="matrixPart() === 'corner'">Corner spandrel</option>
+            <option value="divider" [selected]="matrixPart() === 'divider'">Waist divider</option>
+            <option value="connector" [selected]="matrixPart() === 'connector'">Branching connector</option>
+          </select>
+        </label>
+      }
       <label class="strategy-row">
         <span>All archetypes</span>
         <select data-testid="strategy-all" (change)="selectAllStrategies(eventValue($event))">
@@ -128,11 +323,19 @@
     <section class="panel" aria-label="Geometry">
       <h2>Geometry</h2>
       <ui--slider
-        label="Seed (Seeded Growth star and tendril)"
+        label="Seed"
         [value]="seed()"
         (valueChange)="seed.set($event)"
         [min]="0"
         [max]="999"
+        [step]="1"
+      />
+      <ui--slider
+        label="Connector rows"
+        [value]="connectorRows()"
+        (valueChange)="connectorRows.set($event)"
+        [min]="2"
+        [max]="5"
         [step]="1"
       />
       <ui--slider
@@ -225,6 +428,11 @@
           (triggered)="selectMaterial('mercury')"
         />
         <ui--button
+          label="Pearl"
+          data-testid="material-pearl"
+          (triggered)="selectMaterial('pearl')"
+        />
+        <ui--button
           label="Bronze"
           data-testid="material-bronze"
           (triggered)="selectMaterial('bronze')"
@@ -273,15 +481,10 @@
   }
 
   <p class="telemetry" aria-label="Lab telemetry">
-    <span
-      >Material <strong data-testid="active-material">{{ material() }}</strong></span
-    >
-    <span
-      >Thorns <strong data-testid="thorn-count">{{ geometry().thornCount }}</strong></span
-    >
-    <span>
-      Light <strong data-testid="light-position">{{ lightX() }}, {{ lightY() }}</strong>
-    </span>
+    <span>Material <strong data-testid="active-material">{{ material() }}</strong></span>
+    <span>Seed <strong data-testid="active-seed">{{ seed() }}</strong></span>
+    <span>Thorns <strong data-testid="thorn-count">{{ geometry().thornCount }}</strong></span>
+    <span>Light <strong data-testid="light-position">{{ lightX() }}, {{ lightY() }}</strong></span>
   </p>
   <p class="hint">Hover a canvas to move the light. Reduced motion holds it still.</p>
 </div>

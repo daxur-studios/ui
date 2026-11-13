@@ -11,6 +11,7 @@ import { SIGIL_CHITIN_FILIGREE_STRATEGY } from './sigil-strategy-chitin-filigree
 import { SIGIL_ORBITAL_LACE_STRATEGY } from './sigil-strategy-orbital-lace';
 import { SIGIL_SCULPTED_WEB_STRATEGY } from './sigil-strategy-sculpted-web';
 import { SIGIL_SEEDED_GROWTH_STRATEGY } from './sigil-strategy-seeded-growth';
+import { SIGIL_TOPOLOGICAL_SDF_STRATEGY } from './sigil-strategy-topological-sdf';
 
 /**
  * One geometry composer per archetype slot. A competing strategy supplies its own functions and may
@@ -46,6 +47,7 @@ export const SIGIL_BASELINE_STRATEGY: ISigilStrategy = {
 
 /** Every strategy the lab offers. Competing agents add their entries here. */
 export const SIGIL_STRATEGIES: readonly ISigilStrategy[] = [
+  SIGIL_TOPOLOGICAL_SDF_STRATEGY,
   SIGIL_BASELINE_STRATEGY,
   SIGIL_CHITIN_FILIGREE_STRATEGY,
   SIGIL_ORBITAL_LACE_STRATEGY,

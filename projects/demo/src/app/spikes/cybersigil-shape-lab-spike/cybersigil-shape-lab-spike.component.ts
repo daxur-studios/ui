@@ -7,6 +7,14 @@ import {
 } from '@angular/core';
 import {
   ButtonComponent,
+  composeBranchingConnector,
+  composeCalyxFrame,
+  composeCornerSpandrel,
+  composeToolbarCrown,
+  composeTopologicalFiligreeCrest,
+  composeTopologicalTendril,
+  composeTopologicalWingedStar,
+  composeWaistDivider,
   DEFAULT_SIGIL_LAB_PARAMS,
   SIGIL_BASELINE_STRATEGY,
   SIGIL_DEFAULT_HEIGHTMAP_BLUR,
@@ -17,10 +25,12 @@ import {
   SIGIL_LIQUID_CHROME_FILTER_ID,
   SIGIL_STAR_BLOOM_FILTER_ID,
   SIGIL_STRATEGIES,
+  SIGIL_TOPOLOGICAL_SDF_STRATEGY,
   SigilChromeComponent,
   SigilMaterial,
   SliderComponent,
   type ISigilLabParams,
+  type ISigilRichGeometry,
   type ISigilStrategy,
   type SigilStrategySlot,
 } from '@daxur-studios/ui';
@@ -28,8 +38,11 @@ import {
 /** Slider readings are whole percentages, so the unit-interval knobs are divided by this value. */
 const PERCENT_SCALE = 100;
 
-/** First deterministic variation of the seeded prototype. */
-const DEFAULT_SEED = 0;
+/** First deterministic variation of the seeded generator. */
+const DEFAULT_SEED = 1;
+
+/** Number of seeds shown simultaneously in the Seed Matrix Gallery. */
+const MATRIX_SEED_COUNT = 6;
 
 /** Initial geometry knob readings in percent, mirroring `DEFAULT_SIGIL_LAB_PARAMS`. */
 const INITIAL_CURVATURE = DEFAULT_SIGIL_LAB_PARAMS.curvature * PERCENT_SCALE;
@@ -53,12 +66,27 @@ const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
 /** Folder of the concept art, served from `public/`. */
 const CONCEPT_DIR = '/concept/cybersigillism/';
 
-/** Concept references shown in the comparison strip, one per archetype. */
+/** Concept references shown in the comparison strip. */
 const REFERENCES = [
   { file: 'cycbersigil-concept (6).jpg', label: 'Favourite #1 · winged star (6)' },
   { file: 'cycbersigil-concept (7).jpg', label: 'Favourite #2 · filigree crest (7)' },
   { file: 'cycbersigil-concept (1).jpg', label: 'Favourite #3 · S-curve tendril (1)' },
+  { file: 'cyber (1).jpg', label: 'UI Chrome · desktop toolbar & connectors' },
+  { file: 'cyber (3).jpg', label: 'UI Chrome · waist divider & spandrels' },
 ] as const;
+
+/** Workbench inspection modes. */
+export type SigilLabMode = 'archetypes' | 'ui-parts' | 'seed-matrix' | 'ui-composite';
+
+/** Part keys available in the Seed Matrix Gallery. */
+export type SigilMatrixPart =
+  | 'winged-star'
+  | 'filigree-crest'
+  | 'tendril'
+  | 'toolbar'
+  | 'corner'
+  | 'divider'
+  | 'connector';
 
 /** Geometry knobs as the sliders show them. Unit-interval fields are whole percentages. */
 interface ISigilLabControls {
@@ -71,9 +99,12 @@ interface ISigilLabControls {
 }
 
 /**
- * Spike 09a: a procedural cybersigil workbench. The three full archetypes are composed from
- * `sigil-math.ts` and shaded by the `ui--sigil-chrome` lighting filter. Sliders and buttons are the
- * library's own controls, so the page dogfoods the components it tests.
+ * Spike 09a: Procedural Cybersigil & UI Chrome Workbench.
+ * Supports inspecting:
+ * 1. Ornamental Archetypes (Winged Star, Filigree Crest, S-Curve Tendril, Modular Join)
+ * 2. Architectural UI Chrome Parts (Toolbar Crown, 4-Corner Spandrels, Waist Divider, Branching Connector, Calyx Pill)
+ * 3. 6-Seed Uniqueness Matrix (verifying genuine topological diversity across seeds)
+ * 4. Live Cybersigil UI Window Composite (mirroring `cyber (1).jpg` & `cyber (3).jpg`)
  */
 @Component({
   selector: 'app-cybersigil-shape-lab-spike',
@@ -87,6 +118,10 @@ export class CybersigilShapeLabSpikeComponent {
   protected readonly references = REFERENCES;
   protected readonly joinWidths = JOIN_WIDTHS;
   protected readonly seed = signal(DEFAULT_SEED);
+  protected readonly mode = signal<SigilLabMode>('archetypes');
+  protected readonly matrixPart = signal<SigilMatrixPart>('winged-star');
+  protected readonly connectorRows = signal(3);
+  protected readonly pearlBackdrop = signal(false);
 
   protected readonly geometry = signal<ISigilLabControls>({
     curvature: INITIAL_CURVATURE,
@@ -123,12 +158,12 @@ export class CybersigilShapeLabSpikeComponent {
     };
   });
 
-  /** Strategy id chosen for each archetype slot. Every slot starts on the baseline. */
+  /** Strategy id chosen for each archetype slot. Defaults to the v2 Topological SDF engine. */
   protected readonly picks = signal<Record<SigilStrategySlot, string>>({
-    star: SIGIL_BASELINE_STRATEGY.id,
-    crest: SIGIL_BASELINE_STRATEGY.id,
-    tendril: SIGIL_BASELINE_STRATEGY.id,
-    join: SIGIL_BASELINE_STRATEGY.id,
+    star: SIGIL_TOPOLOGICAL_SDF_STRATEGY.id,
+    crest: SIGIL_TOPOLOGICAL_SDF_STRATEGY.id,
+    tendril: SIGIL_TOPOLOGICAL_SDF_STRATEGY.id,
+    join: SIGIL_TOPOLOGICAL_SDF_STRATEGY.id,
   });
 
   /** Every registered strategy, offered by each select. */
@@ -155,6 +190,70 @@ export class CybersigilShapeLabSpikeComponent {
   protected readonly joins = computed(() =>
     JOIN_WIDTHS.map((width) => this.resolve('join').join(this.params(), width)),
   );
+
+  /** Architectural UI Chrome parts. */
+  protected readonly toolbarCrown = computed(() =>
+    composeToolbarCrown(this.params(), this.seed()),
+  );
+  protected readonly cornerTl = computed(() =>
+    composeCornerSpandrel(this.params(), this.seed(), 120, 'tl'),
+  );
+  protected readonly cornerTr = computed(() =>
+    composeCornerSpandrel(this.params(), this.seed(), 120, 'tr'),
+  );
+  protected readonly cornerBl = computed(() =>
+    composeCornerSpandrel(this.params(), this.seed(), 120, 'bl'),
+  );
+  protected readonly cornerBr = computed(() =>
+    composeCornerSpandrel(this.params(), this.seed(), 120, 'br'),
+  );
+  protected readonly waistDivider = computed(() =>
+    composeWaistDivider(this.params(), this.seed()),
+  );
+  protected readonly branchingConnector = computed(() => {
+    const count = this.connectorRows();
+    const ys: number[] = [];
+    for (let i = 0; i < count; i++) {
+      ys.push(36 + (i * 168) / Math.max(1, count - 1));
+    }
+    return composeBranchingConnector(this.params(), this.seed(), ys);
+  });
+  protected readonly calyxFrame = computed(() => composeCalyxFrame(this.params(), this.seed()));
+
+  /** 6-Seed Matrix items for the selected `matrixPart`. */
+  protected readonly matrixItems = computed<readonly (ISigilRichGeometry & { seed: number })[]>(() => {
+    const baseSeed = this.seed();
+    const p = this.params();
+    const part = this.matrixPart();
+    const items: (ISigilRichGeometry & { seed: number })[] = [];
+    for (let offset = 0; offset < MATRIX_SEED_COUNT; offset++) {
+      const s = baseSeed + offset;
+      switch (part) {
+        case 'winged-star':
+          items.push(composeTopologicalWingedStar(p, s));
+          break;
+        case 'filigree-crest':
+          items.push(composeTopologicalFiligreeCrest(p, s));
+          break;
+        case 'tendril':
+          items.push(composeTopologicalTendril(p, s));
+          break;
+        case 'toolbar':
+          items.push(composeToolbarCrown(p, s));
+          break;
+        case 'corner':
+          items.push(composeCornerSpandrel(p, s, 120, 'tl'));
+          break;
+        case 'divider':
+          items.push(composeWaistDivider(p, s));
+          break;
+        case 'connector':
+          items.push(composeBranchingConnector(p, s, [40, 120, 200]));
+          break;
+      }
+    }
+    return items;
+  });
 
   /** Share of the card a join occupies, as a percentage. Equal scale across widths keeps the caps the same size. */
   protected joinPercent(width: number): number {
@@ -206,6 +305,7 @@ export class CybersigilShapeLabSpikeComponent {
   protected selectMaterial(material: SigilMaterial): void {
     this.material.set(material);
     if (material !== 'flat') this.lastChromeMaterial.set(material);
+    this.pearlBackdrop.set(material === 'pearl');
   }
 
   /** Turns the 3D chrome filter on (restoring the last metal) or off (flat silhouette). */

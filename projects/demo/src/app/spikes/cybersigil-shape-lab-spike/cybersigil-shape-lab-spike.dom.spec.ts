@@ -10,7 +10,7 @@ const CHROME_FILTER = 'url(#sigil-liquid-chrome)';
 const CANVAS_COUNT = 6;
 
 /** Number of concept references in the comparison strip. */
-const REFERENCE_COUNT = 3;
+const REFERENCE_COUNT = 5;
 
 describe('CybersigilShapeLabSpikeComponent', () => {
   let fixture: ComponentFixture<CybersigilShapeLabSpikeComponent>;

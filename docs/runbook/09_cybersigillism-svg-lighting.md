@@ -155,3 +155,13 @@ tags:
 - **[action]** Added seeded wing spines, hollow star, reconnecting veins and crescent-joined barbs to the star. Some tendril seeds now add a crossing vein. The seed slider applies to both; crest and join remain baseline.
 - **[verification]** `npm test`: 145 passed, including deterministic star variation, independent control changes and finite paths across 100 seeds at extreme settings. `npm run test:dom`: 60 passed with existing jsdom `ResizeObserver` errors. `npm run build:ui` and `npx ng build demo` passed with existing stylesheet budget warnings. Nine Chromium lab tests passed on a fresh server, including seed changes and restoration for both shapes.
 - **[open]** Visual quality and clipping across seeds and intermediate knob values still need owner review; the tendril retains two fixed main loops, with an optional crossing vein, and the star retains a fixed two-wing structure. Crest and join do not yet respond to seed.
+
+## 2026-11-12
+
+### antigravity — v2 Architecture Pivot: Seeded Topological Venation Graph + Implicit SDF Smooth-Union
+
+- **[decision]** Owner approved the v2 Cybersigillism procedural engine plan (`implementation_plan.md`) to replace polygon-stamping ("thorns on a line") and fixed-coordinate jitter ("skewing the same shape") with:
+  1. **Seeded Topological Grammar (`sigil-rng.ts`, `sigil-grammar.ts`):** Deterministic per-seed discrete motif selection (bifurcation with Murray's-law thickness conservation, anastomosis split-and-rejoin loops forming negative-space teardrop pockets, opposing calliper claws, crossed anchors, and dendritic 1-to-N manifolds) with clearance validation.
+  2. **2D Implicit Signed Distance Field + Smooth-Min (`sigil-sdf.ts`):** Evaluates variable-radius cubic Bezier capsules and star/spear primitives via polynomial `smin` on an accelerated grid, extracting cubic-Bezier-fitted outer silhouettes (`d`), inner medial-ridge bevel contours (`ridgeD`), and enclosed pocket glass masks (`pocketD`).
+  3. **Architectural UI Chrome Parts (`sigil-ui-parts.ts`) & `pearl` Material:** Dedicated procedural generators for Top Toolbars / Header Crowns, 4-Corner Spandrels, Waist Dividers, Dendritic Rail-to-Card Connectors, and Calyx Pill Frames, plus a `pearl` liquid-silver + lavender pocket glass preset matching `cyber (1)-(3).jpg`.
+- **[action]** Starting Phase 1: building `sigil-rng.ts`, `sigil-sdf.ts`, `sigil-grammar.ts`, and unit tests (`sigil-sdf.spec.ts`, `sigil-grammar.spec.ts`).

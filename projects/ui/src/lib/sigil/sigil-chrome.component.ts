@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 /**
- * Metallic preset for the chrome filter. `mercury`, `bronze` and `anodized` pick a palette from the
- * `--ui-sigil-*` tokens. `flat` selects the palette too, but consumers that honour it skip the filter
- * and show the raw silhouette.
+ * Metallic preset for the chrome filter. `mercury`, `bronze`, `anodized`, and `pearl` pick a
+ * palette from the `--ui-sigil-*` tokens. `flat` selects the palette too, but consumers that
+ * honour it skip the filter and show the raw silhouette.
  */
-export type SigilMaterial = 'mercury' | 'bronze' | 'anodized' | 'flat';
+export type SigilMaterial = 'mercury' | 'bronze' | 'anodized' | 'pearl' | 'flat';
 
 /** DOM id of the liquid-chrome filter. Render `ui--sigil-chrome` once per document so the id stays unique. */
 export const SIGIL_LIQUID_CHROME_FILTER_ID = 'sigil-liquid-chrome';
@@ -29,13 +29,13 @@ export const SIGIL_DEFAULT_SPECULAR_EXPONENT = 20;
 export const SIGIL_SPECULAR_CONSTANT = 1.2;
 
 /** X position of the static point light, in user units. Used when no pointer is tracking. */
-export const SIGIL_DEFAULT_LIGHT_X = 120;
+export const SIGIL_DEFAULT_LIGHT_X = 240;
 
 /** Y position of the static point light, in user units. */
-export const SIGIL_DEFAULT_LIGHT_Y = 40;
+export const SIGIL_DEFAULT_LIGHT_Y = 30;
 
 /** Height of the static point light above the canvas, in user units. */
-export const SIGIL_DEFAULT_LIGHT_Z = 160;
+export const SIGIL_DEFAULT_LIGHT_Z = 280;
 
 /** Radius in user units of the erode step that carves the rim band off the silhouette edge. */
 export const SIGIL_DEFAULT_RIM_WIDTH = 1;
