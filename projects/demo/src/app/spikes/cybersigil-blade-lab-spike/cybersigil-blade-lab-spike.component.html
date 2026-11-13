@@ -1,0 +1,114 @@
+<section class="stage" data-testid="blade-lab">
+  <!-- Banded chrome: diffuse shading pushed through a non-monotonic table fakes environment
+       reflections (dark valleys, bright creases); specular adds the hot glints. -->
+  <svg class="defs" aria-hidden="true" focusable="false" width="0" height="0">
+    <defs>
+      <filter
+        id="blade-chrome"
+        x="-5%"
+        y="-5%"
+        width="110%"
+        height="110%"
+        color-interpolation-filters="sRGB"
+      >
+        <feGaussianBlur in="SourceAlpha" stdDeviation="0.7" result="fine" />
+        <feGaussianBlur in="SourceAlpha" stdDeviation="2.4" result="broad" />
+        <feComposite
+          in="fine"
+          in2="broad"
+          operator="arithmetic"
+          k1="0"
+          k2="0.55"
+          k3="0.45"
+          k4="0"
+          result="height"
+        />
+        <feDiffuseLighting
+          in="height"
+          class="light"
+          surfaceScale="7"
+          diffuseConstant="1.1"
+          result="shade"
+        >
+          <feDistantLight azimuth="235" elevation="38" />
+        </feDiffuseLighting>
+        <feComponentTransfer in="shade" result="bands">
+          <feFuncR type="table" tableValues="0.04 0.55 0.12 0.92 0.35 1 0.6" />
+          <feFuncG type="table" tableValues="0.04 0.55 0.12 0.92 0.35 1 0.6" />
+          <feFuncB type="table" tableValues="0.05 0.6 0.14 0.95 0.4 1 0.65" />
+        </feComponentTransfer>
+        <feFlood class="tint" result="tintColor" />
+        <feBlend in="bands" in2="tintColor" mode="multiply" result="tinted" />
+        <feSpecularLighting
+          in="height"
+          class="light"
+          surfaceScale="7"
+          specularConstant="1.2"
+          specularExponent="34"
+          result="spec"
+        >
+          <feDistantLight azimuth="250" elevation="55" />
+        </feSpecularLighting>
+        <feComposite
+          in="tinted"
+          in2="spec"
+          operator="arithmetic"
+          k1="0"
+          k2="1"
+          k3="0.85"
+          k4="0"
+          result="lit"
+        />
+        <feComposite in="lit" in2="SourceAlpha" operator="in" />
+      </filter>
+    </defs>
+  </svg>
+
+  <header class="toolbar">
+    <h1>Blade lab · seeds {{ firstSeed() }}–{{ lastSeed() }}</h1>
+    <div class="controls">
+      <button type="button" (click)="previousPage()" [disabled]="page() === 0" data-testid="prev">
+        Prev 24
+      </button>
+      <button type="button" (click)="nextPage()" data-testid="next">Next 24</button>
+      <span class="sep"></span>
+      @for (l of layouts; track l) {
+        <button type="button" [class.active]="layout() === l" (click)="layout.set(l)">
+          {{ l }}
+        </button>
+      }
+      <span class="sep"></span>
+      @for (m of modes; track m) {
+        <button type="button" [class.active]="mode() === m" (click)="mode.set(m)">{{ m }}</button>
+      }
+      <span class="sep"></span>
+      <button type="button" (click)="lighter()">−</button>
+      <span class="readout">weight {{ weight() }}</span>
+      <button type="button" (click)="heavier()">+</button>
+    </div>
+  </header>
+
+  <div class="sheet" [attr.data-mode]="mode()">
+    @for (cell of cells(); track cell.seed) {
+      <figure class="cell" data-testid="blade-cell">
+        <svg
+          [attr.viewBox]="cell.sigil.viewBox"
+          role="img"
+          [attr.aria-label]="'Sigil seed ' + cell.seed"
+        >
+          <path
+            class="silhouette"
+            [attr.d]="cell.sigil.d"
+            [attr.filter]="mode() === 'chrome' ? 'url(#blade-chrome)' : null"
+          />
+          @if (mode() === 'spine') {
+            <path class="spine" [attr.d]="cell.sigil.spineD" />
+          }
+        </svg>
+        <figcaption>
+          #{{ cell.seed }} · {{ cell.sigil.layout }} · {{ cell.sigil.blades.length }} blades
+        </figcaption>
+      </figure>
+    }
+  </div>
+</section>

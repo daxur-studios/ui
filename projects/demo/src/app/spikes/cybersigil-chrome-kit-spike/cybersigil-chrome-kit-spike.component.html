@@ -1,0 +1,11 @@
+<section class="stage" data-testid="chrome-kit">
+  <header class="toolbar">
+    <h1>Chrome kit · seed {{ seed() }}</h1>
+    <button type="button" (click)="previous()" data-testid="seed-prev">Prev seed</button>
+    <button type="button" (click)="next()" data-testid="seed-next">Next seed</button>
+  </header>
+  <div class="windows">
+    <app-chrome-kit-window class="desktop" [seed]="seed()" variant="desktop" />
+    <app-chrome-kit-window class="phone" [seed]="seed()" variant="phone" />
+  </div>
+</section>

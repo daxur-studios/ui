@@ -249,7 +249,10 @@ export class SigilSdfField {
 
     // 3. Subtract scalloped eyes.
     for (const hole of this.holes) {
-      const maxR = hole.radius * (1 + Math.abs(hole.scallopDepth)) + Math.max(0, hole.blendK) + this.cellSize * 2;
+      const maxR =
+        hole.radius * (1 + Math.abs(hole.scallopDepth)) +
+        Math.max(0, hole.blendK) +
+        this.cellSize * 2;
       const x0 = Math.max(0, Math.floor((hole.cx - maxR - minX) / this.cellSize));
       const x1 = Math.min(cols - 1, Math.ceil((hole.cx + maxR - minX) / this.cellSize));
       const y0 = Math.max(0, Math.floor((hole.cy - maxR - minY) / this.cellSize));
@@ -284,7 +287,7 @@ export class SigilSdfField {
       if (Math.abs(area) < SIGIL_SDF_MIN_LOOP_AREA) continue;
       const isHole = isLoopHole(loop, grid, cols, rows, minX, minY, this.cellSize, 0);
       // Normalize winding for SVG nonzero fill-rule: solids positive, holes negative.
-      const normalized = (area > 0) !== isHole ? loop : [...loop].reverse();
+      const normalized = area > 0 !== isHole ? loop : [...loop].reverse();
       const pathStr = loopToCubicPath(normalized, this.cellSize);
       if (isHole) {
         holePaths.push(pathStr);
@@ -307,9 +310,18 @@ export class SigilSdfField {
     const ridgePaths: string[] = [];
     for (const loop of ridgeLoops) {
       if (Math.abs(signedArea(loop)) < SIGIL_SDF_MIN_LOOP_AREA * 0.5) continue;
-      const isHole = isLoopHole(loop, grid, cols, rows, minX, minY, this.cellSize, -Math.abs(ridgeDepth));
+      const isHole = isLoopHole(
+        loop,
+        grid,
+        cols,
+        rows,
+        minX,
+        minY,
+        this.cellSize,
+        -Math.abs(ridgeDepth),
+      );
       const area = signedArea(loop);
-      const normalized = (area > 0) !== isHole ? loop : [...loop].reverse();
+      const normalized = area > 0 !== isHole ? loop : [...loop].reverse();
       ridgePaths.push(loopToCubicPath(normalized, this.cellSize));
     }
 
@@ -347,7 +359,7 @@ function signedDistanceToPolygon(px: number, py: number, pts: readonly ISigilPoi
     const distSq = bx * bx + by * by;
     if (distSq < d) d = distSq;
 
-    if ((yi > py) !== (yj > py) && px < ((xj - xi) * (py - yi)) / (yj - yi) + xi) {
+    if (yi > py !== yj > py && px < ((xj - xi) * (py - yi)) / (yj - yi) + xi) {
       inside = !inside;
     }
   }
@@ -440,20 +452,35 @@ function extractClosedLoops(
       const bl = grid[(iy + 1) * cols + ix];
 
       const mask =
-        (tl < level ? 8 : 0) |
-        (tr < level ? 4 : 0) |
-        (br < level ? 2 : 0) |
-        (bl < level ? 1 : 0);
+        (tl < level ? 8 : 0) | (tr < level ? 4 : 0) | (br < level ? 2 : 0) | (bl < level ? 1 : 0);
 
       if (mask === 0 || mask === 15) continue;
 
       let pairs: readonly (readonly [number, number])[];
       if (mask === 5) {
         const center = 0.25 * (tl + tr + br + bl);
-        pairs = center < level ? [[3, 0], [1, 2]] : [[3, 2], [1, 0]];
+        pairs =
+          center < level
+            ? [
+                [3, 0],
+                [1, 2],
+              ]
+            : [
+                [3, 2],
+                [1, 0],
+              ];
       } else if (mask === 10) {
         const center = 0.25 * (tl + tr + br + bl);
-        pairs = center < level ? [[0, 1], [2, 3]] : [[0, 3], [2, 1]];
+        pairs =
+          center < level
+            ? [
+                [0, 1],
+                [2, 3],
+              ]
+            : [
+                [0, 3],
+                [2, 1],
+              ];
       } else {
         pairs = MS_TABLE[mask];
       }

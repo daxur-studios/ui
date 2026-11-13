@@ -165,3 +165,45 @@ tags:
   2. **2D Implicit Signed Distance Field + Smooth-Min (`sigil-sdf.ts`):** Evaluates variable-radius cubic Bezier capsules and star/spear primitives via polynomial `smin` on an accelerated grid, extracting cubic-Bezier-fitted outer silhouettes (`d`), inner medial-ridge bevel contours (`ridgeD`), and enclosed pocket glass masks (`pocketD`).
   3. **Architectural UI Chrome Parts (`sigil-ui-parts.ts`) & `pearl` Material:** Dedicated procedural generators for Top Toolbars / Header Crowns, 4-Corner Spandrels, Waist Dividers, Dendritic Rail-to-Card Connectors, and Calyx Pill Frames, plus a `pearl` liquid-silver + lavender pocket glass preset matching `cyber (1)-(3).jpg`.
 - **[action]** Starting Phase 1: building `sigil-rng.ts`, `sigil-sdf.ts`, `sigil-grammar.ts`, and unit tests (`sigil-sdf.spec.ts`, `sigil-grammar.spec.ts`).
+- **[action]** Built `projects/ui/src/lib/sigil/sigil-rng.ts` (deterministic Mulberry32 + salted sub-stream forking + golden-ratio harmonic placement), `sigil-sdf.ts` (2D capsule/polygon/scalloped-eye SDF with polynomial `smin` blending, Marching Squares loop extraction, Laplacian smoothing + corner-preserving cubic Bezier fitting), and `sigil-grammar.ts` (topological motifs: anastomosis pockets, calliper claws, crossed anchors, and clearance-checked Y-bifurcations for Winged Star, Filigree Crest, and S-Curve Tendril).
+- **[action]** Built `projects/ui/src/lib/sigil/sigil-ui-parts.ts` for architectural UI chrome: `composeToolbarCrown`, `composeCornerSpandrel` (TL/TR/BL/BR), `composeWaistDivider`, `composeBranchingConnector` (`1 -> N` dendritic manifold), and `composeCalyxFrame`. Added `SIGIL_TOPOLOGICAL_SDF_STRATEGY` as the default strategy in `sigil-strategies.ts`.
+- **[action]** Added the `pearl` material preset (`--_ui-sigil-pearl-{body,light,rim,bloom,pocket}`) in `_tokens.scss` and `SigilChromeComponent`, plus dual-blur heightmap blending in `sigil-chrome.component.html`.
+- **[action]** Upgraded `cybersigil-shape-lab-spike` into a 4-mode workbench (*Archetypes*, *UI Chrome Parts*, *6-Seed Matrix*, *Live UI Composite*) with `pearl` light-glass preview support.
+- **[finding]** Visual verification pass 1 caught three issues from live 1280×800 Playwright captures: (1) shallow-angle Marching Squares stair-step ripples on the Calyx Pill and Toolbar Crown rails (fixed by raising `SIGIL_SDF_SIMPLIFY_FACTOR` to `0.58` and adding 2 Laplacian smoothing passes on non-sharp vertices); (2) dark right-half lighting falloff on wide 640-unit canvases (fixed by centering `SIGIL_DEFAULT_LIGHT_X` to `240` and raising `SIGIL_DEFAULT_LIGHT_Z` to `280`); (3) clumpy lower anchor tips and uniform wing postures across seeds (fixed with 4 distinct wing postures, guaranteed tendril anastomosis eyes, and lighter anchor blend radii).
+- **[verification]** Visual verification pass 2 confirmed smooth cubic contours, even chrome lighting across wide toolbars/dividers, genuinely distinct per-seed pocket topologies in the 6-seed matrix, and cohesive `pearl` + `mercury` composite UI previews.
+
+### claude — Calligraphic blade engine prototype (`cybersigil-blade-lab-spike`, Spike 09e)
+
+- **[finding]** Review of v2 against the five references: they mix two styles. `cyber (1)`/`(3)` are calm, near-constant-width chrome tubes with soft fillets, lens pockets and a medallion. `concept (1)/(6)/(7)` are spiky calligraphic sigils. v2 builds the UI parts from the sigil grammar. Its SDF blend radius (`4 + depth*11`, up to about 15 units) is wider than the strokes (about 0.4–7 units half-width), and the 1.5-unit grid cannot resolve 0.4-unit tips. Both make it blobby. Seeds also jitter parameters of fixed composers rather than changing structure.
+- **[decision]** Prototype a separate competitor with no SDF. The atom is a *blade*: a spine integrated from curvature (`(baseTurn + 3·hookTurn·t²)/L`), with a hairline → belly → hairline width profile, an asymmetric edge bias and a decaying root flare. Children leave nearly tangent and alternate sides, with optional counter-curl; rejoining loops make teardrop pockets. A spatial hash enforces clearance. Four layouts are available: crest, wingspan, runner, starburst. Each seed grows 10 candidates and keeps the best by coverage, aspect and structure score. Overlapping polygons union through `nonzero` fill.
+- **[action]** Added `projects/ui/src/lib/sigil/sigil-blade.ts` (+ `.spec.ts`), plus a demo route `/spikes/cybersigil-blade-lab-spike`: a 24-seed contact sheet with chrome / flat / spine modes, a layout filter and a weight control. The page has its own banded-chrome filter: diffuse shading goes through a non-monotonic `feComponentTransfer` table to fake environment reflections, plus specular. The in-flight v2 files and `public-api.ts` were not touched; the demo imports the module by relative path.
+- **[visual]** Three Playwright contact-sheet passes. Pass 1 had good tips but botanical twigs and fat leaf runners. Pass 2 added stronger hooks, length-scaled child widths and loops, and read as tribal cybersigil marks; wingspan and crest seeds come closest to concepts (6) and (7). Pass 3 gave runners S-curves with pockets. They are still lighter and sparser than concept (1). The chrome reads as metal with dark valleys and bright creases, and has no rim halo.
+- **[verification]** `npm test`: 169 passed (blade spec: needle tips, exact turning, belly position, determinism, structural variety, box fit). `npx ng build demo` passed; the spike stylesheet sits at the 4 kB budget line, like the other spikes.
+- **[open]** Owner visual review of the sheet. Starburst needs a hollow star focal (an annulus with reversed winding). The UI chrome kit (`cyber (1)`/`(3)` rails, corners, crown, divider) should be built as a separate stroke-stacked tube kit, not from blades. Blades would remain accents only. Not yet exported from `public-api.ts` or registered with a thumbnail.
+
+### claude — Layout-fitted chrome tube kit (`cybersigil-chrome-kit-spike`, Spike 09f)
+
+- **[decision]** Build the `cyber (1)`/`(3)` UI chrome as its own kit rather than from sigil geometry. These references are calm, near-constant-width tubes. The page layout drives the geometry; the seed varies only ornament: rib count and sweep, corner curl style, divider node shape (4-point star, diamond, 6-point star), and the connector's split order.
+- **[action]** Added `projects/ui/src/lib/sigil/sigil-tube-kit.ts` (+ `.spec.ts`). `buildTubeWindow(layout)` returns centre-line tubes for:
+  - the edge rail;
+  - content panels split at dividers, whose edges bow toward a star node, with side lenses;
+  - a medallion ring cradled by the top rail;
+  - whiplash ribs that leave the ring along its normal and land tangent on a rail;
+  - corner curls;
+  - a recursive dendritic connector whose branches all leave tangent;
+  - fine pill and card frames, plus a glass band.
+
+  Added the demo route `/spikes/cybersigil-chrome-kit-spike`: a desktop window mirroring `cyber (1)` and a phone window mirroring `cyber (3)`. Each measures `data-chrome` elements with a `ResizeObserver` only. Each tube is drawn in four stacked stroke layers across the whole scene (edge, body lifted toward the light, lower lavender reflection, white spine), so tangent merges stay seamless with no filter.
+- **[visual]** Four Playwright passes at 1640×900 (2× for detail).
+  - Pass 1: the structure matched both references, but the tubes were too thin and pale, and the corner curls dropped vertically.
+  - Pass 2: thicker tubes, but the dark edge over a pale body read as engraved double outlines, and the phone ribs ran straight down because the medallion was wider than the room beside it.
+  - Pass 3: mid-tone edge, lifted silver body and white spine read as round chrome. The medallion is capped at 15% of width, and ribs reach outward from the ring edge.
+  - Pass 4: seeds 1–4 vary the connector tiers, ribs and node, and the rails stay fixed.
+- **[verification]** `npm test`: 177 passed. The tube-kit spec covers determinism, frames for every field and card, divider nodes, the connector feeding every target, finite bounded coordinates over 30 seeds, rails fixed while ornament varies, and the medallion cap.
+- **[open]** Owner review against `cyber (1)`/`(3)`. Next candidates:
+  - a blade-engine sigil as the footer swash or crown accent;
+  - card rows that bow into the connector the way `cyber (1)` does;
+  - a pointer-driven highlight offset;
+  - dark-scheme tokens;
+  - promoting both modules to `public-api.ts` once the in-flight v2 work lands.
+- [2026-11-13] [finding] Oracle first experiment (tools/sigil-trace/): reference (1) rebuilt from its own junction-node graph at IoU 0.934, skeleton distance 0.05% diag; (6) 0.914, (7) 0.891. Radii measured, so it proves expressiveness only; parametric fit is next. See brunos-iae ER 016.

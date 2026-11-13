@@ -60,6 +60,20 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'spikes/cybersigil-blade-lab-spike',
+    loadComponent: () =>
+      import('./spikes/cybersigil-blade-lab-spike/cybersigil-blade-lab-spike.component').then(
+        (m) => m.CybersigilBladeLabSpikeComponent,
+      ),
+  },
+  {
+    path: 'spikes/cybersigil-chrome-kit-spike',
+    loadComponent: () =>
+      import('./spikes/cybersigil-chrome-kit-spike/cybersigil-chrome-kit-spike.component').then(
+        (m) => m.CybersigilChromeKitSpikeComponent,
+      ),
+  },
+  {
     path: 'fixtures/pipeline',
     loadComponent: () =>
       import('./fixtures/pipeline/pipeline-fixture.component').then(

@@ -80,13 +80,7 @@ export type SigilLabMode = 'archetypes' | 'ui-parts' | 'seed-matrix' | 'ui-compo
 
 /** Part keys available in the Seed Matrix Gallery. */
 export type SigilMatrixPart =
-  | 'winged-star'
-  | 'filigree-crest'
-  | 'tendril'
-  | 'toolbar'
-  | 'corner'
-  | 'divider'
-  | 'connector';
+  'winged-star' | 'filigree-crest' | 'tendril' | 'toolbar' | 'corner' | 'divider' | 'connector';
 
 /** Geometry knobs as the sliders show them. Unit-interval fields are whole percentages. */
 interface ISigilLabControls {
@@ -192,9 +186,7 @@ export class CybersigilShapeLabSpikeComponent {
   );
 
   /** Architectural UI Chrome parts. */
-  protected readonly toolbarCrown = computed(() =>
-    composeToolbarCrown(this.params(), this.seed()),
-  );
+  protected readonly toolbarCrown = computed(() => composeToolbarCrown(this.params(), this.seed()));
   protected readonly cornerTl = computed(() =>
     composeCornerSpandrel(this.params(), this.seed(), 120, 'tl'),
   );
@@ -207,9 +199,7 @@ export class CybersigilShapeLabSpikeComponent {
   protected readonly cornerBr = computed(() =>
     composeCornerSpandrel(this.params(), this.seed(), 120, 'br'),
   );
-  protected readonly waistDivider = computed(() =>
-    composeWaistDivider(this.params(), this.seed()),
-  );
+  protected readonly waistDivider = computed(() => composeWaistDivider(this.params(), this.seed()));
   protected readonly branchingConnector = computed(() => {
     const count = this.connectorRows();
     const ys: number[] = [];
@@ -221,39 +211,41 @@ export class CybersigilShapeLabSpikeComponent {
   protected readonly calyxFrame = computed(() => composeCalyxFrame(this.params(), this.seed()));
 
   /** 6-Seed Matrix items for the selected `matrixPart`. */
-  protected readonly matrixItems = computed<readonly (ISigilRichGeometry & { seed: number })[]>(() => {
-    const baseSeed = this.seed();
-    const p = this.params();
-    const part = this.matrixPart();
-    const items: (ISigilRichGeometry & { seed: number })[] = [];
-    for (let offset = 0; offset < MATRIX_SEED_COUNT; offset++) {
-      const s = baseSeed + offset;
-      switch (part) {
-        case 'winged-star':
-          items.push(composeTopologicalWingedStar(p, s));
-          break;
-        case 'filigree-crest':
-          items.push(composeTopologicalFiligreeCrest(p, s));
-          break;
-        case 'tendril':
-          items.push(composeTopologicalTendril(p, s));
-          break;
-        case 'toolbar':
-          items.push(composeToolbarCrown(p, s));
-          break;
-        case 'corner':
-          items.push(composeCornerSpandrel(p, s, 120, 'tl'));
-          break;
-        case 'divider':
-          items.push(composeWaistDivider(p, s));
-          break;
-        case 'connector':
-          items.push(composeBranchingConnector(p, s, [40, 120, 200]));
-          break;
+  protected readonly matrixItems = computed<readonly (ISigilRichGeometry & { seed: number })[]>(
+    () => {
+      const baseSeed = this.seed();
+      const p = this.params();
+      const part = this.matrixPart();
+      const items: (ISigilRichGeometry & { seed: number })[] = [];
+      for (let offset = 0; offset < MATRIX_SEED_COUNT; offset++) {
+        const s = baseSeed + offset;
+        switch (part) {
+          case 'winged-star':
+            items.push(composeTopologicalWingedStar(p, s));
+            break;
+          case 'filigree-crest':
+            items.push(composeTopologicalFiligreeCrest(p, s));
+            break;
+          case 'tendril':
+            items.push(composeTopologicalTendril(p, s));
+            break;
+          case 'toolbar':
+            items.push(composeToolbarCrown(p, s));
+            break;
+          case 'corner':
+            items.push(composeCornerSpandrel(p, s, 120, 'tl'));
+            break;
+          case 'divider':
+            items.push(composeWaistDivider(p, s));
+            break;
+          case 'connector':
+            items.push(composeBranchingConnector(p, s, [40, 120, 200]));
+            break;
+        }
       }
-    }
-    return items;
-  });
+      return items;
+    },
+  );
 
   /** Share of the card a join occupies, as a percentage. Equal scale across widths keeps the caps the same size. */
   protected joinPercent(width: number): number {

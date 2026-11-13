@@ -22,6 +22,25 @@
   &.pearl-surface {
     background: var(--_ui-sigil-pearl-bloom);
     color: var(--_ui-sigil-pearl-rim);
+
+    .composite-window {
+      background: var(--_ui-sigil-pearl-pocket);
+      border-color: var(--_ui-sigil-pearl-rim);
+    }
+
+    .composite-card {
+      background: var(--_ui-sigil-pearl-light);
+      border-color: var(--_ui-sigil-pearl-rim);
+      color: var(--_ui-sigil-pearl-body);
+
+      strong {
+        color: var(--_ui-sigil-mercury-body);
+      }
+    }
+
+    .composite-emblem {
+      color: var(--_ui-sigil-mercury-body);
+    }
   }
 }
 

@@ -17,7 +17,8 @@
     <p class="eyebrow">UI LAB / PLAN 09 · SPIKE 09A (V2 TOPOLOGICAL SDF)</p>
     <h1>Cybersigil Shape &amp; UI Chrome Lab</h1>
     <p class="description">
-      Seeded topological venation graphs + smooth-union SDF contours, shaded by a dual-slope liquid-chrome filter.
+      Seeded topological venation graphs + smooth-union SDF contours, shaded by a dual-slope
+      liquid-chrome filter.
     </p>
   </header>
 
@@ -143,7 +144,11 @@
             data-testid="ui-part-connector"
             [attr.viewBox]="'0 0 ' + branchingConnector().width + ' ' + branchingConnector().height"
           >
-            <path class="silhouette" [attr.d]="branchingConnector().d" [attr.filter]="chromeFilter()" />
+            <path
+              class="silhouette"
+              [attr.d]="branchingConnector().d"
+              [attr.filter]="chromeFilter()"
+            />
           </svg>
         </figure>
 
@@ -181,7 +186,9 @@
       <div class="seed-matrix-grid" aria-label="6-Seed Uniqueness Matrix" data-testid="seed-matrix">
         @for (item of matrixItems(); track item.seed) {
           <figure class="canvas-card">
-            <figcaption>{{ matrixPart() }} · seed {{ item.seed }} ({{ item.pocketCount }} pockets)</figcaption>
+            <figcaption>
+              {{ matrixPart() }} · seed {{ item.seed }} ({{ item.pocketCount }} pockets)
+            </figcaption>
             <svg
               class="canvas"
               role="img"
@@ -197,7 +204,11 @@
     }
 
     @case ('ui-composite') {
-      <div class="composite-window" data-testid="ui-composite" aria-label="Cybersigil UI Window Preview">
+      <div
+        class="composite-window"
+        data-testid="ui-composite"
+        aria-label="Cybersigil UI Window Preview"
+      >
         <div class="composite-header">
           <svg
             class="composite-toolbar-svg"
@@ -215,7 +226,11 @@
             class="composite-connector-svg"
             [attr.viewBox]="'0 0 ' + branchingConnector().width + ' ' + branchingConnector().height"
           >
-            <path class="silhouette" [attr.d]="branchingConnector().d" [attr.filter]="chromeFilter()" />
+            <path
+              class="silhouette"
+              [attr.d]="branchingConnector().d"
+              [attr.filter]="chromeFilter()"
+            />
           </svg>
           <div class="composite-cards">
             <div class="composite-card">
@@ -280,13 +295,19 @@
             data-testid="matrix-part-select"
             (change)="matrixPart.set($any(eventValue($event)))"
           >
-            <option value="winged-star" [selected]="matrixPart() === 'winged-star'">Winged star</option>
-            <option value="filigree-crest" [selected]="matrixPart() === 'filigree-crest'">Filigree crest</option>
+            <option value="winged-star" [selected]="matrixPart() === 'winged-star'">
+              Winged star
+            </option>
+            <option value="filigree-crest" [selected]="matrixPart() === 'filigree-crest'">
+              Filigree crest
+            </option>
             <option value="tendril" [selected]="matrixPart() === 'tendril'">S-curve tendril</option>
             <option value="toolbar" [selected]="matrixPart() === 'toolbar'">Toolbar crown</option>
             <option value="corner" [selected]="matrixPart() === 'corner'">Corner spandrel</option>
             <option value="divider" [selected]="matrixPart() === 'divider'">Waist divider</option>
-            <option value="connector" [selected]="matrixPart() === 'connector'">Branching connector</option>
+            <option value="connector" [selected]="matrixPart() === 'connector'">
+              Branching connector
+            </option>
           </select>
         </label>
       }
@@ -481,10 +502,18 @@
   }
 
   <p class="telemetry" aria-label="Lab telemetry">
-    <span>Material <strong data-testid="active-material">{{ material() }}</strong></span>
-    <span>Seed <strong data-testid="active-seed">{{ seed() }}</strong></span>
-    <span>Thorns <strong data-testid="thorn-count">{{ geometry().thornCount }}</strong></span>
-    <span>Light <strong data-testid="light-position">{{ lightX() }}, {{ lightY() }}</strong></span>
+    <span
+      >Material <strong data-testid="active-material">{{ material() }}</strong></span
+    >
+    <span
+      >Seed <strong data-testid="active-seed">{{ seed() }}</strong></span
+    >
+    <span
+      >Thorns <strong data-testid="thorn-count">{{ geometry().thornCount }}</strong></span
+    >
+    <span
+      >Light <strong data-testid="light-position">{{ lightX() }}, {{ lightY() }}</strong></span
+    >
   </p>
   <p class="hint">Hover a canvas to move the light. Reduced motion holds it still.</p>
 </div>

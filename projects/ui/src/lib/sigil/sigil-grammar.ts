@@ -64,7 +64,12 @@ export class ClearanceTracker {
   }
 
   /** Returns true if `pt` is at least `minDist` away from all recorded points (excluding `ignoreNear`). */
-  hasClearance(pt: ISigilPoint, minDist: number, ignoreNear?: ISigilPoint, ignoreRadius = 22): boolean {
+  hasClearance(
+    pt: ISigilPoint,
+    minDist: number,
+    ignoreNear?: ISigilPoint,
+    ignoreRadius = 22,
+  ): boolean {
     const minSq = minDist * minDist;
     const ignSq = ignoreRadius * ignoreRadius;
     for (const p of this.points) {
@@ -211,17 +216,15 @@ export function growCalliperClaw(
     const outDir = vecRotate(dir, clawSign * spread * 0.65);
     const tip = vecAdd(
       origin,
-      vecAdd(vecScale(outDir, reach * (clawSign === sideSign ? 1.0 : 0.82)), vecScale(perp, -clawSign * reach * 0.15)),
+      vecAdd(
+        vecScale(outDir, reach * (clawSign === sideSign ? 1.0 : 0.82)),
+        vecScale(perp, -clawSign * reach * 0.15),
+      ),
     );
     const ctrl1 = vecAdd(origin, vecScale(vecRotate(dir, clawSign * spread * 1.1), reach * 0.45));
     const ctrl2 = vecAdd(tip, vecScale(vecRotate(dir, -clawSign * 0.9), reach * 0.32));
     const spine: ISigilSpine = { p0: origin, p1: ctrl1, p2: ctrl2, p3: tip };
-    field.addSpline(
-      spine,
-      (t) => veinWidthProfile(t, width, 0.8, swell, 0.25),
-      blendK,
-      16,
-    );
+    field.addSpline(spine, (t) => veinWidthProfile(t, width, 0.8, swell, 0.25), blendK, 16);
     tracker.recordSpine(spine, 5);
   }
 }
@@ -253,8 +256,14 @@ export function growCrossedAnchor(
   tracker.recordSpine(stem, 4);
 
   const crossCenter = vecAdd(origin, vecScale(dir, stemLen * 0.45));
-  const leftTip = vecAdd(vecAdd(crossCenter, vecScale(perp, -crossSpan)), vecScale(dir, stemLen * 0.15));
-  const rightTip = vecAdd(vecAdd(crossCenter, vecScale(perp, crossSpan)), vecScale(dir, -stemLen * 0.1));
+  const leftTip = vecAdd(
+    vecAdd(crossCenter, vecScale(perp, -crossSpan)),
+    vecScale(dir, stemLen * 0.15),
+  );
+  const rightTip = vecAdd(
+    vecAdd(crossCenter, vecScale(perp, crossSpan)),
+    vecScale(dir, -stemLen * 0.1),
+  );
   const crossSpine: ISigilSpine = {
     p0: leftTip,
     p1: vecAdd(crossCenter, vecScale(perp, -crossSpan * 0.4)),
@@ -299,12 +308,7 @@ export function growBifurcatingBranch(
   const ctrl2 = vecAdd(origin, vecScale(vecRotate(branchDir, -curlAngle * 0.2), length * 0.72));
   const spine: ISigilSpine = { p0: origin, p1: ctrl1, p2: ctrl2, p3: tip };
 
-  field.addSpline(
-    spine,
-    (t) => veinWidthProfile(t, width, 0.75, params.swell, 0.3),
-    blendK,
-    16,
-  );
+  field.addSpline(spine, (t) => veinWidthProfile(t, width, 0.75, params.swell, 0.3), blendK, 16);
   tracker.recordSpine(spine, 5);
 
   if (depth > 0 && length > 28) {
@@ -368,7 +372,8 @@ function buildStarPolygon(
     if (tipCount === 6) {
       r = i % 2 === 0 ? radius * 1.05 : radius * 0.72;
     } else if (variant === 'octa-crown') {
-      if (i === 6) r = radius * 1.55; // tall top needle
+      if (i === 6)
+        r = radius * 1.55; // tall top needle
       else if (i === 2) r = radius * 1.22;
       else if (i === 0 || i === 4) r = radius * 1.15;
     } else {
@@ -396,15 +401,44 @@ function growWingGraph(
   rng: ISigilRng,
 ): void {
   const reach = (165 + params.spikeLength * 42) * (1 + (side === 1 ? params.asymmetry * 0.14 : 0));
-  const lift = (48 + params.curvature * 42) * rng.range(0.88, 1.15);
-  const rootWidth = 10 + params.swell * 5;
+  const lift = (52 + params.curvature * 44) * rng.range(0.85, 1.2);
+  const rootWidth = 9.5 + params.swell * 4.5;
+  const posture = rng.pick<'soaring' | 's-whip' | 'bat-arch' | 'crescent-hook'>([
+    'soaring',
+    's-whip',
+    'bat-arch',
+    'crescent-hook',
+  ]);
 
-  const primarySpine: ISigilSpine = {
-    p0: { x: centre.x + side * starRadius * 0.28, y: centre.y - 4 },
-    p1: { x: centre.x + side * reach * 0.36, y: centre.y - lift * rng.range(0.85, 1.25) },
-    p2: { x: centre.x + side * reach * 0.72, y: centre.y - lift * rng.range(0.45, 1.05) },
-    p3: { x: centre.x + side * reach, y: centre.y - lift * rng.range(0.5, 1.15) },
-  };
+  const primarySpine: ISigilSpine =
+    posture === 'soaring'
+      ? {
+          p0: { x: centre.x + side * starRadius * 0.28, y: centre.y - 4 },
+          p1: { x: centre.x + side * reach * 0.34, y: centre.y - lift * 1.15 },
+          p2: { x: centre.x + side * reach * 0.72, y: centre.y - lift * 0.95 },
+          p3: { x: centre.x + side * reach, y: centre.y - lift * 0.68 },
+        }
+      : posture === 's-whip'
+        ? {
+            p0: { x: centre.x + side * starRadius * 0.28, y: centre.y - 2 },
+            p1: { x: centre.x + side * reach * 0.38, y: centre.y - lift * 1.22 },
+            p2: { x: centre.x + side * reach * 0.68, y: centre.y + lift * 0.28 },
+            p3: { x: centre.x + side * reach, y: centre.y - lift * 0.85 },
+          }
+        : posture === 'bat-arch'
+          ? {
+              p0: { x: centre.x + side * starRadius * 0.28, y: centre.y - 6 },
+              p1: { x: centre.x + side * reach * 0.32, y: centre.y - lift * 0.65 },
+              p2: { x: centre.x + side * reach * 0.66, y: centre.y - lift * 1.25 },
+              p3: { x: centre.x + side * reach * 0.94, y: centre.y - lift * 0.35 },
+            }
+          : {
+              p0: { x: centre.x + side * starRadius * 0.28, y: centre.y },
+              p1: { x: centre.x + side * reach * 0.42, y: centre.y - lift * 1.05 },
+              p2: { x: centre.x + side * reach * 0.95, y: centre.y - lift * 0.55 },
+              p3: { x: centre.x + side * reach * 0.74, y: centre.y + lift * 0.22 },
+            };
+
   field.addSpline(
     primarySpine,
     (t) => veinWidthProfile(t, rootWidth, 0.8, params.swell, 0.35),
@@ -419,11 +453,11 @@ function growWingGraph(
       tracker,
       primarySpine,
       0.16,
-      0.58,
-      side * (26 + params.curvature * 18),
-      rootWidth * 0.62,
+      0.56,
+      side * (24 + params.curvature * 16),
+      rootWidth * 0.56,
       params.swell,
-      blendK,
+      blendK * 0.8,
     );
   }
   if (motif === 'double-pocket-braid') {
@@ -431,54 +465,57 @@ function growWingGraph(
       field,
       tracker,
       primarySpine,
-      0.46,
+      0.48,
       0.86,
-      -side * (20 + params.curvature * 14),
-      rootWidth * 0.52,
+      -side * (18 + params.curvature * 12),
+      rootWidth * 0.48,
       params.swell,
-      blendK,
+      blendK * 0.8,
     );
   }
 
   // Lower sweeping scythe wing
   const lowerSpine: ISigilSpine = {
     p0: { x: centre.x + side * starRadius * 0.26, y: centre.y + 8 },
-    p1: { x: centre.x + side * reach * 0.34, y: centre.y + lift * rng.range(0.65, 1.05) },
-    p2: { x: centre.x + side * reach * 0.68, y: centre.y + lift * rng.range(0.55, 0.95) },
-    p3: { x: centre.x + side * reach * rng.range(0.82, 0.96), y: centre.y + lift * rng.range(0.25, 0.65) },
+    p1: { x: centre.x + side * reach * 0.34, y: centre.y + lift * rng.range(0.55, 0.95) },
+    p2: { x: centre.x + side * reach * 0.68, y: centre.y + lift * rng.range(0.45, 0.9) },
+    p3: {
+      x: centre.x + side * reach * rng.range(0.76, 0.94),
+      y: centre.y + lift * rng.range(0.05, 0.55),
+    },
   };
   field.addSpline(
     lowerSpine,
-    (t) => veinWidthProfile(t, rootWidth * 0.88, 0.75, params.swell, 0.4),
+    (t) => veinWidthProfile(t, rootWidth * 0.85, 0.75, params.swell, 0.4),
     blendK,
     20,
   );
   tracker.recordSpine(lowerSpine, 7);
 
   if (motif === 'anchor-wing') {
-    const anchorOrigin = cubicPoint(lowerSpine, 0.55);
+    const anchorOrigin = cubicPoint(lowerSpine, 0.48);
     growCrossedAnchor(
       field,
       tracker,
       anchorOrigin,
-      { x: side * 0.25, y: 1 },
-      38 + params.spikeLength * 18,
-      22 + params.spikeLength * 10,
-      rootWidth * 0.68,
+      { x: side * 0.22, y: 1 },
+      34 + params.spikeLength * 16,
+      18 + params.spikeLength * 8,
+      rootWidth * 0.52,
       params.swell,
-      blendK,
+      blendK * 0.55,
     );
   } else if (motif === 'scythe-cascade') {
     growCalliperClaw(
       field,
       tracker,
-      cubicPoint(primarySpine, 0.66),
-      cubicTangent(primarySpine, 0.66),
-      34 + params.spikeLength * 16,
-      rootWidth * 0.62,
+      cubicPoint(primarySpine, 0.64),
+      cubicTangent(primarySpine, 0.64),
+      32 + params.spikeLength * 14,
+      rootWidth * 0.55,
       params.curvature,
       params.swell,
-      blendK,
+      blendK * 0.7,
       side,
     );
   }
@@ -513,10 +550,7 @@ function growWingGraph(
 }
 
 /** Composes Archetype 1 (Winged Star) with seeded topological variation. */
-export function composeTopologicalWingedStar(
-  raw: ISigilLabParams,
-  seed = 1,
-): ISigilRichGeometry {
+export function composeTopologicalWingedStar(raw: ISigilLabParams, seed = 1): ISigilRichGeometry {
   const params = normalizeSigilParams(raw);
   const rng = createSigilRng(seed);
   const field = new SigilSdfField(SIGIL_VIEW_WIDTH, SIGIL_VIEW_HEIGHT, GRAMMAR_CELL_SIZE);
@@ -543,8 +577,7 @@ export function composeTopologicalWingedStar(
     'anchor-wing',
   ];
   const leftMotif = rng.fork('left').pick(motifs);
-  const rightMotif =
-    params.asymmetry > 0.15 ? rng.fork('right').pick(motifs) : leftMotif;
+  const rightMotif = params.asymmetry > 0.15 ? rng.fork('right').pick(motifs) : leftMotif;
 
   growWingGraph(
     field,
@@ -762,10 +795,7 @@ export function composeTopologicalFiligreeCrest(
 type TendrilMotif = 'anastomosis-eye' | 'calliper-claw' | 'crossed-anchor' | 'belly-scythe';
 
 /** Composes Archetype 3 (Flowing S-Curve Tendril) with genuinely distinct per-seed motif decks. */
-export function composeTopologicalTendril(
-  raw: ISigilLabParams,
-  seed = 1,
-): ISigilRichGeometry {
+export function composeTopologicalTendril(raw: ISigilLabParams, seed = 1): ISigilRichGeometry {
   const params = normalizeSigilParams(raw);
   const rng = createSigilRng(seed);
   const field = new SigilSdfField(SIGIL_VIEW_WIDTH, SIGIL_VIEW_HEIGHT, GRAMMAR_CELL_SIZE);
@@ -773,14 +803,14 @@ export function composeTopologicalTendril(
   const blendK = blendRadiusFromParams(params);
 
   const polarity = rng.chance(0.5) ? 1 : -1;
-  const bend = (38 + params.curvature * 48) * polarity;
-  const mainWidth = 11 + params.swell * 6;
+  const bend = (62 + params.curvature * 54) * polarity;
+  const mainWidth = 10.5 + params.swell * 5.5;
 
   const spine: ISigilSpine = {
-    p0: { x: 26, y: SIGIL_CENTER.y + 38 * polarity + rng.range(-12, 12) },
-    p1: { x: 155, y: SIGIL_CENTER.y - bend * rng.range(0.85, 1.25) },
-    p2: { x: 315, y: SIGIL_CENTER.y + bend * rng.range(0.75, 1.2) },
-    p3: { x: 454, y: SIGIL_CENTER.y - 42 * polarity + rng.range(-16, 16) },
+    p0: { x: 24, y: SIGIL_CENTER.y + 68 * polarity + rng.range(-12, 12) },
+    p1: { x: 150, y: SIGIL_CENTER.y - bend * rng.range(0.95, 1.3) },
+    p2: { x: 318, y: SIGIL_CENTER.y + bend * rng.range(0.8, 1.25) },
+    p3: { x: 454, y: SIGIL_CENTER.y - 74 * polarity + rng.range(-14, 14) },
   };
   field.addSpline(
     spine,
@@ -790,21 +820,36 @@ export function composeTopologicalTendril(
   );
   tracker.recordSpine(spine, 10);
 
+  // Guarantee at least one crisp anastomosis eye pocket so every tendril has liquid-web depth
+  const eyeStart = rng.range(0.18, 0.34);
+  const eyeEnd = Math.min(0.66, eyeStart + rng.range(0.22, 0.3));
+  growAnastomosisPocket(
+    field,
+    tracker,
+    spine,
+    eyeStart,
+    eyeEnd,
+    -polarity * (34 + params.curvature * 24),
+    mainWidth * 0.56,
+    params.swell,
+    blendK * 0.8,
+  );
+
   // Pick a non-trivial motif sequence from the deck so seeds vary topologically
   const deck: readonly TendrilMotif[] = [
-    'anastomosis-eye',
     'belly-scythe',
     'calliper-claw',
     'crossed-anchor',
+    'anastomosis-eye',
   ];
   const slotCount = Math.min(4, Math.max(2, Math.round(params.thornCount * 0.75) + 1));
-  const slotTs = harmonicPositions(slotCount, 0.18, 0.76, rng.fork('slots'), 0.15);
+  const slotTs = harmonicPositions(slotCount, 0.22, 0.78, rng.fork('slots'), 0.15);
 
   slotTs.forEach((t, idx) => {
     const motif = deck[(idx + rng.int(0, deck.length - 1)) % deck.length];
     const pt = cubicPoint(spine, t);
     const tan = cubicTangent(spine, t);
-    const side = idx % 2 === 0 ? -polarity : polarity;
+    const side = idx % 2 === 0 ? polarity : -polarity;
 
     switch (motif) {
       case 'anastomosis-eye': {

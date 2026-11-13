@@ -108,6 +108,7 @@ export function composeToolbarCrown(
     'gothic-calyx',
     'braided-arch',
   ]);
+  const ribReach = rng.range(0.24, 0.34);
 
   // 1. Central cradle motif
   if (style === 'star-crown') {
@@ -159,12 +160,12 @@ export function composeToolbarCrown(
   addSymSpline(field, horizonSpine, () => railW * 0.92, blendK, cx, 22);
 
   // 4. Inner rib pocket filament (enclosing teardrop pockets beside the medallion)
-  const ribSpread = rng.range(14, 24) + params.curvature * 10;
+  const ribSpread = rng.range(16, 30) + params.curvature * 12;
   const ribSpine: ISigilSpine = {
     p0: { x: cx - cradleRadius * 1.05, y: cradleCy + 6 },
     p1: { x: cx - cradleRadius - 36, y: topY + ribSpread },
-    p2: { x: cx - cradleRadius - 72, y: topY + ribSpread * 0.4 },
-    p3: { x: cx - width * 0.28, y: topY + 2 },
+    p2: { x: cx - cradleRadius - 76, y: topY + ribSpread * 0.4 },
+    p3: { x: cx - width * ribReach, y: topY + 2 },
   };
   addSymSpline(
     field,
@@ -179,14 +180,31 @@ export function composeToolbarCrown(
   if (style === 'gothic-calyx' || style === 'braided-arch') {
     const flareSpine: ISigilSpine = {
       p0: { x: cx - cradleRadius * 1.15, y: cradleCy - 8 },
-      p1: { x: cx - cradleRadius - 24, y: cradleCy + 22 },
-      p2: { x: cx - cradleRadius - 56, y: cradleCy + 16 },
-      p3: { x: cx - cradleRadius - 82 - params.spikeLength * 24, y: cradleCy + 4 },
+      p1: { x: cx - cradleRadius - 24, y: cradleCy + 26 },
+      p2: { x: cx - cradleRadius - 56, y: cradleCy + 18 },
+      p3: { x: cx - cradleRadius - 88 - params.spikeLength * 24, y: cradleCy + 4 },
     };
     addSymSpline(
       field,
       flareSpine,
       (t) => veinWidthProfile(t, railW * 0.85, 0.7, params.swell, 0.3),
+      blendK,
+      cx,
+      16,
+    );
+  }
+
+  if (style === 'braided-arch') {
+    const secondPocket: ISigilSpine = {
+      p0: { x: cx - width * ribReach + 12, y: topY + 2 },
+      p1: { x: cx - width * (ribReach + 0.08), y: topY + 22 },
+      p2: { x: cornerX + 64, y: topY + 18 },
+      p3: { x: cornerX + 38, y: topY + 2 },
+    };
+    addSymSpline(
+      field,
+      secondPocket,
+      (t) => doubleTaperWidthProfile(t, railW * 0.78, railW * 0.4, params.swell),
       blendK,
       cx,
       16,

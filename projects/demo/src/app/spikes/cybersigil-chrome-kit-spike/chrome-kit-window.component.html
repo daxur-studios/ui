@@ -1,0 +1,119 @@
+<div class="frame" #frame data-testid="chrome-window">
+  @if (scene(); as s) {
+    <svg class="chrome" [attr.viewBox]="viewBox()" aria-hidden="true" focusable="false">
+      <defs>
+        <linearGradient [attr.id]="nodeGradientId" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" class="stop-light" />
+          <stop offset="0.45" class="stop-mid" />
+          <stop offset="0.55" class="stop-dark" />
+          <stop offset="1" class="stop-mid" />
+        </linearGradient>
+      </defs>
+      @for (g of s.glass; track $index) {
+        <path class="glass" [attr.d]="g" />
+      }
+      <circle
+        class="medallion-glass"
+        [attr.cx]="s.medallion.cx"
+        [attr.cy]="s.medallion.cy"
+        [attr.r]="s.medallion.r"
+      />
+      @if (strokes(); as st) {
+        <g class="shadow">
+          @for (t of st.edge; track $index) {
+            <path [attr.d]="t.d" [attr.stroke-width]="t.width" />
+          }
+        </g>
+        <g class="edge">
+          @for (t of st.edge; track $index) {
+            <path [attr.d]="t.d" [attr.stroke-width]="t.width" />
+          }
+        </g>
+        <g class="body">
+          @for (t of st.body; track $index) {
+            <path
+              [attr.d]="t.d"
+              [attr.stroke-width]="t.width"
+              [attr.transform]="'translate(0 ' + t.dy + ')'"
+            />
+          }
+        </g>
+        <g class="reflect">
+          @for (t of st.reflect; track $index) {
+            <path
+              [attr.d]="t.d"
+              [attr.stroke-width]="t.width"
+              [attr.transform]="'translate(0 ' + t.dy + ')'"
+            />
+          }
+        </g>
+        <g class="highlight">
+          @for (t of st.highlight; track $index) {
+            <path
+              [attr.d]="t.d"
+              [attr.stroke-width]="t.width"
+              [attr.transform]="'translate(0 ' + t.dy + ')'"
+            />
+          }
+        </g>
+      }
+      @for (n of s.nodes; track $index) {
+        <path class="node" [attr.d]="n" [attr.fill]="'url(#' + nodeGradientId + ')'" />
+      }
+    </svg>
+    <span class="glyph" [style.left.px]="s.medallion.cx" [style.top.px]="s.medallion.cy">Æ</span>
+  }
+
+  <div class="content" [style.padding-top.px]="headerHeight()">
+    <div class="search" data-chrome="pill">Search…</div>
+    <h1>Recent work</h1>
+
+    @if (variant() === 'desktop') {
+      <h2>Projects <span class="chip">Optional features</span></h2>
+      <div class="row" data-chrome="card target">
+        <span>Æ Workspace</span><span class="chip">Codex</span
+        ><span class="meta">17 minutes ago</span>
+      </div>
+      <h2>Repositories <span class="chip">Optional features</span></h2>
+      <div class="row" data-chrome="card target">
+        <span>△ Triangular</span><span class="chip">Codex</span
+        ><span class="meta">16 minutes ago</span>
+      </div>
+      <div class="row" data-chrome="card target">
+        <span>▭ Library adoption</span><span class="chip">Claude Code</span
+        ><span class="meta">13 minutes ago</span>
+      </div>
+      <div class="row" data-chrome="card">
+        <span>▯ Feature A</span><span class="chip">Codex</span
+        ><span class="meta">16 minutes ago</span>
+      </div>
+      <div class="row" data-chrome="card">
+        <span>▯ Feature B</span><span class="chip">Antigravity</span
+        ><span class="meta">16 minutes ago</span>
+      </div>
+    } @else {
+      <h2>Projects <span class="chip">Optional features</span></h2>
+      <div class="group" data-chrome="card">
+        <div class="row" data-chrome="card">
+          <span>Launch IDE</span><span class="chip">Action</span>
+        </div>
+        <div class="row" data-chrome="card">
+          <span>View branch</span><span class="chip">Action</span>
+        </div>
+        <div class="row" data-chrome="card">
+          <span>Open logs</span><span class="chip">Action</span>
+        </div>
+      </div>
+      <div class="divider" data-chrome="divider"></div>
+      <div class="row" data-chrome="card">
+        <span>△ Triangular</span><span class="chip">Library</span>
+      </div>
+      <div class="row" data-chrome="card">
+        <span>▭ Library adoption</span><span class="chip">Project</span>
+      </div>
+      <div class="row" data-chrome="card">
+        <span>▯ Feature A</span><span class="chip">Project</span>
+      </div>
+    }
+  </div>
+</div>

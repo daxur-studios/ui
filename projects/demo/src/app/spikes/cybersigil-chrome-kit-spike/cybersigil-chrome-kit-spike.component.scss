@@ -1,0 +1,49 @@
+@use '../../../../../ui/src/lib/styles/tokens';
+
+.stage {
+  @include tokens.fallbacks;
+  box-sizing: border-box;
+  min-height: 100vh;
+  padding: var(--_ui-space-large);
+  background: var(--_ui-sigil-pearl-bloom);
+  color: var(--_ui-sigil-mercury-body);
+  font-family: var(--_ui-font-family);
+}
+
+.toolbar {
+  display: flex;
+  gap: var(--_ui-space);
+  align-items: center;
+  margin-bottom: var(--_ui-space-large);
+
+  h1 {
+    margin: 0;
+    font-size: var(--_ui-font-size);
+  }
+
+  button {
+    padding: var(--_ui-space-small) var(--_ui-space);
+    border: var(--_ui-border-width) solid var(--_ui-sigil-pearl-rim);
+    border-radius: var(--_ui-radius);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+  }
+}
+
+.windows {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--_ui-space-large);
+  align-items: flex-start;
+}
+
+.desktop {
+  flex: 1 1 760px;
+  max-width: 1100px;
+}
+
+.phone {
+  flex: 0 0 390px;
+}

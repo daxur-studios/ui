@@ -3,7 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 const SPIKE_ROUTE = '/spikes/cybersigil-shape-lab-spike';
 
 /** Light position the page starts with, before any pointer has moved over a canvas. */
-const DEFAULT_LIGHT = '120, 40';
+const DEFAULT_LIGHT = '240, 30';
 
 /** Thorn count the slider can reach, matching the library's maximum. */
 const MAX_THORN_COUNT = '6';
@@ -106,7 +106,9 @@ test('shows the concept reference strip with five images when toggled', async ({
   await expect(page.getByTestId('reference-strip').locator('img')).toHaveCount(5);
 });
 
-test('switches to UI Chrome Parts, 6-Seed Matrix, and Live UI Composite modes', async ({ page }) => {
+test('switches to UI Chrome Parts, 6-Seed Matrix, and Live UI Composite modes', async ({
+  page,
+}) => {
   await page.getByTestId('mode-ui-parts').click();
   await expect(page.getByTestId('ui-part-toolbar')).toBeVisible();
   await expect(page.getByTestId('ui-part-divider')).toBeVisible();

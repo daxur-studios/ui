@@ -1,0 +1,104 @@
+@use '../../../../../ui/src/lib/styles/tokens';
+
+:host {
+  display: block;
+}
+
+.stage {
+  @include tokens.fallbacks;
+  box-sizing: border-box;
+  min-height: 100vh;
+  padding: var(--_ui-space-large);
+  background: var(--_ui-sigil-pearl-light);
+  color: var(--_ui-sigil-pearl-rim);
+  font-family: var(--_ui-font-family);
+  font-size: var(--_ui-font-size);
+}
+
+.defs {
+  position: absolute;
+}
+
+.light {
+  lighting-color: var(--_ui-sigil-mercury-light);
+}
+
+.tint {
+  flood-color: var(--_ui-sigil-mercury-rim);
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--_ui-space);
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--_ui-space-large);
+
+  h1 {
+    margin: 0;
+    font-size: var(--_ui-font-size);
+    font-weight: 600;
+  }
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--_ui-space-small);
+  align-items: center;
+
+  button {
+    padding: var(--_ui-space-small) var(--_ui-space);
+    border: var(--_ui-border-width) solid var(--_ui-sigil-pearl-body);
+    border-radius: var(--_ui-radius);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+
+    &.active {
+      background: var(--_ui-sigil-pearl-bloom);
+    }
+  }
+}
+
+.sep {
+  width: var(--_ui-space);
+}
+
+.sheet {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--_ui-space);
+}
+
+.cell {
+  margin: 0;
+
+  svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  figcaption {
+    font-size: var(--_ui-font-small);
+    opacity: 0.7;
+  }
+}
+
+.silhouette {
+  fill: var(--_ui-sigil-mercury-body);
+  fill-rule: nonzero;
+}
+
+.spine {
+  fill: none;
+  stroke: var(--_ui-sigil-anodized-bloom);
+  stroke-width: 1;
+}
+
+.sheet[data-mode='spine'] .silhouette {
+  opacity: 0.35;
+}
