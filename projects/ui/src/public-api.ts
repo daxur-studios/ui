@@ -31,3 +31,4 @@ export * from './lib/sigil/sigil-ui-parts';
 export * from './lib/sigil/sigil-strategies';
 export * from './lib/sigil/sigil-strategy-topological-sdf';
 export * from './lib/sigil/sigil-chrome.component';
+export * from './lib/popup/popup.directive';
