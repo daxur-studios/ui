@@ -114,8 +114,8 @@ only an adapter in the registry; do not add one in this plan.
 
 ### 2.3 Measurements
 
-All measurements come from an **occupancy grid**: the cell's ink rasterised to `GRID` × `GRID`
-booleans (`GRID = 128`), aspect preserved, letterboxed. Rasterising happens in the browser with a
+All measurements come from an **occupancy grid**: the cell's ink rasterised to a grid of
+booleans at a fixed `REVIEW_CELL_PX = 2` CSS px per grid cell plus `REVIEW_GRID_PAD = 2` cells of padding, so measurements are scale-consistent and thin tubes resolve. Rasterising happens in the browser with a
 canvas and `Path2D` (handles arcs and curves for free). The measuring functions are pure functions of
 the grid, so they are unit-tested in Node with hand-built grids.
 
@@ -247,10 +247,10 @@ modified by this work).
 
 ### Phase 3: review page
 
-- [ ] `review-rasterise.ts` and the fixture component; route added.
-- [ ] Styles use design tokens only (no literal colours), separate `.ts`/`.html`/`.scss`, named
+- [x] `review-rasterise.ts` and the fixture component; route added.
+- [x] Styles use design tokens only (no literal colours), separate `.ts`/`.html`/`.scss`, named
       constants with JSDoc, per `AGENTS.md`.
-- [ ] Open `/fixtures/sigil-review?subject=blade-crest` and `?subject=tube-window-phone&dressed=1`
+- [x] Open `/fixtures/sigil-review?subject=blade-crest` and `?subject=tube-window-phone&dressed=1`
       in the browser; confirm cells, references and captions render, and
       `window.__sigilReview.ready` is `true`.
 

@@ -1,0 +1,72 @@
+<main class="stage" data-review-root [attr.data-review-ready]="ready() ? '' : null">
+  @if (subject; as s) {
+    <header class="head">
+      <h1>
+        {{ s.label }} <span class="id">{{ s.id }}</span>
+      </h1>
+      <div class="refs">
+        @for (file of s.references; track file) {
+          <img [src]="conceptSrc(file)" [alt]="file" />
+        }
+      </div>
+    </header>
+
+    @for (group of groups; track group.width) {
+      <section class="block" [attr.data-width]="group.width">
+        <h2>{{ group.width }} px</h2>
+        <div class="grid">
+          @for (cell of group.cells; track cell.seed) {
+            <figure
+              class="cell"
+              data-review-cell
+              [attr.data-seed]="cell.seed"
+              [attr.data-width]="cell.width"
+              [class.flagged]="flagsOf(cell.seed, cell.width).length > 0"
+            >
+              <svg
+                class="art"
+                [attr.width]="cell.geometry.width"
+                [attr.height]="cell.geometry.height"
+                [attr.viewBox]="'0 0 ' + cell.geometry.width + ' ' + cell.geometry.height"
+                aria-hidden="true"
+              >
+                @for (box of cell.geometry.keepOut ?? []; track $index) {
+                  <rect
+                    class="keepout"
+                    [attr.x]="box.x"
+                    [attr.y]="box.y"
+                    [attr.width]="box.width"
+                    [attr.height]="box.height"
+                  />
+                }
+                @for (ink of cell.geometry.ink; track $index) {
+                  <path
+                    [class]="inkClass(ink.strokeWidth)"
+                    [attr.d]="ink.d"
+                    [attr.stroke-width]="ink.strokeWidth"
+                    [attr.fill-rule]="ink.fillRule"
+                  />
+                }
+              </svg>
+              <figcaption>
+                seed {{ cell.seed }}
+                @for (flag of flagsOf(cell.seed, cell.width); track flag) {
+                  <span class="flag">{{ flag }}</span>
+                }
+              </figcaption>
+              @if (dressed && s.dressedVariant) {
+                <div class="dressed" [style.width.px]="cell.width">
+                  <app-chrome-kit-window [seed]="cell.seed" [variant]="s.dressedVariant" />
+                </div>
+              }
+            </figure>
+          }
+        </div>
+      </section>
+    }
+  } @else {
+    <p class="error" data-review-error>
+      Unknown subject. Use <code>?subject=</code> with one of: {{ knownIds }}.
+    </p>
+  }
+</main>

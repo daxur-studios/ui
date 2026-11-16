@@ -1,0 +1,89 @@
+@use '../../../../../ui/src/lib/styles/tokens';
+
+.stage {
+  @include tokens.fallbacks;
+  box-sizing: border-box;
+  min-height: 100vh;
+  padding: var(--_ui-space-large);
+  background: var(--_ui-sigil-pearl-bloom);
+  color: var(--_ui-sigil-mercury-body);
+  font-family: var(--_ui-font-family);
+}
+
+.head h1 {
+  margin: 0 0 var(--_ui-space);
+  font-size: var(--_ui-title-size);
+}
+
+.id {
+  color: var(--_ui-sigil-pearl-rim);
+  font-size: var(--_ui-font-small);
+}
+
+.refs {
+  display: flex;
+  gap: var(--_ui-space);
+
+  img {
+    height: 220px;
+    border-radius: var(--_ui-radius);
+  }
+}
+
+.block h2 {
+  margin: var(--_ui-space-large) 0 var(--_ui-space);
+  font-size: var(--_ui-font-size);
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--_ui-space-large);
+  align-items: flex-start;
+}
+
+.cell {
+  margin: 0;
+}
+
+.art {
+  display: block;
+  background: var(--_ui-sigil-pearl-light);
+
+  .fill {
+    fill: var(--_ui-sigil-mercury-body);
+  }
+
+  .stroke {
+    fill: none;
+    stroke: var(--_ui-sigil-mercury-body);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .keepout {
+    fill: none;
+    stroke: var(--_ui-sigil-pearl-rim);
+    stroke-dasharray: 4 3;
+  }
+}
+
+figcaption {
+  margin-top: var(--_ui-space-small);
+  font-size: var(--_ui-font-small);
+}
+
+.flag {
+  margin-left: var(--_ui-space-small);
+  padding: 0 var(--_ui-space-small);
+  border: var(--_ui-border-width) solid var(--_ui-sigil-mercury-body);
+  border-radius: var(--_ui-radius);
+}
+
+.dressed {
+  margin-top: var(--_ui-space);
+}
+
+.error {
+  font-size: var(--_ui-font-size);
+}

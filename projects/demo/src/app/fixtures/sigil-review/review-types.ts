@@ -45,6 +45,8 @@ export interface IReviewSubject {
   heightFor(width: number): number;
   /** Pure, deterministic geometry. No DOM access. */
   geometry(seed: number, width: number): IReviewGeometry;
+  /** Reference-window variant to mount as a dressed row, for looking only; omit for none. */
+  readonly dressedVariant?: 'desktop' | 'phone';
   /** Optional target ranges; cells outside are flagged, not failed. */
   readonly bands?: Partial<Record<ReviewMetricName, readonly [min: number, max: number]>>;
 }

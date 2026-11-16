@@ -50,8 +50,10 @@ function tubeSubject(
   references: readonly string[],
   widths: readonly number[],
   layoutFor: (width: number) => ReviewFrameLayout,
+  dressedVariant: 'desktop' | 'phone',
 ): IReviewSubject {
   return {
+    dressedVariant,
     id,
     kind: 'frame',
     label,
@@ -88,6 +90,7 @@ export const REVIEW_SUBJECTS: readonly IReviewSubject[] = [
     ['cyber (1).jpg'],
     DESKTOP_WIDTHS,
     desktopLayout,
+    'desktop',
   ),
   tubeSubject(
     'tube-window-phone',
@@ -95,6 +98,7 @@ export const REVIEW_SUBJECTS: readonly IReviewSubject[] = [
     ['cyber (3).jpg'],
     PHONE_WIDTHS,
     phoneLayout,
+    'phone',
   ),
 ];
 

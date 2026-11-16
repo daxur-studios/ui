@@ -11,8 +11,11 @@ export interface IReviewGrid {
   readonly cells: Uint8Array;
 }
 
-/** Side length of the square grid the browser rasteriser produces for each cell. */
-export const REVIEW_GRID_SIZE = 128;
+/** CSS pixels covered by one grid cell, so measurements mean the same at every cell size. */
+export const REVIEW_CELL_PX = 2;
+
+/** Empty cells added around every rasterised cell, so edge-touching ink is detectable. */
+export const REVIEW_GRID_PAD = 2;
 
 /** Creates an empty grid of the given size. */
 export function createGrid(width: number, height: number): IReviewGrid {

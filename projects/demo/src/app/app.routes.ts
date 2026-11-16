@@ -81,6 +81,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'fixtures/sigil-review',
+    loadComponent: () =>
+      import('./fixtures/sigil-review/sigil-review-fixture.component').then(
+        (m) => m.SigilReviewFixtureComponent,
+      ),
+  },
+  {
     path: 'fixtures/blank',
     loadComponent: () =>
       import('./fixtures/blank/blank-fixture.component').then((m) => m.BlankFixtureComponent),

@@ -23,7 +23,7 @@ for a plan to build a review harness before any more visual work.
 - A subject supplies pure geometry; the same geometry feeds the measurements and the default flat
   silhouette picture. Chrome shading is an optional extra row and is never measured, because shading
   hides shape problems.
-- Measurements come from a 128 × 128 occupancy grid rasterised in the browser, with the measuring
+- Measurements come from an occupancy grid (2 CSS px per cell) rasterised in the browser, with the measuring
   functions pure and unit-tested in Node. This avoids adding an image-decoding dependency.
 - Frames are measured against canned layouts that are pure functions of width, with keep-out boxes
   for content, so resize safety is a number rather than an impression.
@@ -41,7 +41,7 @@ for a plan to build a review harness before any more visual work.
 `projects/demo/src/app/fixtures/sigil-review/`, with 24 specs on hand-built grids. All nine
 per-cell measurements from the plan are covered, plus variety (with fixed-rail subtraction), spread
 and keep-out overlap. The grid is width by height rather than fixed square so specs can use small
-shapes; `REVIEW_GRID_SIZE = 128` is what the browser rasteriser will use.
+shapes; the browser rasteriser later settled on a fixed cell size instead (see Phase 3).
 
 **Verification.** `npm test`: 201 passed. No engine file touched.
 
@@ -64,3 +64,21 @@ frame, unique ids, and every reference image exists on disk.
 rasteriser, so it is first measured in Phase 4; the 6 px inset may need tuning then.
 
 **Next.** Phase 3: rasteriser and review page.
+
+## 2026-11-16: claude: Phase 3 done (rasteriser and review page)
+
+**Action.** Added `review-rasterise.ts`, `review-params.ts`, `review-report.ts` and the fixture page
+at `/fixtures/sigil-review` (query: `subject`, `seeds`, `widths`, `dressed`). It publishes
+`window.__sigilReview` and sets `data-review-ready`. Deviation from the plan: the grid is 2 CSS px per
+cell with 2 cells of padding, not a fixed 128, because a fixed grid would be far too coarse for
+1100 px frames.
+
+**Verification.** `npm test`: 232 passed. `ng build demo`: succeeded, no new budget warnings. Browser:
+`blade-crest` shows 12 cells, both references, ready true, no flags, no console errors.
+`tube-window-phone&dressed=1` shows 9 cells with the dressed window under each, ready true.
+
+**First real finding.** Every tube-window-phone cell at 320, 390 and 480 flags `out-of-bounds` and
+`keep-out` (keep-out overlap about 0.083 to 0.086). Either the tube kit really spills onto the
+content boxes and the frame edge, or the 6 px inset is too tight. Phase 4 should settle which.
+
+**Next.** Phase 4: command, sheet and report.
