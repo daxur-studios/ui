@@ -8,8 +8,10 @@ import {
   inkBounds,
   iou,
   mirrorGrid,
+  maskDepth,
+  overshootCells,
+  REVIEW_CELL_PX,
   subtractInk,
-  touchesEdge,
 } from './review-grid';
 import type { ReviewMetricName } from './review-types';
 
@@ -24,8 +26,12 @@ export const KEEP_OUT_TOLERANCE = 0.01;
 
 /** Measurements for one rendered cell. */
 export interface ICellMetrics extends Record<ReviewMetricName, number> {
-  /** True when ink touches the outermost ring of the grid. */
+  /** True when ink goes past the content box (`overshootPx > 0`). */
   readonly outOfBounds: boolean;
+  /** CSS px the ink reaches past the content box; `0` when it stays inside or only touches. */
+  readonly overshootPx: number;
+  /** CSS px the ink reaches into a keep-out box (about); `0` when it stays out. */
+  readonly keepOutDepthPx: number;
 }
 
 /** Share of `part` in `whole`; `0` when `whole` is `0`. */
@@ -49,8 +55,14 @@ export function keepOutHit(ink: IReviewGrid, keepOutMask: IReviewGrid): number {
  * Measures one cell's ink grid.
  *
  * @param keepOutMask Optional grid marking content boxes; omit for motifs.
+ * @param pad Empty rings around the content box; ink in them is past the edge.
  */
-export function measureCell(ink: IReviewGrid, keepOutMask?: IReviewGrid): ICellMetrics {
+export function measureCell(
+  ink: IReviewGrid,
+  keepOutMask?: IReviewGrid,
+  pad = 1,
+): ICellMetrics {
+  const overshoot = overshootCells(ink, pad);
   const inkCells = countInk(ink);
   const bounds = inkBounds(ink);
   const boxCells = bounds ? (bounds.x1 - bounds.x0 + 1) * (bounds.y1 - bounds.y0 + 1) : 0;
@@ -65,7 +77,9 @@ export function measureCell(ink: IReviewGrid, keepOutMask?: IReviewGrid): ICellM
     pockets,
     mirror: iou(ink, mirrorGrid(ink)),
     keepOutHit: keepOutMask ? keepOutHit(ink, keepOutMask) : 0,
-    outOfBounds: touchesEdge(ink),
+    outOfBounds: overshoot > 0,
+    overshootPx: overshoot * REVIEW_CELL_PX,
+    keepOutDepthPx: keepOutMask ? maskDepth(ink, keepOutMask) * REVIEW_CELL_PX : 0,
   };
 }
 

@@ -9,6 +9,8 @@ import {
   gridFromRows,
   inkBounds,
   iou,
+  maskDepth,
+  overshootCells,
   mirrorGrid,
   subtractInk,
   touchesEdge,
@@ -77,5 +79,19 @@ describe('review grid', () => {
     expect(commonInk([a, b]).cells).toEqual(gridFromRows(['.#.#']).cells);
     expect(subtractInk(a, commonInk([a, b])).cells).toEqual(gridFromRows(['#...']).cells);
     expect(countInk(subtractInk(a, a))).toBe(0);
+  });
+
+  it('measures how far ink overshoots the padded box', () => {
+    expect(overshootCells(gridFromRows(['.....', '.....', '..#..', '.....', '.....']), 1)).toBe(0);
+    expect(overshootCells(gridFromRows(['.....', '.#...', '.....', '.....', '.....']), 1)).toBe(0);
+    expect(overshootCells(gridFromRows(['#....', '.....', '.....', '.....', '.....']), 2)).toBe(2);
+    expect(overshootCells(gridFromRows(['.....', '.....', '.....', '...#.', '.....']), 2)).toBe(1);
+  });
+
+  it('measures how deep ink reaches into a mask', () => {
+    const mask = gridFromRows(['.......', '.#####.', '.#####.', '.#####.', '.......']);
+    expect(maskDepth(gridFromRows(['#......', '.......', '.......', '.......', '.......']), mask)).toBe(0);
+    expect(maskDepth(gridFromRows(['.......', '.#.....', '.......', '.......', '.......']), mask)).toBe(1);
+    expect(maskDepth(gridFromRows(['.......', '.......', '...#...', '.......', '.......']), mask)).toBe(2);
   });
 });

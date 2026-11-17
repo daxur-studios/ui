@@ -82,3 +82,27 @@ cell with 2 cells of padding, not a fixed 128, because a fixed grid would be far
 content boxes and the frame edge, or the 6 px inset is too tight. Phase 4 should settle which.
 
 **Next.** Phase 4: command, sheet and report.
+
+## 2026-11-16: claude: Phase 4 done (command, sheet and report), with a failing result
+
+**Action.** Added `e2e/review/sigil-review.spec.ts`, `tools/sigil-review/run.mjs`, the
+`sigil:review` npm script and a `review` Playwright project that only exists when the wrapper sets
+`SIGIL_REVIEW_SUBJECTS`. Each subject writes `sheet.png`, `report.json` and `report.md` under
+`ignore/sigil-review/<subject>/`, prints the report, and fails on console errors or hard invariants.
+
+**Result of `--all`.** Four blade subjects pass with no flags. Both tube windows fail on every seed:
+
+| subject             | widths        | flags                                                           |
+| ------------------- | ------------- | --------------------------------------------------------------- |
+| tube-window-desktop | 760, 1100     | out-of-bounds                                                   |
+| tube-window-phone   | 320, 390, 480 | out-of-bounds, keep-out (about 8.5% of the keep-out area inked) |
+
+The phone sheet shows the tube frame is almost identical across seeds, the rails run to the box edge,
+and the kit draws its own double rim inside the pill and card boxes. So the flags look like a real
+property of the kit plus a keep-out inset that may be too tight, not a harness bug. I did not change
+either; the choice is the owner's.
+
+**Not verified.** Whether the seed barely changing the tube frame is intended. Desktop sheet not
+viewed. Seven thumbnail e2e tests fail in plain `npm run test:e2e` (not touched by this plan).
+
+**Next.** Decide how to treat the tube-frame failures, then Phase 5 (baseline and deltas).

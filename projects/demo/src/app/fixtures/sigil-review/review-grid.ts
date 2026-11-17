@@ -15,7 +15,7 @@ export interface IReviewGrid {
 export const REVIEW_CELL_PX = 2;
 
 /** Empty cells added around every rasterised cell, so edge-touching ink is detectable. */
-export const REVIEW_GRID_PAD = 2;
+export const REVIEW_GRID_PAD = 8;
 
 /** Creates an empty grid of the given size. */
 export function createGrid(width: number, height: number): IReviewGrid {
@@ -157,6 +157,50 @@ export function touchesEdge(grid: IReviewGrid): boolean {
     if (cellAt(grid, 0, y) || cellAt(grid, grid.width - 1, y)) return true;
   }
   return false;
+}
+
+/**
+ * How far ink reaches past the content box, in cells.
+ *
+ * The outer `pad` rings of the grid lie outside the box, so ink at ring `k` (0 is outermost)
+ * overshoots by `pad - k` cells. `0` means the ink stays inside or merely reaches the box edge.
+ */
+export function overshootCells(grid: IReviewGrid, pad: number): number {
+  let worst = 0;
+  for (let y = 0; y < grid.height; y++) {
+    for (let x = 0; x < grid.width; x++) {
+      if (!grid.cells[y * grid.width + x]) continue;
+      const outside = Math.max(
+        pad - x,
+        pad - y,
+        x - (grid.width - 1 - pad),
+        y - (grid.height - 1 - pad),
+      );
+      if (outside > worst) worst = outside;
+    }
+  }
+  return worst;
+}
+
+/** Cells in which both grids are set (`a AND b`). */
+function andGrid(a: IReviewGrid, b: IReviewGrid): IReviewGrid {
+  const out = createGrid(a.width, a.height);
+  for (let i = 0; i < out.cells.length; i++) out.cells[i] = a.cells[i] & b.cells[i];
+  return out;
+}
+
+/**
+ * How deep ink reaches into a mask, in cells: `1` when it only touches the mask, `2` when it
+ * also reaches a cell one step further in, and so on. `0` when ink and mask do not overlap.
+ */
+export function maskDepth(ink: IReviewGrid, mask: IReviewGrid, cap = 64): number {
+  let depth = 0;
+  let current = mask;
+  while (depth < cap && countInk(andGrid(ink, current)) > 0) {
+    depth++;
+    current = erode(current);
+  }
+  return depth;
 }
 
 /**

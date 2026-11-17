@@ -12,6 +12,7 @@
     "test:watch": "vitest",
     "test:dom": "ng test demo --watch=false",
     "test:e2e": "playwright test",
+    "sigil:review": "node tools/sigil-review/run.mjs",
     "spikes:thumbnails": "playwright test --project=thumbnails",
     "format": "prettier --write ."
   },

@@ -258,12 +258,14 @@ Done when: both URLs render with no console errors and the demo builds.
 
 ### Phase 4: command, sheet and report
 
-- [ ] `e2e/review/sigil-review.spec.ts`, the `review` project, `run.mjs`, the npm script.
-- [ ] The spec asserts the hard invariants from 2.3 and writes the three output files.
-- [ ] Run `--all`; look at each `sheet.png`; record the six summary tables in the runbook.
+- [x] `e2e/review/sigil-review.spec.ts`, the `review` project, `run.mjs`, the npm script.
+- [x] The spec asserts the hard invariants from 2.3 and writes the three output files.
+- [x] Run `--all`; look at each `sheet.png`; record the six summary tables in the runbook.
 
 Done when: `npm run sigil:review -- --all` exits 0, six folders exist under `ignore/sigil-review/`,
 and `npm run test:e2e` still passes without running the review project.
+
+**Outcome:** the review project is gated behind `SIGIL_REVIEW_SUBJECTS` so plain e2e never runs it. `--all` exits 1, not 0: both tube windows fail the hard invariants (see runbook). Not weakened on purpose. Seven thumbnail e2e tests also fail in plain `test:e2e`; they are outside this plan and were not investigated.
 
 ### Phase 5: baseline and sanity check
 

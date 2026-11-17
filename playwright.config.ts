@@ -5,10 +5,17 @@ const HARNESS_PORT = 4226;
 /** Demo harness dev-server origin. */
 const HARNESS_ORIGIN = `http://localhost:${HARNESS_PORT}`;
 
+/** Review project, only enabled when the `sigil:review` wrapper sets `SIGIL_REVIEW_SUBJECTS`, so a plain `playwright test` never runs it. */
+const REVIEW_PROJECT = {
+  name: 'review',
+  testMatch: '**/review/*.spec.ts',
+  use: { ...devices['Desktop Chrome'] },
+};
+
 /**
  * Playwright configuration for @daxur-studios/ui.
  * Runs cross-browser component rendering and interaction verification against the demo harness.
- * The `thumbnails` project captures spike previews and is kept out of the normal test run.
+ * The `thumbnails` and `review` projects (spike previews, sigil review sheets) are kept out of the normal test run.
  */
 export default defineConfig({
   testDir: './e2e',
@@ -30,7 +37,7 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      testIgnore: '**/thumbnails/**',
+      testIgnore: ['**/thumbnails/**', '**/review/**'],
       use: { ...devices['Desktop Chrome'] },
     },
     {
@@ -38,5 +45,6 @@ export default defineConfig({
       testMatch: '**/thumbnails/*.spec.ts',
       use: { ...devices['Desktop Chrome'] },
     },
+    ...(process.env['SIGIL_REVIEW_SUBJECTS'] ? [REVIEW_PROJECT] : []),
   ],
 });

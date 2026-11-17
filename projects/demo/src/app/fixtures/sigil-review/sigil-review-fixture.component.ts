@@ -12,7 +12,7 @@ import { variety, measureCell, summariseCells } from './review-metrics';
 import { rasteriseGeometry } from './review-rasterise';
 import { flagsFor, isInvariantFlag, type ICellReport, type IReviewReport } from './review-report';
 import { parseSeeds, parseWidths } from './review-params';
-import type { IReviewGrid } from './review-grid';
+import { type IReviewGrid, REVIEW_GRID_PAD } from './review-grid';
 import { findReviewSubject, REVIEW_SUBJECTS } from './review-subjects';
 import type { IReviewGeometry } from './review-types';
 
@@ -98,7 +98,7 @@ export class SigilReviewFixtureComponent {
       const metrics = group.cells.map((cell) => {
         const raster = rasteriseGeometry(cell.geometry);
         grids.push(raster.ink);
-        const m = measureCell(raster.ink, raster.keepOut);
+        const m = measureCell(raster.ink, raster.keepOut, REVIEW_GRID_PAD);
         cells.push({
           seed: cell.seed,
           width: cell.width,
