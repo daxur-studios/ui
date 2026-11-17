@@ -117,9 +117,33 @@ export function phoneLayout(width: number): ReviewFrameLayout {
   };
 }
 
-/** Boxes ornament must stay out of: every pill and card, shrunk by the keep-out inset. */
+/** True when `outer` fully contains `inner` and they are not the same rect. */
+function contains(outer: ITubeRect, inner: ITubeRect): boolean {
+  const same =
+    outer.x === inner.x &&
+    outer.y === inner.y &&
+    outer.width === inner.width &&
+    outer.height === inner.height;
+  return (
+    !same &&
+    outer.x <= inner.x &&
+    outer.y <= inner.y &&
+    outer.x + outer.width >= inner.x + inner.width &&
+    outer.y + outer.height >= inner.y + inner.height
+  );
+}
+
+/**
+ * Rects that contain no other rect. A grouped card's rows draw their own outlines inside it, so
+ * only the rows are real content boxes; the group is not.
+ */
+export function leafRects(rects: readonly ITubeRect[]): ITubeRect[] {
+  return rects.filter((r) => !rects.some((other) => contains(r, other)));
+}
+
+/** Boxes ornament must stay out of: every pill and leaf card, shrunk by the keep-out inset. */
 export function keepOutBoxes(layout: ReviewFrameLayout): IReviewBox[] {
-  return [...(layout.pills ?? []), ...(layout.cards ?? [])].map((r) => ({
+  return leafRects([...(layout.pills ?? []), ...(layout.cards ?? [])]).map((r) => ({
     x: r.x + KEEP_OUT_INSET,
     y: r.y + KEEP_OUT_INSET,
     width: Math.max(0, r.width - KEEP_OUT_INSET * 2),

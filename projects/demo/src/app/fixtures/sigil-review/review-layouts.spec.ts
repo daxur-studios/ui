@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { desktopLayout, keepOutBoxes, phoneLayout } from './review-layouts';
+import { desktopLayout, keepOutBoxes, leafRects, phoneLayout } from './review-layouts';
 
 const WIDTHS = [320, 390, 480, 760, 1100] as const;
 
@@ -57,10 +57,19 @@ describe('canned review layouts', () => {
     expect(layout.connectorTargets).toBeUndefined();
   });
 
-  it('keep-out boxes are the cards and pills shrunk inward', () => {
+  it('leafRects drops a card that contains other cards', () => {
+    const layout = phoneLayout(390);
+    const all = [...(layout.pills ?? []), ...(layout.cards ?? [])];
+    const leaves = leafRects(all);
+    expect(leaves).toHaveLength(all.length - 1);
+    expect(leaves).not.toContainEqual(layout.cards?.[0]);
+    expect(leafRects(desktopLayout(1100).cards ?? [])).toHaveLength(5);
+  });
+
+  it('keep-out boxes are the leaf cards and pills shrunk inward', () => {
     const layout = phoneLayout(390);
     const boxes = keepOutBoxes(layout);
-    expect(boxes).toHaveLength((layout.pills?.length ?? 0) + (layout.cards?.length ?? 0));
+    expect(boxes).toHaveLength((layout.pills?.length ?? 0) + (layout.cards?.length ?? 0) - 1);
     const pill = layout.pills?.[0];
     expect(boxes[0].x).toBeGreaterThan(pill?.x ?? 0);
     expect(boxes[0].width).toBeLessThan(pill?.width ?? 0);

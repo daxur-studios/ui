@@ -269,16 +269,18 @@ and `npm run test:e2e` still passes without running the review project.
 
 ### Phase 5: baseline and sanity check
 
-- [ ] `--save-baseline` and the delta table in `report.md` (current, baseline, change per summary
+- [x] `--save-baseline` and the delta table in `report.md` (current, baseline, change per summary
       measurement).
-- [ ] Sanity check that the numbers mean something: temporarily pass `weight: 0.5` and then
+- [x] Sanity check that the numbers mean something: temporarily pass `weight: 0.5` and then
       `weight: 1.8` to the blade subjects (in the registry, not the engine) and confirm `hairline`
       and `mass` move the expected way; revert. Record the three sets of numbers in the runbook.
-- [ ] `tools/sigil-review/README.md`.
-- [ ] Save baselines for all six subjects.
+- [x] `tools/sigil-review/README.md`.
+- [x] Save baselines for all six subjects.
 
 Done when: the delta table shows the weight experiment correctly, and the README lets a fresh agent
 add a subject without reading the harness code.
+
+**Outcome:** done. The edge check now flags ink past the content box (`overshootPx`) rather than ink touching it, and reports keep-out depth (`keepOutDepthPx`). Grid pad is now 8 cells (16 px). Blade `weight` 0.5 raised `hairline` 0.341 to 0.637 and cut `mass` 0.068 to 0; 1.8 cut `hairline` to 0.196 and raised `mass` to 0.349. Registry reverted. Baselines saved for all six subjects. `--all` still exits 1 because of the tube windows.
 
 ## 4. Acceptance
 

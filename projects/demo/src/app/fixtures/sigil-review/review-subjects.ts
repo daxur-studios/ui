@@ -67,7 +67,13 @@ function tubeSubject(
         ...[...scene.tubes, ...scene.fineTubes].map((t) => ({ d: t.d, strokeWidth: t.width })),
         ...scene.nodes.map((d) => ({ d })),
       ];
-      return { width: layout.width, height: layout.height, ink, keepOut: keepOutBoxes(layout) };
+      return {
+        width: layout.width,
+        height: layout.height,
+        headroom: scene.overhang,
+        ink,
+        keepOut: keepOutBoxes(layout),
+      };
     },
   };
 }

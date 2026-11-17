@@ -90,8 +90,14 @@ describe('review grid', () => {
 
   it('measures how deep ink reaches into a mask', () => {
     const mask = gridFromRows(['.......', '.#####.', '.#####.', '.#####.', '.......']);
-    expect(maskDepth(gridFromRows(['#......', '.......', '.......', '.......', '.......']), mask)).toBe(0);
-    expect(maskDepth(gridFromRows(['.......', '.#.....', '.......', '.......', '.......']), mask)).toBe(1);
-    expect(maskDepth(gridFromRows(['.......', '.......', '...#...', '.......', '.......']), mask)).toBe(2);
+    expect(
+      maskDepth(gridFromRows(['#......', '.......', '.......', '.......', '.......']), mask),
+    ).toBe(0);
+    expect(
+      maskDepth(gridFromRows(['.......', '.#.....', '.......', '.......', '.......']), mask),
+    ).toBe(1);
+    expect(
+      maskDepth(gridFromRows(['.......', '.......', '...#...', '.......', '.......']), mask),
+    ).toBe(2);
   });
 });

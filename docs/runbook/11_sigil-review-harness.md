@@ -106,3 +106,25 @@ either; the choice is the owner's.
 viewed. Seven thumbnail e2e tests fail in plain `npm run test:e2e` (not touched by this plan).
 
 **Next.** Decide how to treat the tube-frame failures, then Phase 5 (baseline and deltas).
+
+## 2026-11-16: claude: Phase 5 done (baseline, deltas, README) and the tube finding measured
+
+**Action.** Added `overshootPx` and `keepOutDepthPx` per cell, `out-of-bounds` now means ink past the content box, grid pad raised from 2 to 8 cells so overshoot can be read up to 16 px. Added `review-delta.ts` (with spec), the baseline delta table in `report.md`, `--save-baseline`, and `tools/sigil-review/README.md`. Saved baselines for all six subjects; a rerun shows no changes.
+
+**Sanity check (blade-crest, 12 seeds, median).**
+
+| weight | hairline | mass | coverage |
+| --- | --- | --- | --- |
+| 0.5 | 0.637 | 0 | 0.151 |
+| default | 0.341 | 0.068 | 0.225 |
+| 1.8 | 0.196 | 0.349 | 0.301 |
+
+The numbers move the right way. Registry reverted.
+
+**Tube finding.** Desktop: keep-out is fine (at most 0.2% of the box, 6 px deep); only the edge is crossed. Phone: ink goes 60 px deep into the keep-out boxes (8.3 to 8.6%), far more than any inset could explain, which first looked like the kit but is not (corrected in Plan 12): the phone layout's grouped card contains its three row cards, and the kit's fine tube around each row lands inside the group's keep-out box. It is a fixture bug. Both: ink goes at least 16 px past the cell edge at every seed and width (the pad caps the reading), and a path-by-path look (Plan 12) shows the medallion ring rising about 28 px above the frame top, plus small rib and lens overshoots. Whether the medallion overhang is intended is the owner's call.
+
+**Verification.** `npm test`: 237 passed. `ng build demo`: succeeded. `--all`: 4 pass, 2 fail (tube windows).
+
+**Not verified.** Desktop tube sheet not viewed. Seed insensitivity of the tube frame unexplained. 7 thumbnail e2e failures untouched.
+
+**Next.** Owner decides whether to fix the tube kit (separate work, not in Plan 11).

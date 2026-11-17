@@ -57,11 +57,7 @@ export function keepOutHit(ink: IReviewGrid, keepOutMask: IReviewGrid): number {
  * @param keepOutMask Optional grid marking content boxes; omit for motifs.
  * @param pad Empty rings around the content box; ink in them is past the edge.
  */
-export function measureCell(
-  ink: IReviewGrid,
-  keepOutMask?: IReviewGrid,
-  pad = 1,
-): ICellMetrics {
+export function measureCell(ink: IReviewGrid, keepOutMask?: IReviewGrid, pad = 1): ICellMetrics {
   const overshoot = overshootCells(ink, pad);
   const inkCells = countInk(ink);
   const bounds = inkBounds(ink);

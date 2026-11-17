@@ -18,14 +18,16 @@ function contextFor(geometry: IReviewGeometry): {
   height: number;
 } {
   const width = Math.ceil(geometry.width / REVIEW_CELL_PX) + REVIEW_GRID_PAD * 2;
-  const height = Math.ceil(geometry.height / REVIEW_CELL_PX) + REVIEW_GRID_PAD * 2;
+  const headroom = geometry.headroom ?? 0;
+  const headCells = Math.ceil(headroom / REVIEW_CELL_PX);
+  const height = Math.ceil(geometry.height / REVIEW_CELL_PX) + headCells + REVIEW_GRID_PAD * 2;
   const canvas = document.createElement('canvas');
   canvas.width = width;
   canvas.height = height;
   const ctx = canvas.getContext('2d', { willReadFrequently: true });
   if (!ctx) throw new Error('2d canvas is not available');
   const scale = 1 / REVIEW_CELL_PX;
-  ctx.setTransform(scale, 0, 0, scale, REVIEW_GRID_PAD, REVIEW_GRID_PAD);
+  ctx.setTransform(scale, 0, 0, scale, REVIEW_GRID_PAD, REVIEW_GRID_PAD + headCells);
   return { ctx, width, height };
 }
 

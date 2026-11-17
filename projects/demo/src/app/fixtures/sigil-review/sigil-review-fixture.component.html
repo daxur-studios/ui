@@ -26,8 +26,15 @@
               <svg
                 class="art"
                 [attr.width]="cell.geometry.width"
-                [attr.height]="cell.geometry.height"
-                [attr.viewBox]="'0 0 ' + cell.geometry.width + ' ' + cell.geometry.height"
+                [attr.height]="cell.geometry.height + (cell.geometry.headroom ?? 0)"
+                [attr.viewBox]="
+                  '0 ' +
+                  -(cell.geometry.headroom ?? 0) +
+                  ' ' +
+                  cell.geometry.width +
+                  ' ' +
+                  (cell.geometry.height + (cell.geometry.headroom ?? 0))
+                "
                 aria-hidden="true"
               >
                 @for (box of cell.geometry.keepOut ?? []; track $index) {

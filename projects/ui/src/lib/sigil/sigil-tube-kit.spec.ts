@@ -27,6 +27,20 @@ describe('buildTubeWindow', () => {
     expect(buildTubeWindow(layout)).toEqual(buildTubeWindow(layout));
   });
 
+  it('declares how far the medallion ring rises above the frame', () => {
+    for (const width of [320, 390, 760, 1100]) {
+      for (let seed = 1; seed <= 30; seed++) {
+        const scene = buildTubeWindow({ ...layout, width, seed });
+        const ring = scene.tubes.find(
+          (t) => t.d.endsWith('Z') && (t.d.match(/A/g) ?? []).length === 2,
+        )!;
+        const top = scene.medallion.cy - scene.medallion.r - ring.width / 2;
+        expect(scene.overhang).toBeCloseTo(Math.max(0, -top), 6);
+        expect(scene.overhang).toBeGreaterThanOrEqual(0);
+      }
+    }
+  });
+
   it('frames every field and card with a fine tube', () => {
     expect(buildTubeWindow(layout).fineTubes).toHaveLength(4);
   });

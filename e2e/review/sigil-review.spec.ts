@@ -1,7 +1,11 @@
 import { expect, test } from '@playwright/test';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { REVIEW_SUBJECTS } from '../../projects/demo/src/app/fixtures/sigil-review/review-subjects';
+import {
+  deltaMarkdown,
+  deltaRows,
+} from '../../projects/demo/src/app/fixtures/sigil-review/review-delta';
 import {
   isInvariantFlag,
   type IReviewReport,
@@ -42,11 +46,19 @@ for (const id of ids) {
     await page.screenshot({ path: join(dir, 'sheet.png'), fullPage: true });
     const full = { ...report, generatedAt: new Date().toISOString() };
     writeFileSync(join(dir, 'report.json'), JSON.stringify(full, null, 2));
-    writeFileSync(join(dir, 'report.md'), reportMarkdown(full));
-    if (env('SAVE_BASELINE') === '1') {
-      writeFileSync(join(dir, 'baseline.json'), JSON.stringify(full, null, 2));
+    const baselinePath = join(dir, 'baseline.json');
+    let markdown = reportMarkdown(full);
+    if (env('SAVE_BASELINE') !== '1') {
+      if (existsSync(baselinePath)) {
+        const baseline = JSON.parse(readFileSync(baselinePath, 'utf8')) as IReviewReport;
+        markdown += `\n${deltaMarkdown(deltaRows(full, baseline))}\n`;
+      } else {
+        markdown += '\nNo baseline saved yet (run with --save-baseline).\n';
+      }
     }
-    console.log(`\n${reportMarkdown(full)}\nwritten: ${join(dir, 'report.md')}`);
+    writeFileSync(join(dir, 'report.md'), markdown);
+    if (env('SAVE_BASELINE') === '1') writeFileSync(baselinePath, JSON.stringify(full, null, 2));
+    console.log(`\n${markdown}\nwritten: ${join(dir, 'report.md')}`);
 
     expect(errors, 'no console errors').toEqual([]);
     const failures = report.cells.filter((c) => c.flags.some(isInvariantFlag));
@@ -87,6 +99,10 @@ function reportMarkdown(r: IReviewReport & { generatedAt: string }): string {
       ? `${num(s.variety.min.value)} (seeds ${s.variety.min.a},${s.variety.min.b})`
       : 'n/a';
     lines.push('', `Variety: mean ${num(s.variety.mean)}, min pair ${min}.`);
+    const at = r.cells.filter((c) => c.width === s.width);
+    lines.push(
+      `Worst overshoot ${Math.max(0, ...at.map((c) => c.metrics.overshootPx))} px past the box, worst keep-out depth ${Math.max(0, ...at.map((c) => c.metrics.keepOutDepthPx))} px.`,
+    );
     if (s.invariantFailures.length)
       lines.push(`Invariant failures: seeds ${s.invariantFailures.join(', ')}.`);
     lines.push('');

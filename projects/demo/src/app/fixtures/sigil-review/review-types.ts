@@ -19,6 +19,8 @@ export interface IReviewBox {
 export interface IReviewGeometry {
   readonly width: number;
   readonly height: number;
+  /** Declared room above the box (px) that ink may use, e.g. a crown; ink past it still fails. */
+  readonly headroom?: number;
   readonly ink: readonly IReviewInk[];
   /** Boxes that ornament must stay out of (text, controls). Frames only. */
   readonly keepOut?: readonly IReviewBox[];

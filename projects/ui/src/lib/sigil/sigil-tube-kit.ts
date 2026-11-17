@@ -41,6 +41,8 @@ export interface ITubeScene {
   readonly nodes: readonly string[];
   /** Medallion centre, for placing a glyph. */
   readonly medallion: { readonly cx: number; readonly cy: number; readonly r: number };
+  /** How far the medallion ring rises above the frame's top edge, in px; `0` when it stays inside. */
+  readonly overhang: number;
 }
 
 /** Layout the frame must fit, measured from the page. */
@@ -210,7 +212,8 @@ function ribPath(
   const nx = Math.cos(t);
   const ny = Math.sin(t);
   const span = Math.abs(endX - start.x);
-  const c1 = { x: start.x + nx * span * pull, y: start.y + ny * span * pull };
+  // The control point never rises above the ring's top, so the rib stays under the crown.
+  const c1 = { x: start.x + nx * span * pull, y: Math.max(cy - ringR, start.y + ny * span * pull) };
   const c2 = { x: endX - side * span * 0.45, y: endY };
   return `M${p(start.x, start.y)}C${p(c1.x, c1.y)} ${p(c2.x, c2.y)} ${p(endX, endY)}`;
 }
@@ -367,9 +370,10 @@ export function buildTubeWindow(layout: ITubeLayout): ITubeScene {
   }
 
   // Medallion ring and whiplash ribs.
+  const ringWidth = tw * 1.4;
   tubes.push({
     d: `M${p(cx - ringR, cy)}A${f(ringR)} ${f(ringR)} 0 1 0 ${p(cx + ringR, cy)}A${f(ringR)} ${f(ringR)} 0 1 0 ${p(cx - ringR, cy)}Z`,
-    width: tw * 1.4,
+    width: ringWidth,
   });
   const ribThetas = [Math.PI + 0.2, Math.PI + 0.55, Math.PI + 0.95];
   for (let i = 0; i < ribCount; i++) {
@@ -416,5 +420,6 @@ export function buildTubeWindow(layout: ITubeLayout): ITubeScene {
     tubes.push({ d, width: tw * 0.85 });
   }
 
-  return { tubes, fineTubes, glass, nodes, medallion: { cx, cy, r: ringR } };
+  const overhang = Math.max(0, ringR + ringWidth / 2 - cy);
+  return { tubes, fineTubes, glass, nodes, medallion: { cx, cy, r: ringR }, overhang };
 }
