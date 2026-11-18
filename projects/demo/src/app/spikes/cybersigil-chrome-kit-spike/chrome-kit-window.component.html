@@ -1,4 +1,9 @@
-<div class="frame" #frame data-testid="chrome-window">
+<div
+  class="frame"
+  #frame
+  data-testid="chrome-window"
+  [style.margin-top.px]="scene()?.overhang ?? 0"
+>
   @if (scene(); as s) {
     <svg class="chrome" [attr.viewBox]="viewBox()" aria-hidden="true" focusable="false">
       <defs>

@@ -324,7 +324,7 @@ export function buildTubeWindow(layout: ITubeLayout): ITubeScene {
   const cx = W / 2;
   const ringR = Math.min(
     W * MEDALLION_MAX_WIDTH_RATIO,
-    header * MEDALLION_RADIUS_RATIO * ornament.range(0.9, 1.08),
+    header * MEDALLION_RADIUS_RATIO * ornament.range(0.75, 1.12),
   );
   const cy = header * MEDALLION_CENTRE_RATIO;
   const gap = tw * CRADLE_GAP_TUBES;
@@ -377,15 +377,15 @@ export function buildTubeWindow(layout: ITubeLayout): ITubeScene {
   });
   const ribThetas = [Math.PI + 0.2, Math.PI + 0.55, Math.PI + 0.95];
   for (let i = 0; i < ribCount; i++) {
-    const theta = ribThetas[i] + ornament.range(-0.08, 0.08);
+    const theta = ribThetas[i] + ornament.range(-0.2, 0.2);
     // Alternate landing: first rib merges into the content rail, later ones into the edge rail.
     const landsOnContent = i === 0;
     // Reach is measured outward from the ring, so ribs always sweep sideways, never inward.
     const room = Math.max(ringR * 0.5, cx - ringR - inset - contentR);
     const span =
-      ringR + room * (landsOnContent ? ornament.range(0.35, 0.55) : ornament.range(0.6, 0.9));
+      ringR + room * (landsOnContent ? ornament.range(0.25, 0.7) : ornament.range(0.45, 1));
     const endY = landsOnContent ? header : e;
-    const pull = ornament.range(0.25, 0.5);
+    const pull = ornament.range(0.12, 0.7);
     for (const side of [-1, 1] as const) {
       tubes.push({
         d: ribPath(cx, cy, ringR, theta, cx + side * span, endY, pull, side),
@@ -396,7 +396,7 @@ export function buildTubeWindow(layout: ITubeLayout): ITubeScene {
 
   // Corner curls in the top band.
   if (cornerStyle !== 'plain') {
-    const curls = cornerStyle === 'double' ? [0.25, 0.6] : [ornament.range(0.25, 0.45)];
+    const curls = cornerStyle === 'double' ? [0.25, 0.6] : [ornament.range(0.12, 0.8)];
     const room = Math.max(0, cx - ringR * 1.7 - inset - contentR);
     for (const reach of curls) {
       const edgeY = e + edgeR * 0.6;

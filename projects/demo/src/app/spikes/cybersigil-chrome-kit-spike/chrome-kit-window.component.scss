@@ -24,7 +24,8 @@
   background: var(--_chrome-paper);
   color: var(--_chrome-ink);
   font-family: var(--_ui-font-family);
-  overflow: hidden;
+  /* Visible so the medallion crown can rise above the window; the template adds matching margin. */
+  overflow: visible;
 }
 
 .chrome {
