@@ -51,6 +51,7 @@ Thumbs.db
 # Local package archives and other local-only artifacts
 /ignore/
 *.tgz
+/artifacts
 
 # sigil-trace prototype outputs (regenerable by the scripts)
 /tools/sigil-trace/templates/
